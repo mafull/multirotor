@@ -4,29 +4,22 @@ import sys
 
 from generate_file_from_template import run as generate
 
-
-# @todo: Move to external config file
+# @todo: Move to external config file + add destination paths
 TEMPLATE_FILE_PATH_HEADER = "../code/templates/Class.hpp"
 TEMPLATE_FILE_PATH_SOURCE = "../code/templates/Class.cpp"
 
-
+# Main entry point
 def main():
     name = get_name_from_args()
     if name == "":
         print("Invalid name. Please try again")
         sys.exit()
-
     # Generate the header file
     generate(name, TEMPLATE_FILE_PATH_HEADER)
     # Generate the source file
     generate(name, TEMPLATE_FILE_PATH_SOURCE)
 
-
-
-
-
-
-
+# Return a valid name from command-line arguments
 def get_name_from_args():
     # Create and use an ArgumentParser
     parser = argparse.ArgumentParser()
@@ -53,6 +46,6 @@ def get_name_from_args():
             # Return nothing
             return ""
 
-
+# Call the main function
 if __name__ == "__main__":
     main()
