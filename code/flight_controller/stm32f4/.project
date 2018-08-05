@@ -37,5 +37,10 @@
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/third_party/HAL_Driver/Src</locationURI>
 		</link>
+		<link>
+			<name>common</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/common</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>
