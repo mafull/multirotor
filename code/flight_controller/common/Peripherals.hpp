@@ -7,19 +7,24 @@
 
 class Peripherals
 {
-    public:
-        Peripherals();
-        ~Peripherals();
-        
-        void addUART(const UART& uart)
-        {
-            //m_UARTs.push_back(uart);
-        }
+public:
+    Peripherals();
+    ~Peripherals();
+    
+    void addUART(const UART& uart)
+    {
+        m_UARTs.push_back(uart);
+    }
 
-    protected:
+    const UART& UART(uint8_t index) const
+    {
+        return m_UARTs[index];
+    }
 
-    private:
-        //std::vector<UART&> m_UARTs;
+protected:
+
+private:
+    std::vector<UART> m_UARTs;
 };
 
 #endif  // __PERIPHERALS_HPP

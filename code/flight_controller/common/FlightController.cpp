@@ -19,5 +19,5 @@ FlightController::~FlightController()
 
 void FlightController::run()
 {
-
+    m_peripherals.UART(0).write();
 }

@@ -3,13 +3,13 @@
 
 class NAME_AS_IS
 {
-    public:
-        NAME_AS_IS();
-        ~NAME_AS_IS();
-        
-    protected:
+public:
+    NAME_AS_IS();
+    ~NAME_AS_IS();
+    
+protected:
 
-    private:
+private:
 
 };
 
