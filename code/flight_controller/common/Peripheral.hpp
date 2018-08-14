@@ -1,6 +1,8 @@
 #ifndef __PERIPHERAL_HPP
 #define __PERIPHERAL_HPP
 
+#include "Assert.hpp"
+
 class Peripheral
 {
 protected:

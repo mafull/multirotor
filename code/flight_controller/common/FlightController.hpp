@@ -11,17 +11,17 @@ public:
 
     void run();
 
-    const Peripherals& getPeripherals() const
-    {
-        return m_peripherals;
-    }
+//    const Peripherals& getPeripherals() const
+//    {
+//        return m_peripherals;
+//    }
 
 protected:
     
 private:
-    bool m_isInstantiated;
+    static bool m_isInstantiated;
 
-    const Peripherals m_peripherals;
+//    const Peripherals m_peripherals;
 };
 
 #endif  // __FLIGHT_CONTROLLER_HPP

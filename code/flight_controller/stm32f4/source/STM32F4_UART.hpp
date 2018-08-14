@@ -3,16 +3,18 @@
 
 #include "UART.hpp"
 
-#include "stm32f4xx_hal_uart.h"
+#include "stm32f4xx.h"
 
 class STM32F4_UART : public UART
 {
 public:
-    STM32F4_UART(USART_TypeDef instance);
-    ~STM32F4_UART();
+    STM32F4_UART(USART_TypeDef *instance);
+//    ~STM32F4_UART();
     
     void initialise(UART_InitTypeDef& init);
+    
     void write();
+
 protected:
 
 private:

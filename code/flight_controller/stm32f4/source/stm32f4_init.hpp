@@ -1,3 +1,5 @@
+#include "FlightController.hpp"
+
 bool stm32f4_initialiseFlightController(FlightController& flightController);
 void stm32f4_initialisePeripherals(const Peripherals& peripherals);
 

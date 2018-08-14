@@ -1,5 +1,5 @@
-#ifndef __CONGIG_HPP
-#define __CONFIG_HPP
+#ifndef __ASSERT_HPP
+#define __ASSERT_HPP
 
 /// Assert macro that calls a custom callback function
 #define ASSERT(expr) \
@@ -19,4 +19,4 @@ static void assert_init(assert_funcptr_t funcPtr)
     assert_failed = funcPtr;
 }
 
-#endif  // __CONFIG_HPP
+#endif  // __ASSERT_HPP

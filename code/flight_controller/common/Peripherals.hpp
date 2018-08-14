@@ -11,15 +11,15 @@ public:
     Peripherals();
     ~Peripherals();
     
-    void addUART(const UART& uart)
-    {
-        m_UARTs.push_back(uart);
-    }
+    // void addUART(const UART& uart)
+    // {
+    //     m_UARTs.push_back(uart);
+    // }
 
-    const UART& UART(uint8_t index) const
-    {
-        return m_UARTs[index];
-    }
+    // const UART& UART(uint8_t index) const
+    // {
+    //     return m_UARTs[index];
+    // }
 
 protected:
 
