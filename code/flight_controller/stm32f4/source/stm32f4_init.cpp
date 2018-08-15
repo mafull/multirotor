@@ -3,6 +3,8 @@
 #include "stm32f4_config.hpp"
 
 // Peripherals
+#include "STM32F4_DigitalOutput.hpp"
+#include "STM32F4_I2C.hpp"
 #include "STM32F4_UART.hpp"
 
 bool stm32f4_initialiseFlightController(FlightController& flightController)

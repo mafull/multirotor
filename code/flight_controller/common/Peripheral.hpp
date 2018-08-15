@@ -7,6 +7,8 @@ typedef enum Peripheral_Type_t
 {
     Peripheral_Type_None = 0,
 
+    Peripheral_Type_DigitalInput,
+    Peripheral_Type_DigitalOutput,
     Peripheral_Type_I2C,
     Peripheral_Type_PWMInput,
     Peripheral_Type_PWMOutput,
