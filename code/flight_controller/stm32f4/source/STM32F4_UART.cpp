@@ -1,22 +1,33 @@
 #include "STM32F4_UART.hpp"
 
-STM32F4_UART::STM32F4_UART(USART_TypeDef *instance)
+STM32F4_UART::STM32F4_UART() :
+    m_configured(false)
 {
-    m_handle.Instance = instance;
+    // Do nothing
 }
 
-//STM32F4_UART::~STM32F4_UART()
-//{
-//
-//}
-
-
-void STM32F4_UART::initialise(UART_InitTypeDef& init)
+void STM32F4_UART::setConfiguration(USART_TypeDef *instance, UART_InitTypeDef& init)
 {
-    m_handle.Init = init;
-    //ASSERT(HAL_UART_Init(&m_handle) == HAL_OK);
+    // Ensure it is not already initialised
+    ASSERT(!m_initialised);
 
-    m_initialised = true;
+    // Store the configuration in the handle
+    m_handle.Instance = instance;
+    m_handle.Init = init;
+
+    m_configured = true;
+}
+
+void STM32F4_UART::initialise()
+{
+    // Ensure it is configured but not already initialised
+    ASSERT(m_configured && !m_initialised);
+
+    // Attempt to initialise the UART peripheral
+    m_initialised = (HAL_UART_Init(&m_handle) == HAL_OK);
+
+    // Ensure that the initialsation was successful
+    ASSERT(m_initialised);
 }
 
 void STM32F4_UART::write()

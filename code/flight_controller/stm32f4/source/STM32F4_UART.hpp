@@ -1,5 +1,5 @@
-#ifndef __STM32_F4_UART_HPP
-#define __STM32_F4_UART_HPP
+#ifndef __STM32F4_UART_HPP
+#define __STM32F4_UART_HPP
 
 #include "UART.hpp"
 
@@ -8,17 +8,18 @@
 class STM32F4_UART : public UART
 {
 public:
-    STM32F4_UART(USART_TypeDef *instance);
-//    ~STM32F4_UART();
+    STM32F4_UART();
+
+    void setConfiguration(USART_TypeDef *instance, UART_InitTypeDef& init);
     
-    void initialise(UART_InitTypeDef& init);
-    
+    void initialise();
     void write();
 
 protected:
 
 private:
+    bool m_configured;
     UART_HandleTypeDef m_handle;
 };
 
-#endif  // __STM32_F4_UART_HPP
+#endif  // __STM32F4_UART_HPP

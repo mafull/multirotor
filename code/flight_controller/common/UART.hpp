@@ -7,6 +7,10 @@ class UART : public Peripheral
 {
 public:
     virtual void write() = 0;
+
+protected:
+    UART() :
+        m_type(Peripheral_Type_UART) {}
 };
 
 #endif  // __UART_HPP

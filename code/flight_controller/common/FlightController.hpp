@@ -11,6 +11,8 @@ public:
 
     void run();
 
+    void addPeripheral();
+
 //    const Peripherals& getPeripherals() const
 //    {
 //        return m_peripherals;
