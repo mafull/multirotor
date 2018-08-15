@@ -1,7 +1,11 @@
 #ifndef __STM32F4_I2C_HPP
 #define __STM32F4_I2C_HPP
 
-class STM32F4_I2C
+#include "I2C.hpp"
+
+#include "stm32f4xx.h"
+
+class STM32F4_I2C : public I2C
 {
 public:
     STM32F4_I2C();

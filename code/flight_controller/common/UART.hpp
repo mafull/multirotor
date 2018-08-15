@@ -10,7 +10,9 @@ public:
 
 protected:
     UART() :
-        m_type(Peripheral_Type_UART) {}
+        Peripheral(Peripheral_Type_UART)
+    {        
+    }
 };
 
 #endif  // __UART_HPP

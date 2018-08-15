@@ -1,7 +1,11 @@
 #ifndef __STM32F4_DIGITAL_OUTPUT_HPP
 #define __STM32F4_DIGITAL_OUTPUT_HPP
 
-class STM32F4_DigitalOutput
+#include "DigitalOutput.hpp"
+
+#include "stm32f4xx.h"
+
+class STM32F4_DigitalOutput : public DigitalOutput
 {
 public:
     STM32F4_DigitalOutput();
@@ -10,7 +14,7 @@ public:
 
     void initialise();
     const DigitalOutput_State_t getState() const;
-    void setState(const DigitalOutput_State_t state);
+    void setState(const DigitalOutput_State_t state) const;
     
 protected:
 

@@ -23,8 +23,11 @@ public:
     virtual void initialise() = 0;
 
 protected:
-    Peripheral() :
-        m_initialised(false) {}
+    Peripheral(Peripheral_Type_t type) :
+        m_initialised(false),
+        m_type(type)
+    {
+    }
     
     bool m_initialised;
     Peripheral_Type_t m_type;

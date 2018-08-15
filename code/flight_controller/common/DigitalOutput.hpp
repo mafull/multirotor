@@ -15,7 +15,7 @@ class DigitalOutput : public Peripheral
 {
 public:
     virtual const DigitalOutput_State_t getState() const = 0;
-    virtual void setState(const DigitalOutput_State_t state) = 0;
+    virtual void setState(const DigitalOutput_State_t state) const = 0;
 
     const bool isHigh() const
     {
@@ -34,7 +34,9 @@ public:
     
 protected:
     DigitalOutput() :
-        m_type(Peripheral_Type_DigitalOutput) {}
+        Peripheral(Peripheral_Type_DigitalOutput)
+    {        
+    }
 };
 
 #endif  // __DIGITAL_OUTPUT_HPP
