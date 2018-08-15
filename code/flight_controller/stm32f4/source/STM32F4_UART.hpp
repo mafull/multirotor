@@ -13,7 +13,7 @@ public:
     void setConfiguration(USART_TypeDef *instance, UART_InitTypeDef& init);
     
     void initialise();
-    void write();
+    void write(const char *str);
 
 protected:
 

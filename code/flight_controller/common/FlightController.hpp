@@ -1,7 +1,7 @@
 #ifndef __FLIGHT_CONTROLLER_HPP
 #define __FLIGHT_CONTROLLER_HPP
 
-#include "Peripherals.hpp"
+//#include "Peripherals.hpp"
 
 class FlightController
 {

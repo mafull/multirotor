@@ -7,12 +7,58 @@
 #include "STM32F4_I2C.hpp"
 #include "STM32F4_UART.hpp"
 
+void SystemClock_Config(void)
+{
+    RCC_OscInitTypeDef RCC_OscInitStruct;
+    RCC_ClkInitTypeDef RCC_ClkInitStruct;
+
+    __PWR_CLK_ENABLE();
+
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLM = 4;
+    RCC_OscInitStruct.PLL.PLLN = 168;
+    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+    RCC_OscInitStruct.PLL.PLLQ = 4;
+    HAL_RCC_OscConfig(&RCC_OscInitStruct);
+
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_PCLK1
+        |RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
+
+    //while(HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000000)) {};
+    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+
+    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+
+    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+    __HAL_RCC_GPIOE_CLK_ENABLE();
+    __HAL_RCC_GPIOF_CLK_ENABLE();
+    __HAL_RCC_GPIOG_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+}
+
 bool stm32f4_initialiseFlightController(FlightController& flightController)
 {
+    SystemClock_Config();
     bool ok = true;
 
     //const Peripherals& peripherals = flightController.getPeripherals();
-    //stm32f4_initialisePeripherals(peripherals);
+    const Peripherals peripherals = 0;
+    stm32f4_initialisePeripherals(peripherals);
 
     return ok;
 }
@@ -21,7 +67,7 @@ void stm32f4_initialisePeripherals(const Peripherals& peripherals)
 {
     stm32f4_initialiseDigitalInput(peripherals);
     stm32f4_initialiseDigitalOutput(peripherals);
-    stm32f4_initialiseI2C(peripherals);
+    //stm32f4_initialiseI2C(peripherals);
     stm32f4_initialisePWMInput(peripherals);
     stm32f4_initialisePWMOutput(peripherals);
     stm32f4_initialiseUART(peripherals);
@@ -77,7 +123,7 @@ void stm32f4_initialiseUART(const Peripherals& peripherals)
 {
     // Create instances of the STM32F4_UART module
     STM32F4_UART uart1;
-    STM32F4_UART uart2;
+    //STM32F4_UART uart2;
 
     // Create a common initialisation structure
     UART_InitTypeDef init;
@@ -94,13 +140,43 @@ void stm32f4_initialiseUART(const Peripherals& peripherals)
 
     // Set the baud rate for UART2 and update the configuration
     init.BaudRate = UART2_BAUD_RATE;
-    uart2.setConfiguration(USART2, init);
+    //uart2.setConfiguration(USART2, init);
 
     // Initialise both instances
     uart1.initialise();
-    uart2.initialise();
+    //uart2.initialise();
+
+    uart1.write("Hello world\n");
 
     // Add to the FlightController instance
     // peripherals.addUART(uart1);
     // peripherals.addUART(uart2);
 }
+
+
+// CALLBACKS
+
+//extern "C" {
+void HAL_UART_MspInit(UART_HandleTypeDef* huart)
+{
+    GPIO_InitTypeDef GPIO_InitStruct;
+    if(huart->Instance==USART1)
+    {
+        __USART1_CLK_ENABLE();
+  
+        GPIO_InitStruct.Pin = UART1_RX_PIN;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+        HAL_GPIO_Init(UART1_RX_PORT, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = UART1_TX_PIN;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+        HAL_GPIO_Init(UART1_TX_PORT, &GPIO_InitStruct);
+
+        HAL_NVIC_SetPriority(USART1_IRQn, 1, 1);
+        HAL_NVIC_EnableIRQ(USART1_IRQn);
+    }
+}
+//}

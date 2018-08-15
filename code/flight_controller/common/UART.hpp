@@ -6,7 +6,7 @@
 class UART : public Peripheral
 {
 public:
-    virtual void write() = 0;
+    virtual void write(const char *str) = 0;
 
 protected:
     UART() :
