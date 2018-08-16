@@ -7,6 +7,10 @@
 #include "STM32F4_I2C.hpp"
 #include "STM32F4_UART.hpp"
 
+static STM32F4_I2C i2c1;
+static STM32F4_UART uart1;
+//static const STM32F4_UART uart2;
+
 void SystemClock_Config(void)
 {
     RCC_OscInitTypeDef RCC_OscInitStruct;
@@ -56,34 +60,37 @@ bool stm32f4_initialiseFlightController(FlightController& flightController)
     SystemClock_Config();
     bool ok = true;
 
-    //const Peripherals& peripherals = flightController.getPeripherals();
-    const Peripherals peripherals = 0;
-    stm32f4_initialisePeripherals(peripherals);
+    stm32f4_initialisePeripherals();
+
+    PeripheralManager& pm = flightController._peripherals;
+    pm.addI2C(&i2c1);
+    pm.addUART(&uart1);
+    //pm.addUART(&uart2);
 
     return ok;
 }
 
-void stm32f4_initialisePeripherals(const Peripherals& peripherals)
+void stm32f4_initialisePeripherals()
 {
-    stm32f4_initialiseDigitalInput(peripherals);
-    stm32f4_initialiseDigitalOutput(peripherals);
-    //stm32f4_initialiseI2C(peripherals);
-    stm32f4_initialisePWMInput(peripherals);
-    stm32f4_initialisePWMOutput(peripherals);
-    stm32f4_initialiseUART(peripherals);
+    stm32f4_initialiseDigitalInput();
+    stm32f4_initialiseDigitalOutput();
+    //stm32f4_initialiseI2C();
+    stm32f4_initialisePWMInput();
+    stm32f4_initialisePWMOutput();
+    stm32f4_initialiseUART();
 }
 
-void stm32f4_initialiseDigitalInput(const Peripherals& peripherals)
-{
-
-}
-
-void stm32f4_initialiseDigitalOutput(const Peripherals& peripherals)
+void stm32f4_initialiseDigitalInput()
 {
 
 }
 
-void stm32f4_initialiseI2C(const Peripherals& peripherals)
+void stm32f4_initialiseDigitalOutput()
+{
+
+}
+
+void stm32f4_initialiseI2C()
 {
     // Create an instance of the STM32F4_I2C module
     STM32F4_I2C i2c1;
@@ -109,20 +116,20 @@ void stm32f4_initialiseI2C(const Peripherals& peripherals)
     // DO SOMETHING
 }
 
-void stm32f4_initialisePWMInput(const Peripherals& peripherals)
+void stm32f4_initialisePWMInput()
 {
 
 }
 
-void stm32f4_initialisePWMOutput(const Peripherals& peripherals)
+void stm32f4_initialisePWMOutput()
 {
 
 }
 
-void stm32f4_initialiseUART(const Peripherals& peripherals)
+void stm32f4_initialiseUART()
 {
     // Create instances of the STM32F4_UART module
-    STM32F4_UART uart1;
+    //STM32F4_UART uart1;
     //STM32F4_UART uart2;
 
     // Create a common initialisation structure

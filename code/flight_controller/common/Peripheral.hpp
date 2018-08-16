@@ -12,9 +12,7 @@ typedef enum Peripheral_Type_t
     Peripheral_Type_I2C,
     Peripheral_Type_PWMInput,
     Peripheral_Type_PWMOutput,
-    Peripheral_Type_UART,
-
-    Peripheral_Type_MAX
+    Peripheral_Type_UART
 } Peripheral_Type_t;
 
 class Peripheral
