@@ -13,8 +13,11 @@ public:
     virtual void setPulseWidthUs(PWMOutput_PulseWidth_t pulseWidthUs) = 0;
     virtual PWMOutput_PulseWidth_t getPulseWidthUs() = 0;
 
-private:
-
+protected:
+    PWMOutput() :
+        Peripheral(Peripheral_Type_PWMOutput)
+    {
+    }
 };
 
 #endif  // __PWM_OUTPUT_HPP

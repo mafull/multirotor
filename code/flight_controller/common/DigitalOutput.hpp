@@ -35,7 +35,7 @@ public:
 protected:
     DigitalOutput() :
         Peripheral(Peripheral_Type_DigitalOutput)
-    {        
+    {
     }
 };
 

@@ -11,7 +11,7 @@ public:
 protected:
     UART() :
         Peripheral(Peripheral_Type_UART)
-    {        
+    {
     }
 };
 

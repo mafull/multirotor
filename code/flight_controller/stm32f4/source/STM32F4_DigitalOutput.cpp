@@ -4,7 +4,7 @@ static void enablePortClock(GPIO_TypeDef *port);
 static uint8_t getSetBitsCount(uint16_t input);
 
 STM32F4_DigitalOutput::STM32F4_DigitalOutput() :
-    m_configured(false)
+    _configured(false)
 {
     // Do nothing
 }
@@ -12,7 +12,7 @@ STM32F4_DigitalOutput::STM32F4_DigitalOutput() :
 void STM32F4_DigitalOutput::setConfiguration(GPIO_TypeDef *port, GPIO_InitTypeDef& init)
 {
     // Ensure it is not already initialised
-    ASSERT(!m_initialised);
+    ASSERT(!_initialised);
 
     // Ensure that only one pin is being configured
     ASSERT(getSetBitsCount(init.Pin) == 1u);
@@ -23,41 +23,41 @@ void STM32F4_DigitalOutput::setConfiguration(GPIO_TypeDef *port, GPIO_InitTypeDe
         (init.Mode == GPIO_MODE_OUTPUT_PP));
 
     // Store the configuration
-    m_port = port;
-    m_initStruct = init;
+    _port = port;
+    _initStruct = init;
 
-    m_configured = true;
+    _configured = true;
 }
 
 void STM32F4_DigitalOutput::initialise()
 {
     // Ensure it is configured but not already initialised
-    ASSERT(m_configured && !m_initialised);
+    ASSERT(_configured && !_initialised);
 
     // Enable the relevant port clock
-    enablePortClock(m_port);
+    enablePortClock(_port);
 
     // Initialise the GPIO peripheral
-    HAL_GPIO_Init(m_port, &m_initStruct);
-    m_initialised = true;
+    HAL_GPIO_Init(_port, &_initStruct);
+    _initialised = true;
 }
 
 const DigitalOutput_State_t STM32F4_DigitalOutput::getState() const
 {
-    ASSERT(m_initialised);
+    ASSERT(_initialised);
 
-    return (HAL_GPIO_ReadPin(m_port, m_initStruct.Pin) == GPIO_PIN_SET) ?
+    return (HAL_GPIO_ReadPin(_port, _initStruct.Pin) == GPIO_PIN_SET) ?
         DigitalOutput_State_High : DigitalOutput_State_Low;
 }
 
 void STM32F4_DigitalOutput::setState(const DigitalOutput_State_t state) const
 {
-    ASSERT(m_initialised);
+    ASSERT(_initialised);
     ASSERT(state != DigitalOutput_State_NotConfigured);
 
     HAL_GPIO_WritePin(
-        m_port,
-        m_initStruct.Pin,
+        _port,
+        _initStruct.Pin,
         (state == DigitalOutput_State_High) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 

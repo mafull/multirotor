@@ -18,8 +18,8 @@ public:
 protected:
 
 private:
-    bool m_configured;
-    UART_HandleTypeDef m_handle;
+    bool _configured;
+    UART_HandleTypeDef _handle;
 };
 
 #endif  // __STM32F4_UART_HPP

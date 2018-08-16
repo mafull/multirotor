@@ -24,13 +24,13 @@ public:
 
 protected:
     Peripheral(Peripheral_Type_t type) :
-        m_initialised(false),
-        m_type(type)
+        _initialised(false),
+        _type(type)
     {
     }
     
-    bool m_initialised;
-    Peripheral_Type_t m_type;
+    bool _initialised;
+    Peripheral_Type_t _type;
 };
 
 #endif  // __PERIPHERAL_HPP

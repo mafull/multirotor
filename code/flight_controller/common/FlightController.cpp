@@ -3,21 +3,21 @@
 #include "Assert.hpp"
 
 
-bool FlightController::m_isInstantiated = false;
+bool FlightController::_isInstantiated = false;
 
 FlightController::FlightController()
 {
     // Ensure we only have a single instance of this class
-    ASSERT(!m_isInstantiated);
-    m_isInstantiated = true;
+    ASSERT(!_isInstantiated);
+    _isInstantiated = true;
 }
 
 FlightController::~FlightController()
 {
-    m_isInstantiated = false;
+    _isInstantiated = false;
 }
 
 void FlightController::run()
 {
-    //m_peripherals.UART(0).write();
+    _peripherals.UART[0].write();
 }

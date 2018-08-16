@@ -10,7 +10,7 @@ public:
 protected:
     I2C() :
         Peripheral(Peripheral_Type_I2C)
-    {        
+    {
     }
 };
 

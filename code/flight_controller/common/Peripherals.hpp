@@ -13,18 +13,18 @@ public:
     
     // void addUART(const UART& uart)
     // {
-    //     m_UARTs.push_back(uart);
+    //     _UARTs.push_back(uart);
     // }
 
     // const UART& UART(uint8_t index) const
     // {
-    //     return m_UARTs[index];
+    //     return _UARTs[index];
     // }
 
 protected:
 
 private:
-    std::vector<UART> m_UARTs;
+    std::vector<UART> _UARTs;
 };
 
 #endif  // __PERIPHERALS_HPP

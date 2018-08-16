@@ -19,9 +19,9 @@ public:
 protected:
 
 private:
-    bool m_configured;
-    GPIO_TypeDef *m_port;
-    GPIO_InitTypeDef m_initStruct;
+    bool _configured;
+    GPIO_TypeDef *_port;
+    GPIO_InitTypeDef _initStruct;
 };
 
 #endif  // __STM32F4_DIGITAL_OUTPUT_HPP

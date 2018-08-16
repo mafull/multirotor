@@ -17,8 +17,8 @@ public:
 protected:
 
 private:
-    bool m_configured;
-    I2C_HandleTypeDef m_handle;
+    bool _configured;
+    I2C_HandleTypeDef _handle;
 };
 
 #endif  // __STM32F4_I2C_HPP
