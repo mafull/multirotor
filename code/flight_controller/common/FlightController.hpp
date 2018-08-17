@@ -1,7 +1,10 @@
 #ifndef __FLIGHT_CONTROLLER_HPP
 #define __FLIGHT_CONTROLLER_HPP
 
+#include "IMU.hpp"
 #include "PeripheralManager.hpp"
+
+#include <string>
 
 class FlightController
 {
@@ -11,9 +14,12 @@ public:
 
     void run();
 
-    void addPeripheral(); 
+    void log(const std::string& msg);
 
-    PeripheralManager _peripherals;
+
+
+    PeripheralManager peripherals;
+    IMU imu;
 
 protected:
     

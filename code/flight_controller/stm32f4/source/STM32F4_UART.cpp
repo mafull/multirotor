@@ -29,13 +29,18 @@ void STM32F4_UART::initialise()
     // Ensure that the initialsation was successful
     ASSERT(_initialised);
 }
-#include <string.h>
-void STM32F4_UART::write(const char *str)
+
+
+#include <cstdint>
+#include <string>
+void STM32F4_UART::write(const std::string& data)
 {
     ASSERT(_initialised);
 
-    // uint8_t *pData;
-    // uint16_t size = 0;
     uint32_t timeout = 100;
-    HAL_UART_Transmit(&_handle, (uint8_t *)str, strlen(str), timeout);
+    HAL_UART_Transmit(
+        &_handle,
+        static_Cast<uint8_t *>(data.c_str()),
+        data.size(),
+        timeout);
 }

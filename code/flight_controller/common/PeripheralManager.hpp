@@ -1,14 +1,12 @@
 #ifndef __PERIPHERAL_MANAGER_HPP
 #define __PERIPHERAL_MANAGER_HPP
 
-#include <cstdint>
-#include <vector>
-
-#include "Peripheral.hpp"
-
 #include "DigitalOutput.hpp"
 #include "I2C.hpp"
 #include "UART.hpp"
+
+#include <cstdint>
+#include <vector>
 
 #define CREATE_PERIPHERAL_FUNCTIONS(upper, lower) \
     /* Function to store a pointer to the peripheral in a vector */ \
@@ -33,7 +31,6 @@ class PeripheralManager
 {
 public:
     PeripheralManager() {}
-    ~PeripheralManager() { ASSERT(false); }
 
     PERIPHERALS(CREATE_PERIPHERAL_FUNCTIONS)
     

@@ -3,10 +3,12 @@
 
 #include "Peripheral.hpp"
 
+#include <string>
+
 class UART : public Peripheral
 {
 public:
-    virtual void write(const char *str) = 0;
+    virtual void write(const std::string& data) = 0;
 
 protected:
     UART() :
