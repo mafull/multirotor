@@ -26,7 +26,7 @@ void STM32F4_UART::initialise()
     // Attempt to initialise the UART peripheral
     _initialised = (HAL_UART_Init(&_handle) == HAL_OK);
 
-    // Ensure that the initialsation was successful
+    // Ensure that the initialisation was successful
     ASSERT(_initialised);
 }
 
@@ -40,7 +40,7 @@ void STM32F4_UART::write(const std::string& data)
     uint32_t timeout = 100;
     HAL_UART_Transmit(
         &_handle,
-        static_Cast<uint8_t *>(data.c_str()),
+        reinterpret_cast<uint8_t *>(const_cast<char *>(data.c_str())),
         data.size(),
         timeout);
 }

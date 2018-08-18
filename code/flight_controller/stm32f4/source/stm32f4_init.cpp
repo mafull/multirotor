@@ -62,7 +62,7 @@ bool stm32f4_initialiseFlightController(FlightController& flightController)
 
     stm32f4_initialisePeripherals();
 
-    PeripheralManager& pm = flightController._peripherals;
+    PeripheralManager& pm = flightController.peripherals;
     pm.addI2C(&i2c1);
     pm.addUART(&uart1);
     //pm.addUART(&uart2);
@@ -186,7 +186,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
         HAL_NVIC_EnableIRQ(USART1_IRQn);
 
         // @todo: Add to class? Like enabling EXTI for button press
-        UART_EnableIT(huart);
+        __HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
     }
 }
 //}
