@@ -29,3 +29,35 @@ void STM32F4_I2C::initialise()
     // Ensure that the initialsation was successful
     ASSERT(_initialised);
 }
+
+void STM32F4_I2C::writeMemory(
+    I2C_Address_t deviceAddress,
+    I2C_Address_t memoryAddress,
+    uint8_t *data,
+    uint8_t amount)
+{
+    ASSERT(HAL_I2C_Mem_Write(
+        &_handle,
+        (deviceAddress << 1),
+        memoryAddress,
+        1,
+        data,
+        1,
+        100) == HAL_OK);
+}
+
+void STM32F4_I2C::readMemory(
+    I2C_Address_t deviceAddress,
+    I2C_Address_t memoryAddress,
+    uint8_t *data,
+    uint8_t amount)
+{
+    ASSERT(HAL_I2C_Mem_Read(
+        &_handle,
+        (deviceAddress << 1),
+        memoryAddress,
+        1,
+        data,
+        amount,
+        100) == HAL_OK);
+}

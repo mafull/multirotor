@@ -22,7 +22,7 @@ void FlightController::run()
     log("FlightController::run()\n");
 
     // INITIALISE MPU6050, BMP280, HMC5883L
-    imu.initialise();
+    //imu.initialise();
     // SET PWM OUTPUTS TO TURN MOTORS OFF
     // LOAD DATA FROM EEPROM
 

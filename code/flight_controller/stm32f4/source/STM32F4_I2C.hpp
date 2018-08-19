@@ -14,6 +14,17 @@ public:
     
     void initialise();
 
+    void writeMemory(
+        I2C_Address_t deviceAddress,
+        I2C_Address_t memoryAddress,
+        uint8_t *data,
+        uint8_t amount);
+    void readMemory(
+        I2C_Address_t deviceAddress,
+        I2C_Address_t memoryAddress,
+        uint8_t *data,
+        uint8_t amount);
+
 protected:
 
 private:

@@ -9,7 +9,7 @@
 
 static STM32F4_I2C i2c1;
 static STM32F4_UART uart1;
-//static const STM32F4_UART uart2;
+static STM32F4_UART uart2;
 
 void SystemClock_Config(void)
 {
@@ -65,7 +65,7 @@ bool stm32f4_initialiseFlightController(FlightController& flightController)
     PeripheralManager& pm = flightController.peripherals;
     pm.addI2C(&i2c1);
     pm.addUART(&uart1);
-    //pm.addUART(&uart2);
+    pm.addUART(&uart2);
 
     return ok;
 }
@@ -74,7 +74,7 @@ void stm32f4_initialisePeripherals()
 {
     stm32f4_initialiseDigitalInput();
     stm32f4_initialiseDigitalOutput();
-    //stm32f4_initialiseI2C();
+    stm32f4_initialiseI2C();
     stm32f4_initialisePWMInput();
     stm32f4_initialisePWMOutput();
     stm32f4_initialiseUART();
@@ -92,9 +92,6 @@ void stm32f4_initialiseDigitalOutput()
 
 void stm32f4_initialiseI2C()
 {
-    // Create an instance of the STM32F4_I2C module
-    STM32F4_I2C i2c1;
-
     // Create a common initialisation structure
     I2C_InitTypeDef init;
     init.DutyCycle = I2C_DUTYCYCLE_2;
@@ -111,9 +108,6 @@ void stm32f4_initialiseI2C()
 
     // Initialise the instance
     i2c1.initialise();
-
-    // Add to the FlightController instance
-    // DO SOMETHING
 }
 
 void stm32f4_initialisePWMInput()
@@ -128,10 +122,6 @@ void stm32f4_initialisePWMOutput()
 
 void stm32f4_initialiseUART()
 {
-    // Create instances of the STM32F4_UART module
-    //STM32F4_UART uart1;
-    //STM32F4_UART uart2;
-
     // Create a common initialisation structure
     UART_InitTypeDef init;
     init.WordLength = UART_WORDLENGTH_8B;
@@ -147,19 +137,12 @@ void stm32f4_initialiseUART()
 
     // Set the baud rate for UART2 and update the configuration
     init.BaudRate = UART2_BAUD_RATE;
-    //uart2.setConfiguration(USART2, init);
+    uart2.setConfiguration(USART2, init);
 
     // Initialise both instances
     uart1.initialise();
-    //uart2.initialise();
-
-    uart1.write("Hello world\n");
-
-    // Add to the FlightController instance
-    // peripherals.addUART(uart1);
-    // peripherals.addUART(uart2);
+    uart2.initialise();
 }
-
 
 // CALLBACKS
 
