@@ -19,16 +19,11 @@ FlightController::~FlightController()
 
 void FlightController::run()
 {
-    log("FlightController::run()\n");
-
-    // INITIALISE MPU6050, BMP280, HMC5883L
-    //imu.initialise();
-    // SET PWM OUTPUTS TO TURN MOTORS OFF
-    // LOAD DATA FROM EEPROM
+    log("FlightController::run()");
 
     // SET UP THREADS
 
-    log("> Initialisation complete\n");
+    log("> Threads initialised");
 
     /* START THREADS:
         LOGGING
@@ -44,7 +39,7 @@ void FlightController::log(const std::string& msg)
     // SEND MESSAGE TO LOGGING THREAD
 
     // LOGGING THREAD WILL THEN LOG THE MESSAGE
-    peripherals.uart(0).write(msg);
+    peripherals.uart(0).write(msg + "\n");
 }
 
 /* CONTROL LOOP:
@@ -67,3 +62,45 @@ void FlightController::log(const std::string& msg)
     PROCESS INCOMING UART DATA
     SEND PENDING OUTGOING DATA FROM MSG QUEUE
 */
+
+void FlightController::controlThreadTop()
+{
+    log("FlightController::controlThreadTop()");
+
+    // INITIALISE MPU6050, BMP280, HMC5883L
+    //imu.initialise();
+    // SET PWM OUTPUTS TO TURN MOTORS OFF
+    // LOAD DATA FROM EEPROM
+
+    log("> Control loop ready to start");
+
+    while (1)
+    {
+        /*
+        PROCESS INPUTS
+            MESSAGE QUEUE
+            CONTROL INPUTS
+            SENSOR READINGS
+        */
+
+        /*
+        GENERATE OUTPUTS
+            UPDATE PIDS
+            MIX MOTOR OUTPUTS
+        */
+
+        /*
+        OUTPUT
+            LOGGING
+            INDICATION LEDS
+            UPDATE PWM OUTPUTS
+        */
+
+        // MAINTAIN CONSTANT LOOP RATE
+    }
+
+    log("> Control loop finished");
+
+
+    log("> Control thread finished");
+}

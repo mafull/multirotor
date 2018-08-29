@@ -1,7 +1,7 @@
 #ifndef __STM32F4_UART_HPP
 #define __STM32F4_UART_HPP
 
-#include "UART.hpp"
+#include "peripherals/UART.hpp"
 
 #include "stm32f4xx.h"
 

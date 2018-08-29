@@ -1,8 +1,8 @@
 #ifndef __FLIGHT_CONTROLLER_HPP
 #define __FLIGHT_CONTROLLER_HPP
 
-#include "IMU.hpp"
-#include "PeripheralManager.hpp"
+#include "imu/IMU.hpp"
+#include "peripherals/PeripheralManager.hpp"
 
 #include <string>
 
@@ -22,6 +22,7 @@ public:
     IMU imu;
 
 protected:
+    void controlThreadTop();
     
 private:
     static bool _isInstantiated;

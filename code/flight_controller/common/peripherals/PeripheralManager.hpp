@@ -1,9 +1,9 @@
 #ifndef __PERIPHERAL_MANAGER_HPP
 #define __PERIPHERAL_MANAGER_HPP
 
-#include "peripherals/DigitalOutput.hpp"
-#include "peripherals/I2C.hpp"
-#include "peripherals/UART.hpp"
+#include "DigitalOutput.hpp"
+#include "I2C.hpp"
+#include "UART.hpp"
 
 #include <cstdint>
 #include <vector>

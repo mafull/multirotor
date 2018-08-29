@@ -3,9 +3,9 @@
 #include "stm32f4_config.hpp"
 
 // Peripherals
-#include "STM32F4_DigitalOutput.hpp"
-#include "STM32F4_I2C.hpp"
-#include "STM32F4_UART.hpp"
+#include "peripherals/STM32F4_DigitalOutput.hpp"
+#include "peripherals/STM32F4_I2C.hpp"
+#include "peripherals/STM32F4_UART.hpp"
 
 static STM32F4_I2C i2c1;
 static STM32F4_UART uart1;
