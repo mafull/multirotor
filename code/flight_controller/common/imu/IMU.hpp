@@ -6,6 +6,37 @@
 #include "imu/Magnetometer.hpp"
 #include "peripherals/I2C.hpp"
 
+using IMU_Data_Element_t = float;
+
+using IMU_Data_t = 
+    struct IMU_Data_t
+    {
+        // TIME DATATYPE timestamp;
+        
+        struct
+        {
+            IMU_Data_Element_t roll;
+            IMU_Data_Element_t pitch;
+            IMU_Data_Element_t yaw;
+        } gyroscope;
+
+        struct
+        {
+            IMU_Data_Element_t roll;
+            IMU_Data_Element_t pitch;
+            IMU_Data_Element_t yaw;
+        } accelerometer;
+
+        struct
+        {
+            IMU_Data_Element_t heading;
+        } magnetometer;
+
+        IMU_Data_Element_t roll;
+        IMU_Data_Element_t pitch;
+        IMU_Data_Element_t yaw;
+    };
+
 class IMU
 {
 public:
@@ -15,6 +46,13 @@ public:
     void setConfiguration(I2C *i2c);
 
     void initialise();
+
+    void update();
+
+    const IMU_Data_t& getData() const
+    {
+        return _data;
+    }
 
     void addAccelerometer(Accelerometer *accelerometer)
     {
@@ -61,6 +99,8 @@ private:
     Accelerometer *_accelerometer;
     Gyroscope *_gyroscope;
     Magnetometer *_magnetometer;
+
+    IMU_Data_t _data;
 };
 
 #endif  // __IMU_HPP

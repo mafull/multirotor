@@ -2,6 +2,8 @@
 
 #include "stm32f4_config.hpp"
 
+//
+#include "imu/MPU6050.hpp"
 // Peripherals
 #include "peripherals/STM32F4_DigitalOutput.hpp"
 #include "peripherals/STM32F4_I2C.hpp"
@@ -10,6 +12,8 @@
 static STM32F4_I2C i2c1;
 static STM32F4_UART uart1;
 static STM32F4_UART uart2;
+
+static MPU6050 mpu6050;
 
 void SystemClock_Config(void)
 {
@@ -60,17 +64,20 @@ bool stm32f4_initialiseFlightController(FlightController& flightController)
     SystemClock_Config();
     bool ok = true;
 
-    stm32f4_initialisePeripherals();
-
-    PeripheralManager& pm = flightController.peripherals;
-    pm.addI2C(&i2c1);
-    pm.addUART(&uart1);
-    pm.addUART(&uart2);
+    stm32f4_initialisePeripherals(flightController.peripherals);
+    stm32f4_initialiseIMU(flightController.imu);
 
     return ok;
 }
 
-void stm32f4_initialisePeripherals()
+void stm32f4_initialiseIMU(IMU& imu)
+{
+    imu.addAccelerometer(&mpu6050.accelerometer);
+    //imu.addGyroscope(&mpu6050.gyroscope);
+    //imu.addMagnetometer(&hmc5883l);
+}
+
+void stm32f4_initialisePeripherals(PeripheralManager& peripheralManager)
 {
     stm32f4_initialiseDigitalInput();
     stm32f4_initialiseDigitalOutput();
@@ -78,6 +85,10 @@ void stm32f4_initialisePeripherals()
     stm32f4_initialisePWMInput();
     stm32f4_initialisePWMOutput();
     stm32f4_initialiseUART();
+
+    peripheralManager.addI2C(&i2c1);
+    peripheralManager.addUART(&uart1);
+    peripheralManager.addUART(&uart2);
 }
 
 void stm32f4_initialiseDigitalInput()

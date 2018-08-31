@@ -3,10 +3,14 @@
 
 #include "peripherals/I2C.hpp"
 
+using Gyroscope_Data_Element_t = float;
+
 using Gyroscope_Data_t =
     struct Gyroscope_Data_t
     {
-        bool isFilled;
+        Gyroscope_Data_Element_t x;
+        Gyroscope_Data_Element_t y;
+        Gyroscope_Data_Element_t z;
     };
 
 class Gyroscope
@@ -15,17 +19,17 @@ public:
     Gyroscope();
     ~Gyroscope();
     
-    void setI2C(I2C *i2c)
-    {
-        ASSERT(i2c);
-        _i2c = i2c;
-    }
-    
-    void initialise();
+    virtual void initialise() = 0;
 
     const Gyroscope_Data_t& getData() const
     {
         return _data;
+    }
+
+    void setI2C(I2C *i2c)
+    {
+        ASSERT(i2c);
+        _i2c = i2c;
     }
 
 protected:

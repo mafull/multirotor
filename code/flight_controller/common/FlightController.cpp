@@ -74,6 +74,8 @@ void FlightController::controlThreadTop()
 
     log("> Control loop ready to start");
 
+    const IMU_Data_t& imuData = imu.getData();
+
     while (1)
     {
         /*
