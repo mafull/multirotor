@@ -33,11 +33,12 @@ public:
     }
 
 protected:
-
-private:
     I2C *_i2c;
 
     Gyroscope_Data_t _data;
+    
+private:
+
 };
 
 #endif  // __GYROSCOPE_HPP

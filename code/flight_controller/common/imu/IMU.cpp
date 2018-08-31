@@ -56,6 +56,13 @@ void IMU::initialise()
 
 void IMU::update()
 {
+    _accelerometer->update();
+    //_gyroscope->update();
+    //_magnetometer->update();
+
+
+
+
     // GET SENSOR DATA
     Accelerometer_Data_t aData = _accelerometer->getData();
     Gyroscope_Data_t gData = _gyroscope->getData();

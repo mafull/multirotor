@@ -85,6 +85,8 @@ void FlightController::controlThreadTop()
             SENSOR READINGS
         */
 
+        imu.update();
+
         /*
         GENERATE OUTPUTS
             UPDATE PIDS

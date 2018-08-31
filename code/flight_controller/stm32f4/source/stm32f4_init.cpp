@@ -3,6 +3,7 @@
 #include "stm32f4_config.hpp"
 
 //
+#include "imu/HMC5883L.hpp"
 #include "imu/MPU6050.hpp"
 // Peripherals
 #include "peripherals/STM32F4_DigitalOutput.hpp"
@@ -13,6 +14,7 @@ static STM32F4_I2C i2c1;
 static STM32F4_UART uart1;
 static STM32F4_UART uart2;
 
+static HMC5883L hmc5883l;
 static MPU6050 mpu6050;
 
 void SystemClock_Config(void)
@@ -72,9 +74,9 @@ bool stm32f4_initialiseFlightController(FlightController& flightController)
 
 void stm32f4_initialiseIMU(IMU& imu)
 {
-    imu.addAccelerometer(&mpu6050.accelerometer);
-    //imu.addGyroscope(&mpu6050.gyroscope);
-    //imu.addMagnetometer(&hmc5883l);
+    imu.setAccelerometer(&mpu6050.accelerometer);
+    imu.setGyroscope(&mpu6050.gyroscope);
+    imu.setMagnetometer(&hmc5883l);
 }
 
 void stm32f4_initialisePeripherals(PeripheralManager& peripheralManager)

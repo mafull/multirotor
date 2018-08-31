@@ -21,6 +21,7 @@ public:
     ~Accelerometer();
 
     virtual void initialise() = 0;
+    virtual void update() = 0;
 
     const Accelerometer_Data_t& getData() const
     {
@@ -34,11 +35,12 @@ public:
     }
 
 protected:
-
-private:
     I2C *_i2c;
 
     Accelerometer_Data_t _data;
+
+private:
+
 };
 
 #endif  // __ACCELEROMETER_HPP

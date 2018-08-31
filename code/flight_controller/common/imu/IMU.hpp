@@ -12,7 +12,7 @@ using IMU_Data_t =
     struct IMU_Data_t
     {
         // TIME DATATYPE timestamp;
-        
+
         struct
         {
             IMU_Data_Element_t roll;
@@ -54,19 +54,19 @@ public:
         return _data;
     }
 
-    void addAccelerometer(Accelerometer *accelerometer)
+    void setAccelerometer(Accelerometer *accelerometer)
     {
         ASSERT(accelerometer);
         _accelerometer = accelerometer;
     }
 
-    void addGyroscope(Gyroscope *gyroscope)
+    void setGyroscope(Gyroscope *gyroscope)
     {
         ASSERT(gyroscope);
         _gyroscope = gyroscope;
     }
 
-    void addMagnetometer(Magnetometer *magnetometer)
+    void setMagnetometer(Magnetometer *magnetometer)
     {
         ASSERT(magnetometer);
         _magnetometer = magnetometer;

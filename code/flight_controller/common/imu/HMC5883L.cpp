@@ -1,0 +1,11 @@
+#include "HMC5883L.hpp"
+
+HMC5883L::HMC5883L()
+{
+
+}
+
+HMC5883L::~HMC5883L()
+{
+
+}

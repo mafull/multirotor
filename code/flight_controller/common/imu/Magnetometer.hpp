@@ -3,10 +3,14 @@
 
 #include "peripherals/I2C.hpp"
 
+using Magnetometer_Data_Element_t = float;
+
 using Magnetometer_Data_t =
     struct Magnetometer_Data_t
     {
-        bool isFilled;
+        Magnetometer_Data_Element_t x;
+        Magnetometer_Data_Element_t y;
+        Magnetometer_Data_Element_t z;
     };
 
 class Magnetometer
