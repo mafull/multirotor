@@ -57,16 +57,16 @@ void IMU::initialise()
 void IMU::update()
 {
     _accelerometer->update();
-    //_gyroscope->update();
+    _gyroscope->update();
     //_magnetometer->update();
 
 
 
 
     // GET SENSOR DATA
-    Accelerometer_Data_t aData = _accelerometer->getData();
-    Gyroscope_Data_t gData = _gyroscope->getData();
-    // Magnetometer_Data_t mData = _magnetometer->getData();
+    const Accelerometer_Data_t& aData = _accelerometer->getData();
+    const Gyroscope_Data_t& gData = _gyroscope->getData();
+    // const Magnetometer_Data_t& mData = _magnetometer->getData();
     
 
     // CALCULATE DT

@@ -6,34 +6,31 @@
 
 class MPU6050
 {
-
-
-
-
+    // Accelerometer-derived subclass
     class MPU6050_Accelerometer : public Accelerometer
     {
+        friend class MPU6050;
+
     public:
         MPU6050_Accelerometer(MPU6050& parent);
 
         void initialise();
         void update();
 
-    protected:
-
     private:
         MPU6050& _parent;
     };
 
-
+    // Gyroscope-derived subclass
     class MPU6050_Gyroscope : public Gyroscope
     {
+        friend class MPU6050;
+
     public:
         MPU6050_Gyroscope(MPU6050& parent);
 
         void initialise();
         void update();
-
-    protected:
 
     private:
         MPU6050& _parent;
@@ -49,10 +46,8 @@ public:
 
     ~MPU6050();
 
-    void update(
-        Accelerometer_Data_t *accelerometerData,
-        Gyroscope_Data_t *gyroscopeData);
-    void readFromDevice();
+    void update();
+    bool readFromDevice();
 
     void setI2C(I2C *i2c)
     {
@@ -67,6 +62,8 @@ protected:
 
 private:
     I2C *_i2c;
+
+    uint8_t _rawData[14];
 };
 
 #endif  // __MPU6050_HPP

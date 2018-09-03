@@ -67,8 +67,10 @@ void FlightController::controlThreadTop()
 {
     log("FlightController::controlThreadTop()");
 
-    // INITIALISE MPU6050, BMP280, HMC5883L
-    //imu.initialise();
+    // Initialise the IMU
+    imu.setConfiguration(&peripherals.i2c(0));
+    imu.initialise();
+
     // SET PWM OUTPUTS TO TURN MOTORS OFF
     // LOAD DATA FROM EEPROM
 

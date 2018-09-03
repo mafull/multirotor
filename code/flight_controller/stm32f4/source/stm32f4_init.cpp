@@ -64,16 +64,19 @@ void SystemClock_Config(void)
 bool stm32f4_initialiseFlightController(FlightController& flightController)
 {
     SystemClock_Config();
-    bool ok = true;
+    bool okay = true;
 
     stm32f4_initialisePeripherals(flightController.peripherals);
     stm32f4_initialiseIMU(flightController.imu);
 
-    return ok;
+    return okay;
 }
 
 void stm32f4_initialiseIMU(IMU& imu)
 {
+    //mpu6050.setConfiguration(x);
+    //hmc5883l.setConfiguration(x);
+
     imu.setAccelerometer(&mpu6050.accelerometer);
     imu.setGyroscope(&mpu6050.gyroscope);
     imu.setMagnetometer(&hmc5883l);

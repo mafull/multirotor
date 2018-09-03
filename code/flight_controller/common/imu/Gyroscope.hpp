@@ -20,6 +20,7 @@ public:
     ~Gyroscope();
     
     virtual void initialise() = 0;
+    virtual void update() = 0;
 
     const Gyroscope_Data_t& getData() const
     {

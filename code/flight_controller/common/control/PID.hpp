@@ -1,8 +1,7 @@
 #ifndef __PID_HPP
 #define __PID_HPP
 
-typedef double PID_Type_t;
-//using PID_Type_t = double;
+using PID_Type_t = double;
 
 class PID
 {
@@ -12,7 +11,7 @@ public:
     
     void setSetpoint(PID_Type_t setpoint);
     PID_Type_t update(PID_Type_t actual);
-    PID_Type_t getOutput() const { return _output; }
+    const PID_Type_t getOutput() const { return _output; }
     void reset();
 
 protected:
