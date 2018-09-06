@@ -12,6 +12,9 @@
 
 #include "stm32f4_init.hpp"
 
+// #include "cmsis_os.h"
+#include "thread.hpp"
+
 #include "Assert.hpp"
 #include "FlightController.hpp"
 

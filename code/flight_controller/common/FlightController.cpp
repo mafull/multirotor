@@ -29,6 +29,12 @@ void FlightController::run()
         LOGGING
         COMMS
         CONTROL */
+    controlThread.setUART(&peripherals.uart(0));
+    controlThread.Start();
+    cpp_freertos::Thread::StartScheduler();
+
+    for (;;) {}
+
     // THIS IS THE MAIN THREAD, CHECK STATUS OF OTHER THREADS (MSG QUEUE?)
 
     // RETURN ONCE E.G. OTHER THREADS ARE FINISHED

@@ -33,6 +33,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/third_party/FreeRTOS/Source</locationURI>
 		</link>
 		<link>
+			<name>FreeRTOS_CPP_Wrapper</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/third_party/FreeRTOS_CPP_Wrapper</locationURI>
+		</link>
+		<link>
 			<name>HAL_Driver.src</name>
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/third_party/HAL_Driver/Src</locationURI>
