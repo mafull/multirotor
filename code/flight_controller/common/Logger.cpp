@@ -16,36 +16,41 @@ void Logger::start()
     _thread.Start();
 }
 
-static uint32_t counter = 0;
 void Logger::log(const std::string& message)
 {
-    _queue.Enqueue(&counter);
-    counter++;
+    if (message.length() <= 128u) // @todo: Change to constant
+    {
+        _queue.Enqueue(const_cast<void *>(static_cast<const void *>(message.c_str()))); // @todo: Sort this out
+    }
+    else // Message is too long
+    {
+        // @todo: Add in message splitting
+        _queue.Enqueue(const_cast<void *>(static_cast<const void *>("TOO LONG"))); // @todo: This too
+    }
 }
 
 
 
-
-
-static uint32_t value = 0;
 void Logger::Logger_Thread::Run()
 {
     while (!_parent._uart) {}
 
     write("Logger_Thread running\n");
 
-    for (uint32_t i = 0; i < 5; i++)
-    {
-        _parent._queue.Enqueue(&i);
-    }
+    // Character buffer in which to store the received message
+    // @todo: replace char[x] with a structure inc. message source
+    char receivedMessage[128] = ""; // @todo: Change size to constant
 
     for (;;)
     {
-        const bool success = _parent._queue.Dequeue((void *)&value);
+        // Attempt to remove an item from the queue
+        const bool success = _parent._queue.Dequeue((void *)&receivedMessage);
 
-        if (success)
+        if (success) // Successfully removed an item from the queue
         {
-            write("Logger: " + std::to_string(value) + "(" + std::to_string(_parent._queue.NumSpacesLeft()) + ")\n");
+            // Print the received message
+            // @todo: Add formatting
+            write(std::string(receivedMessage) + '\n');
         }
     }
 }

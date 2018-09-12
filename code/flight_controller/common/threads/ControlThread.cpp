@@ -15,8 +15,6 @@ static Mode_t mode = Mode_None;
 
 void ControlThread::Run()
 {
-    if (!_uart) return;
-
     for (;;)
     {
         //_uart->write(std::to_string(i++) + '.');

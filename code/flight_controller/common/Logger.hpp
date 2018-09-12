@@ -1,9 +1,9 @@
 #ifndef __LOGGER_HPP
 #define __LOGGER_HPP
 
-#define QUEUE_SIZE      20
-//#define QUEUE_ITEM_SIZE (sizeof(char) * 128)
-#define QUEUE_ITEM_SIZE sizeof(uint32_t)
+#define QUEUE_SIZE      20u
+#define QUEUE_ITEM_SIZE (sizeof(char) * 128u)
+//#define QUEUE_ITEM_SIZE sizeof(uint32_t)
 
 #include "peripherals/UART.hpp"
 
