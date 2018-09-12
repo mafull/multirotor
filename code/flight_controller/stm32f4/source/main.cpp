@@ -12,9 +12,6 @@
 
 #include "stm32f4_init.hpp"
 
-// #include "cmsis_os.h"
-#include "thread.hpp"
-
 #include "Assert.hpp"
 #include "FlightController.hpp"
 
@@ -23,13 +20,16 @@ void assert_callback(const char *file, int line);
 /**
  * The main entry point of the application
  */
+
+FlightController flightController;
+
 int main()
 {
     // Initialise the assert handler
     assert_init(&assert_callback);
 
     // Create an instance of FlightController
-    FlightController flightController;
+    //FlightController flightController;
 
     // Attempt to initialise the instance
     ASSERT(stm32f4_initialiseFlightController(flightController));
@@ -48,4 +48,6 @@ int main()
 void assert_callback(const char *file, int line)
 {
     // Do something here
+    flightController.peripherals.uart(0).write("#");
+    flightController.peripherals.uart(0).write("ASSERT: " + std::string(file) + std::to_string(line));
 }

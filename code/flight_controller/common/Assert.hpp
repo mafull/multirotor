@@ -4,11 +4,11 @@
 /// Assert macro that calls a custom callback function
 #define ASSERT(expr) \
     if (!(expr)) \
-        assert_failed(__FILE__, __LINE__)
+        assert_failed_TODO(__FILE__, __LINE__)
 
 /// A function pointer typedef used to configure the assert callback
 typedef void (*assert_funcptr_t)(const char *, int);
-static assert_funcptr_t assert_failed = nullptr;
+static assert_funcptr_t assert_failed_TODO = nullptr;
 
 /**
  * Configure the assert callback function
@@ -16,7 +16,7 @@ static assert_funcptr_t assert_failed = nullptr;
  */
 static void assert_init(assert_funcptr_t funcPtr)
 {
-    assert_failed = funcPtr;
+    assert_failed_TODO = funcPtr;
 }
 
 #endif  // __ASSERT_HPP

@@ -1,14 +1,13 @@
 #ifndef __FLIGHT_CONTROLLER_HPP
 #define __FLIGHT_CONTROLLER_HPP
 
-#include "ControlThread.hpp"
+#include "Logger.hpp"
 #include "imu/IMU.hpp"
+#include "threads/ControlThread.hpp"
+#include "threads/IMUThread.hpp"
 #include "peripherals/PeripheralManager.hpp"
 
 #include <string>
-
-
-#include "ControlThread.hpp"
 
 class FlightController
 {
@@ -21,14 +20,16 @@ public:
     void log(const std::string& msg);
 
     ControlThread controlThread;
+    //IMUThread imuThread;
 
     PeripheralManager peripherals;
     IMU imu;
-
-protected:
-    void controlThreadTop();
+    Logger logger;
     
 private:
+    void setUpThreads();
+    void startThreads();
+
     static bool _isInstantiated;
 
 };

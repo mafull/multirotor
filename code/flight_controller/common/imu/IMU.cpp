@@ -49,7 +49,7 @@ void IMU::initialise()
     // Initialise the peripherals
     _accelerometer->initialise();
     _gyroscope->initialise();
-    _magnetometer->initialise();
+    //_magnetometer->initialise();
 
     _initialised = true;
 }

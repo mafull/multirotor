@@ -158,16 +158,16 @@ See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
  
 /* Normal assert() semantics without relying on the provision of an assert.h
 header file. */
-#define configASSERT( x ) //@todo if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); } 
+#define configASSERT( x ) if( ( x ) == 0 ) { portDISABLE_INTERRUPTS(); for( ;; ); }
  
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS
    standard names. */
-#define vPortSVCHandler    SVC_Handler
-#define xPortPendSVHandler PendSV_Handler
+#define vPortSVCHandler     SVC_Handler
+#define xPortPendSVHandler  PendSV_Handler
 
 /* IMPORTANT: This define MUST be commented when used with STM32Cube firmware, 
               to prevent overwriting SysTick_Handler defined within STM32Cube HAL */
-/* #define xPortSysTickHandler SysTick_Handler */
+// #define xPortSysTickHandler SysTick_Handler 
 
 #endif /* FREERTOS_CONFIG_H */
 

@@ -5,7 +5,9 @@
 
 bool FlightController::_isInstantiated = false;
 
-FlightController::FlightController()
+FlightController::FlightController() :
+    logger(),
+    controlThread(logger)
 {
     // Ensure we only have a single instance of this class
     ASSERT(!_isInstantiated);
@@ -17,102 +19,46 @@ FlightController::~FlightController()
     _isInstantiated = false;
 }
 
+#include "stm32f4xx.h"
+
 void FlightController::run()
 {
-    log("FlightController::run()");
+    peripherals.uart(0).write("Running\n");
+    logger.log("FlightController::run()");
 
-    // SET UP THREADS
+    setUpThreads();
 
-    log("> Threads initialised");
+    //log("> Threads initialised");
 
-    /* START THREADS:
-        LOGGING
-        COMMS
-        CONTROL */
-    controlThread.setUART(&peripherals.uart(0));
-    controlThread.Start();
-    cpp_freertos::Thread::StartScheduler();
+    // ASSERT(false);
+    startThreads();
 
-    for (;;) {}
-
-    // THIS IS THE MAIN THREAD, CHECK STATUS OF OTHER THREADS (MSG QUEUE?)
-
-    // RETURN ONCE E.G. OTHER THREADS ARE FINISHED
-}
-
-void FlightController::log(const std::string& msg)
-{
-    // SEND MESSAGE TO LOGGING THREAD
-
-    // LOGGING THREAD WILL THEN LOG THE MESSAGE
-    peripherals.uart(0).write(msg + "\n");
-}
-
-/* CONTROL LOOP:
-    PROCESS INPUTS
-        MESSAGE QUEUE
-        CONTROL INPUTS
-        SENSOR READINGS
-
-    GENERATE OUTPUTS
-        UPDATE PIDS
-        MIX MOTOR OUTPUTS
-
-    OUTPUT
-        LOGGING
-        INDICATION LEDS
-        UPDATE PWM OUTPUTS
-*/
-
-/* COMMS LOOP:
-    PROCESS INCOMING UART DATA
-    SEND PENDING OUTGOING DATA FROM MSG QUEUE
-*/
-
-void FlightController::controlThreadTop()
-{
-    log("FlightController::controlThreadTop()");
-
-    // Initialise the IMU
-    imu.setConfiguration(&peripherals.i2c(0));
-    imu.initialise();
-
-    // SET PWM OUTPUTS TO TURN MOTORS OFF
-    // LOAD DATA FROM EEPROM
-
-    log("> Control loop ready to start");
-
-    const IMU_Data_t& imuData = imu.getData();
-
-    while (1)
+    peripherals.uart(0).write("threads started\n");
+    for (;;)
     {
-        /*
-        PROCESS INPUTS
-            MESSAGE QUEUE
-            CONTROL INPUTS
-            SENSOR READINGS
-        */
+        //peripherals.uart(0).write("log: ");
+        logger.log("log");
 
-        imu.update();
-
-        /*
-        GENERATE OUTPUTS
-            UPDATE PIDS
-            MIX MOTOR OUTPUTS
-        */
-
-        /*
-        OUTPUT
-            LOGGING
-            INDICATION LEDS
-            UPDATE PWM OUTPUTS
-        */
-
-        // MAINTAIN CONSTANT LOOP RATE
+        // Do nothing
+        //HAL_Delay(1000);
     }
+}
 
-    log("> Control loop finished");
+void FlightController::setUpThreads()
+{
+    logger.setUART(&peripherals.uart(0));
+    controlThread.setUART(&peripherals.uart(0));
 
+    // imu.setConfiguration(&peripherals.i2c(0));
+    // imu.initialise();
+    // imuThread.setIMU(&imu);
+}
 
-    log("> Control thread finished");
+void FlightController::startThreads()
+{
+    controlThread.Start();
+    //imuThread.Start();
+
+    logger.start();
+    cpp_freertos::Thread::StartScheduler();
 }
