@@ -11,13 +11,16 @@
 
 #include <string>
 
-class FlightController
+class FlightController : private Loggable
 {
-    class Init_Thread : public cpp_freertos::Thread
+    class Init_Thread : public cpp_freertos::Thread, private Logger
     {
     public:
-        Init_Thread(FlightController& parent) :
+        Init_Thread(const Logger& logger, FlightController& parent) :
+            // Base constructors
+            Logger(logger, "Init Thread"),
             Thread("Init Thread", 1024, 1),
+            // Private members
             _parent(parent)
         {
             // Do nothing
@@ -38,12 +41,9 @@ public:
 
     void log(const std::string& msg);
 
-    ControlThread controlThread;
-    //IMUThread imuThread;
 
     PeripheralManager peripherals;
     IMU imu;
-    Logger logger;
     
 private:
     void setUpThreads();
@@ -52,7 +52,9 @@ private:
     static bool _isInstantiated;
 
     Init_Thread _thread;
-
+    ControlThread _controlThread;
+    //IMUThread imuThread;
+    Logger _logger;
 };
 
 #endif  // __FLIGHT_CONTROLLER_HPP

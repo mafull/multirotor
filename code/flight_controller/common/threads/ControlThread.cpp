@@ -15,13 +15,10 @@ static Mode_t mode = Mode_None;
 
 void ControlThread::Run()
 {
+    logInfo("Running");
+
     for (;;)
     {
-        //_uart->write(std::to_string(i++) + '.');
-        Delay(1000);
-        //_logger.log(std::to_string(i++) + '#');
-
-
         switch (mode)
         {
         case Mode_None:
@@ -53,4 +50,6 @@ void ControlThread::Run()
             break;
         }
     }
+
+    logInfo("Finished");
 }

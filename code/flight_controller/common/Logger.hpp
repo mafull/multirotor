@@ -59,6 +59,7 @@ public:
 
     void log(const std::string& message);
 
+    // @todo: Ideally remove this and set the uart in the constructor - UART will then needs to not assert when used without beign initialised
     void setUART(UART *uart)
     {
         ASSERT(uart);
@@ -84,38 +85,14 @@ public:
 
     }
 
+protected:
+    void log(Log_Severity_t severity, const std::string& message);
+    void logDebug(const std::string& message);
+    void logError(const std::string& message);
+    void logInfo(const std::string& message);
+    void logWarning(const std::string& message);
+
 private:
-    void log(Log_Severity_t severity, const std::string& message)
-    {
-        Log_Packet_t packet = 
-            {
-                .sender = _sender,
-                .severity = severity,
-                .message = const_cast<char *>(message.c_str())
-            };
-        _logger.log(packet);
-    }
-
-    void logError(const std::string& message)
-    {
-        log(Log_Severity_Error, message);
-    }
-
-    void logWarning(const std::string& message)
-    {
-        log(Log_Severity_Warning, message);
-    }
-
-    void logInfo(const std::string& message)
-    {
-        log(Log_Severity_Info, message);
-    }
-
-    void logDebug(const std::string& message)
-    {
-        log(Log_Severity_Debug, message);
-    }
-
     Logger& logger;
     const std::string _sender;
 };

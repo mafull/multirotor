@@ -6,8 +6,11 @@
 bool FlightController::_isInstantiated = false;
 
 FlightController::FlightController() :
-    logger(),
-    controlThread(logger),
+    // Base constructors
+    Loggable(_logger, "FlightController"),
+    // Private members
+    _controlThread(_logger),
+    _logger(),
     _thread(*this)
 {
     // Ensure we only have a single instance of this class
@@ -32,37 +35,37 @@ void FlightController::run()
 
 void FlightController::setUpThreads()
 {
-    logger.log("Setting up threads...");
+    logInfo("Setting up threads...");
 
     logger.setUART(&peripherals.uart(0)); // @todo: Move this?
     // imu.setConfiguration(&peripherals.i2c(0));
     // imu.initialise();
     // imuThread.setIMU(&imu);
 
-    logger.log("All threads are ready");
+    logInfo("All threads are ready");
 }
 
 void FlightController::startThreads()
 {
-    logger.log("Starting threads...");
+    logInfo("Starting threads...");
 
     logger.start(); // @todo: Work out why this has to go before other threads
 
-    controlThread.Start();
+    _controlThread.Start();
     //imuThread.Start();
     
-    logger.log("All threads have been started");
-    logger.log("Starting scheduler...");
+    logInfo("All threads have been started");
+    logInfo("Starting scheduler...");
 
     //cpp_freertos::Thread::StartScheduler();
 }
 
 void FlightController::Init_Thread::Run()
 {
-    _parent.logger.log(GetName() + " started");
+    logInfo("Running");
 
     _parent.setUpThreads();
     _parent.startThreads();
 
-    _parent.logger.log("END OF RUN");
+    logInfo("Finished");
 }

@@ -16,32 +16,12 @@ void Logger::start()
     _thread.Start();
 }
 
-void Logger::log(const std::string& message)
-{
-    // if (message.length() <= 128u) // @todo: Change to constant
-    // {
-    //     _queue.Enqueue(const_cast<void *>(static_cast<const void *>(message.c_str()))); // @todo: Sort this out
-    // }
-    // else // Message is too long
-    // {
-    //     // @todo: Add in message splitting
-    //     _queue.Enqueue(const_cast<void *>(static_cast<const void *>("TOO LONG"))); // @todo: This too
-    // }
-
-    // Create a
-    Log_Packet_t packet =
-        {
-            .sender = "UNKNOWN",
-            .severity = Log_Severity_Debug,
-            .message = const_cast<char *>(message.c_str()) // @todo: Is this the best way to do this?
-        };
-    log(packet);
-}
-
 void Logger::log(const Log_Packet_t& packet)
 {
     _queue.Enqueue(&packet);
 }
+
+
 
 
 
@@ -81,4 +61,40 @@ const std::string Logger::Logger_Thread::createFormattedStringFromPacket(const L
 void Logger::Logger_Thread::write(const std::string& message)
 {
     _parent._uart->write(message);
+}
+
+
+
+
+
+
+void Loggable::log(Log_Severity_t severity, const std::string& message)
+{
+    Log_Packet_t packet = 
+        {
+            .sender = _sender,
+            .severity = severity,
+            .message = const_cast<char *>(message.c_str())
+        };
+    _logger.log(packet);
+}
+
+void Loggable::logError(const std::string& message)
+{
+    log(Log_Severity_Error, message);
+}
+
+void Loggable::logWarning(const std::string& message)
+{
+    log(Log_Severity_Warning, message);
+}
+
+void Loggable::logInfo(const std::string& message)
+{
+    log(Log_Severity_Info, message);
+}
+
+void Loggable::logDebug(const std::string& message)
+{
+    log(Log_Severity_Debug, message);
 }

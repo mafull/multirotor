@@ -22,30 +22,20 @@ using Mode_t =
 
 
 
-class ControlThread : public cpp_freertos::Thread
+class ControlThread : public cpp_freertos::Thread, private Loggable
 {
 public:
     ControlThread(Logger& logger) :
-        Thread("Control Thread", 1024, 1),
-        _logger(logger)
+        // Base constructors
+        Loggable(logger, "Control"),
+        Thread("Control Thread", 1024, 1)
     {
 
     }
 
     ~ControlThread();
 
-    void setUART(UART *uart)
-    {
-        _uart = uart;
-    }
-
     void Run();
-
-    UART *_uart;
-protected:
-
-private:
-    Logger& _logger;
 };
 
 #endif  // __CONTROL_THREAD_HPP
