@@ -10,8 +10,8 @@ FlightController::FlightController() :
     Loggable(_logger, "FlightController"),
     // Private members
     _controlThread(_logger),
-    _logger(),
-    _thread(*this)
+    _thread(_logger, *this),
+    _logger()
 {
     // Ensure we only have a single instance of this class
     ASSERT(!_isInstantiated);
@@ -37,7 +37,7 @@ void FlightController::setUpThreads()
 {
     logInfo("Setting up threads...");
 
-    logger.setUART(&peripherals.uart(0)); // @todo: Move this?
+    _logger.setUART(&peripherals.uart(0)); // @todo: Move this?
     // imu.setConfiguration(&peripherals.i2c(0));
     // imu.initialise();
     // imuThread.setIMU(&imu);
@@ -49,11 +49,11 @@ void FlightController::startThreads()
 {
     logInfo("Starting threads...");
 
-    logger.start(); // @todo: Work out why this has to go before other threads
+    _logger.start(); // @todo: Work out why this has to go before other threads
 
     _controlThread.Start();
     //imuThread.Start();
-    
+    logError("ERROR TEST");
     logInfo("All threads have been started");
     logInfo("Starting scheduler...");
 

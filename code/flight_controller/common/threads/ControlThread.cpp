@@ -10,12 +10,12 @@ ControlThread::~ControlThread()
 
 }
 
-static int i = 0;
 static Mode_t mode = Mode_None;
 
 void ControlThread::Run()
 {
     logInfo("Running");
+    logError("ERROR TEST");
 
     for (;;)
     {

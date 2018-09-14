@@ -22,7 +22,7 @@ using Mode_t =
 
 
 
-class ControlThread : public cpp_freertos::Thread, private Loggable
+class ControlThread : private Loggable, public cpp_freertos::Thread
 {
 public:
     ControlThread(Logger& logger) :

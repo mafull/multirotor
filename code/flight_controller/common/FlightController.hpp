@@ -13,12 +13,12 @@
 
 class FlightController : private Loggable
 {
-    class Init_Thread : public cpp_freertos::Thread, private Logger
+    class Init_Thread : private Loggable, public cpp_freertos::Thread
     {
     public:
-        Init_Thread(const Logger& logger, FlightController& parent) :
+        Init_Thread(Logger& logger, FlightController& parent) :
             // Base constructors
-            Logger(logger, "Init Thread"),
+            Loggable(logger, "Init Thread"),
             Thread("Init Thread", 1024, 1),
             // Private members
             _parent(parent)
@@ -51,9 +51,11 @@ private:
 
     static bool _isInstantiated;
 
-    Init_Thread _thread;
+    
     ControlThread _controlThread;
     //IMUThread imuThread;
+    Init_Thread _thread;
+    
     Logger _logger;
 };
 

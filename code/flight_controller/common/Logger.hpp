@@ -5,6 +5,7 @@
 #define QUEUE_SENDER_LENGTH 16u
 #define QUEUE_SIZE      20u
 //#define QUEUE_ITEM_SIZE (sizeof(char) * QUEUE_MESSAGE_LENGTH)
+#define PACKET_CSTRING_LENGTH (sizeof(Log_Packet_t) + 3u)
 
 #include "peripherals/UART.hpp"
 
@@ -23,9 +24,9 @@ using Log_Severity_t =
 using Log_Packet_t = 
     struct Log_Packet_t
     {
-        char sender[QUEUE_SENDER_LENGTH];
+        char sender[QUEUE_SENDER_LENGTH]; // +1 for the null terminator
         Log_Severity_t severity;
-        char message[QUEUE_MESSAGE_LENGTH];
+        char message[QUEUE_MESSAGE_LENGTH]; // +1 for the null terminator
     };
 
 
@@ -57,7 +58,7 @@ public:
 
     void start();
 
-    void log(const std::string& message);
+    void log(const Log_Packet_t& packet);
 
     // @todo: Ideally remove this and set the uart in the constructor - UART will then needs to not assert when used without beign initialised
     void setUART(UART *uart)
@@ -78,7 +79,7 @@ private:
 class Loggable
 {
 public:
-    Loggable(const Logger& logger, const std::string& sender) :
+    Loggable(Logger& logger, const std::string& sender) :
         _logger(logger),
         _sender(sender)
     {
@@ -86,14 +87,14 @@ public:
     }
 
 protected:
-    void log(Log_Severity_t severity, const std::string& message);
+    void log(const Log_Severity_t severity, const std::string& message);
     void logDebug(const std::string& message);
     void logError(const std::string& message);
     void logInfo(const std::string& message);
     void logWarning(const std::string& message);
 
 private:
-    Logger& logger;
+    Logger& _logger;
     const std::string _sender;
 };
 
