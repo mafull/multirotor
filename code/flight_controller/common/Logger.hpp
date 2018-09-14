@@ -31,32 +31,13 @@ using Log_Packet_t =
 
 
 
-class Logger
+class Logger : public cpp_freertos::Thread
 {
-    class Logger_Thread : public cpp_freertos::Thread
-    {
-    public:
-        Logger_Thread(Logger& parent) :
-            Thread("Logger Thread", 1024, 1),
-            _parent(parent)
-        {
-        }
-        //~Logger_Thread();
-
-        void Run();
-
-    private:
-        const std::string createFormattedStringFromPacket(const Log_Packet_t& packet);
-        void write(const std::string& message);
-        
-        Logger& _parent;
-    };
-
 public:
     Logger();
     ~Logger();
 
-    void start();
+    void Run();
 
     void log(const Log_Packet_t& packet);
 
@@ -68,10 +49,11 @@ public:
     }
 
 protected:
+    const std::string createFormattedStringFromPacket(const Log_Packet_t& packet);
+    void write(const std::string& message);
 
 private:
     UART *_uart;
-    Logger_Thread _thread;
 
     cpp_freertos::Queue _queue;
 };

@@ -4,7 +4,10 @@
 #include "imu/Accelerometer.hpp"
 #include "imu/Gyroscope.hpp"
 #include "imu/Magnetometer.hpp"
+#include "Logger.hpp"
 #include "peripherals/I2C.hpp"
+
+#include "thread.hpp"
 
 using IMU_Data_Element_t = float;
 
@@ -37,11 +40,13 @@ using IMU_Data_t =
         IMU_Data_Element_t yaw;
     };
 
-class IMU
+class IMU : private Loggable, public cpp_freertos::Thread
 {
 public:
-    IMU();
-    ~IMU();
+    IMU(Logger& logger);
+    // ~IMU();
+
+    void Run();
     
     void setConfiguration(I2C *i2c);
 

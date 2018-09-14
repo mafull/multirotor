@@ -3,7 +3,7 @@
 #include <cstring>
 
 Logger::Logger() :
-    _thread(*this),
+    Thread("Logger Thread", 1024, 2),
     _queue(QUEUE_SIZE, sizeof(Log_Packet_t))
 {
 }
@@ -13,23 +13,9 @@ Logger::~Logger()
 
 }
 
-void Logger::start()
+void Logger::Run()
 {
-    _thread.Start();
-}
-
-void Logger::log(const Log_Packet_t& packet)
-{
-    _queue.Enqueue(const_cast<void *>(static_cast<const void *>(&packet)));
-}
-
-
-
-
-
-void Logger::Logger_Thread::Run()
-{
-    while (!_parent._uart) {}
+    while (!_uart) {}
 
     // @todo: This is nasty, either make it a function or make this thread extend Loggable (in which case, maybe make a Loggable_Private and make Loggable subclass that; _Private can have the ability to put something on the front of the queue)
     Log_Packet_t tmpPacket = {
@@ -45,7 +31,7 @@ void Logger::Logger_Thread::Run()
     for (;;)
     {
         // Attempt to remove an item from the queue
-        const bool success = _parent._queue.Dequeue((void *)&receivedPacket);
+        const bool success = _queue.Dequeue((void *)&receivedPacket);
 
         if (success) // Successfully removed an item from the queue
         {
@@ -58,7 +44,12 @@ void Logger::Logger_Thread::Run()
     }
 }
 
-const std::string Logger::Logger_Thread::createFormattedStringFromPacket(const Log_Packet_t& packet)
+void Logger::log(const Log_Packet_t& packet)
+{
+    _queue.Enqueue(const_cast<void *>(static_cast<const void *>(&packet)));
+}
+
+const std::string Logger::createFormattedStringFromPacket(const Log_Packet_t& packet)
 {
     // Create a char array of the maximum size possible
     char cStr[PACKET_CSTRING_LENGTH] = "";
@@ -76,9 +67,9 @@ const std::string Logger::Logger_Thread::createFormattedStringFromPacket(const L
     return std::string(cStr);
 }
 
-void Logger::Logger_Thread::write(const std::string& message)
+void Logger::write(const std::string& message)
 {
-    _parent._uart->write(message);
+    _uart->write(message);
 }
 
 

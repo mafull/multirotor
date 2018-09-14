@@ -19,6 +19,8 @@ void ControlThread::Run()
 
     for (;;)
     {
+        logDebug("Tick");
+        Delay(1000);
         switch (mode)
         {
         case Mode_None:

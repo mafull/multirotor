@@ -5,12 +5,16 @@
 
 const double pi = 3.14159265358979323846;
 const IMU_Data_Element_t rad2degMultiplier = 180.0 / pi;
-#define RAD2DEG(x)      (x) * rad2degMultiplier
+#define RAD2DEG(x)      ((x) * rad2degMultiplier)
 
-IMU::IMU() :
+IMU::IMU(Logger& logger) :
+    // Base constructors
+    Loggable(logger, "IMU"),
+    Thread("IMU Thread", 1024, 1),
+    // Private members
     _configured(false),
     _initialised(false),
-    // Peripherals
+    // Peripherals @todo: Remove this comment
     _accelerometer(nullptr),
     _gyroscope(nullptr),
     _magnetometer(nullptr)
@@ -18,9 +22,16 @@ IMU::IMU() :
 
 }
 
-IMU::~IMU()
-{
+// IMU::~IMU()
+// {
 
+// }
+
+void IMU::Run()
+{
+    logInfo("Running");
+
+    logInfo("Finished");
 }
 
 void IMU::setConfiguration(I2C *i2c)

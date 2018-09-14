@@ -8,6 +8,8 @@ bool FlightController::_isInstantiated = false;
 FlightController::FlightController() :
     // Base constructors
     Loggable(_logger, "FlightController"),
+    // Public members
+    imu(_logger),
     // Private members
     _controlThread(_logger),
     _thread(_logger, *this),
@@ -38,9 +40,8 @@ void FlightController::setUpThreads()
     logInfo("Setting up threads...");
 
     _logger.setUART(&peripherals.uart(0)); // @todo: Move this?
-    // imu.setConfiguration(&peripherals.i2c(0));
-    // imu.initialise();
-    // imuThread.setIMU(&imu);
+     imu.setConfiguration(&peripherals.i2c(0));
+     imu.initialise();
 
     logInfo("All threads are ready");
 }
@@ -49,15 +50,12 @@ void FlightController::startThreads()
 {
     logInfo("Starting threads...");
 
-    _logger.start(); // @todo: Work out why this has to go before other threads
+    _logger.Start(); // @todo: Work out why this has to go before other threads
 
     _controlThread.Start();
-    //imuThread.Start();
-    logError("ERROR TEST");
-    logInfo("All threads have been started");
-    logInfo("Starting scheduler...");
+    imu.Start();
 
-    //cpp_freertos::Thread::StartScheduler();
+    logInfo("All threads have been started");
 }
 
 void FlightController::Init_Thread::Run()

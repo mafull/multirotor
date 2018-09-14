@@ -4,7 +4,6 @@
 #include "Logger.hpp"
 #include "imu/IMU.hpp"
 #include "threads/ControlThread.hpp"
-#include "threads/IMUThread.hpp"
 #include "peripherals/PeripheralManager.hpp"
 
 #include "thread.hpp"
@@ -53,7 +52,6 @@ private:
 
     
     ControlThread _controlThread;
-    //IMUThread imuThread;
     Init_Thread _thread;
     
     Logger _logger;
