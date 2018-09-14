@@ -12,13 +12,16 @@
 #include "queue.hpp"
 #include "thread.hpp"
 
+
 using Log_Severity_t = 
     enum Log_Severity_t : uint8_t
     {
         Log_Severity_Error = 0,
         Log_Severity_Warning,
         Log_Severity_Info,
-        Log_Severity_Debug
+        Log_Severity_Debug,
+
+        Log_Severity_MAX
     };
 
 using Log_Packet_t = 
@@ -28,7 +31,6 @@ using Log_Packet_t =
         Log_Severity_t severity;
         char message[QUEUE_MESSAGE_LENGTH]; // +1 for the null terminator
     };
-
 
 
 class Logger : public cpp_freertos::Thread
@@ -58,6 +60,7 @@ private:
     cpp_freertos::Queue _queue;
 };
 
+
 class Loggable
 {
 public:
@@ -79,5 +82,6 @@ private:
     Logger& _logger;
     const std::string _sender;
 };
+
 
 #endif  // __LOGGER_HPP
