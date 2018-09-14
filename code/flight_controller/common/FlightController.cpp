@@ -5,7 +5,7 @@
 
 bool FlightController::_isInstantiated = false;
 
-FlightController::FlightController() :
+FlightController::FlightController(PeripheralManager& peripheralManager) :
     // Base constructors
     Loggable(_logger, "FlightController"),
     // Public members
@@ -13,7 +13,8 @@ FlightController::FlightController() :
     // Private members
     _controlThread(_logger),
     _thread(_logger, *this),
-    _logger()
+    _logger(),
+    _peripheralManager(peripheralManager)
 {
     // Ensure we only have a single instance of this class
     ASSERT(!_isInstantiated);
@@ -32,15 +33,15 @@ void FlightController::run()
     cpp_freertos::Thread::StartScheduler();
 
     ASSERT(true); // Should never get here
-    peripherals.uart(0).write("WHY AM I HERE"); // @todo: Remove this once ASSERT is working
+    _peripheralManager.uart(0).write("WHY AM I HERE"); // @todo: Remove this once ASSERT is working
 }
 
 void FlightController::setUpThreads()
 {
     logInfo("Setting up threads...");
 
-    _logger.setUART(&peripherals.uart(0)); // @todo: Move this?
-     imu.setConfiguration(&peripherals.i2c(0));
+    _logger.setUART(&_peripheralManager.uart(0)); // @todo: Move this?
+     imu.setConfiguration(&_peripheralManager.i2c(0));
      imu.initialise();
 
     logInfo("All threads are ready");

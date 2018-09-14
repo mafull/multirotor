@@ -21,15 +21,17 @@ void assert_callback(const char *file, int line);
  * The main entry point of the application
  */
 
-FlightController flightController;
-
 int main()
 {
     // Initialise the assert handler
     assert_init(&assert_callback);
 
+    // PERIPHERALS
+    PeripheralManager peripheralManager;
+    stm32f4_initialisePeripheralManager(peripheralManager);
+    
     // Create an instance of FlightController
-    //FlightController flightController;
+    FlightController flightController(peripheralManager);
 
     // Attempt to initialise the instance
     ASSERT(stm32f4_initialiseFlightController(flightController));
@@ -48,6 +50,6 @@ int main()
 void assert_callback(const char *file, int line)
 {
     // Do something here
-    flightController.peripherals.uart(0).write("#");
-    flightController.peripherals.uart(0).write("ASSERT: " + std::string(file) + std::to_string(line));
+    // flightController.peripherals.uart(0).write("#");
+    // flightController.peripherals.uart(0).write("ASSERT: " + std::string(file) + std::to_string(line));
 }

@@ -33,7 +33,7 @@ class FlightController : private Loggable
     };
 
 public:
-    FlightController();
+    FlightController(PeripheralManager& peripheralManager);
     ~FlightController();
 
     void run();
@@ -41,7 +41,6 @@ public:
     void log(const std::string& msg);
 
 
-    PeripheralManager peripherals;
     IMU imu;
     
 private:
@@ -53,8 +52,9 @@ private:
     
     ControlThread _controlThread;
     Init_Thread _thread;
-    
     Logger _logger;
+    
+    PeripheralManager _peripheralManager;
 };
 
 #endif  // __FLIGHT_CONTROLLER_HPP

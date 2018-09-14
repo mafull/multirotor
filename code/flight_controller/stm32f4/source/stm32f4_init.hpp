@@ -1,6 +1,7 @@
 #include "FlightController.hpp"
 
 bool stm32f4_initialiseFlightController(FlightController& flightController);
+bool stm32f4_initialisePeripheralManager(PeripheralManager& peripheralManager);
 
 void stm32f4_initialiseIMU(IMU& imu);
 void stm32f4_initialisePeripherals(PeripheralManager& peripheralManager);

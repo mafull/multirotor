@@ -64,14 +64,23 @@ void SystemClock_Config(void)
 
 bool stm32f4_initialiseFlightController(FlightController& flightController)
 {
-    SystemClock_Config();
+    // SystemClock_Config();
     bool okay = true;
 
-    stm32f4_initialisePeripherals(flightController.peripherals);
+    //stm32f4_initialisePeripherals(flightController.peripherals);
     stm32f4_initialiseIMU(flightController.imu);
 
     return okay;
 }
+
+
+
+bool stm32f4_initialisePeripheralManager(PeripheralManager& peripheralManager)
+{
+    stm32f4_initialisePeripherals(peripheralManager);
+}
+
+
 
 void stm32f4_initialiseIMU(IMU& imu)
 {
@@ -85,6 +94,8 @@ void stm32f4_initialiseIMU(IMU& imu)
 
 void stm32f4_initialisePeripherals(PeripheralManager& peripheralManager)
 {
+    SystemClock_Config();
+    
     stm32f4_initialiseDigitalInput();
     stm32f4_initialiseDigitalOutput();
     stm32f4_initialiseI2C();
