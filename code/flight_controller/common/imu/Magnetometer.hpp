@@ -15,9 +15,6 @@ using Magnetometer_Data_t =
 class Magnetometer
 {
 public:
-    Magnetometer();
-    ~Magnetometer();
-
     virtual void initialise() = 0;
     virtual void update() = 0;
 

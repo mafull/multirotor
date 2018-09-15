@@ -57,12 +57,18 @@ const std::string Logger::createFormattedStringFromPacket(const Log_Packet_t& pa
 
     // Safely format the string with the packet data
     snprintf(
-        cStr,
-        PACKET_CSTRING_LENGTH,
-        "%*.*s %.1u %.*s\n",
-        QUEUE_SENDER_LENGTH, QUEUE_SENDER_LENGTH, packet.sender,
-        packet.severity,
-        QUEUE_MESSAGE_LENGTH, packet.message);
+        cStr,                  // Target string
+        PACKET_CSTRING_LENGTH, // Max output string length
+        "%*.*s %.1u %.*s\n",   // Format string
+        // Sender
+        QUEUE_SENDER_LENGTH,   // Width (min length)
+        QUEUE_SENDER_LENGTH,   // Precision (max length)
+        packet.sender,         // Data
+        // Severity
+        packet.severity,       // Data
+        // Messgage
+        QUEUE_MESSAGE_LENGTH,  // Precision (max length)
+        packet.message);       // Data
 
     // Create a c++ string from the char array
     return std::string(cStr);
@@ -73,6 +79,18 @@ void Logger::write(const std::string& message)
     _uart.write(message);
 }
 
+
+Loggable::Loggable(Logger& logger, const std::string& sender) :
+    _logger(logger),
+    _sender(sender)
+{
+    //logDebug("Created"); // @todo: Get this working somehow. Need to make sure logger is initialised before anything else in FlightController ctr
+}
+
+Loggable::~Loggable()
+{
+    logDebug("Deleted");
+}
 
 void Loggable::log(const Log_Severity_t severity, const std::string& message)
 {

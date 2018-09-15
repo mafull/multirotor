@@ -15,9 +15,6 @@ using Gyroscope_Data_t =
 class Gyroscope
 {
 public:
-    Gyroscope();
-    ~Gyroscope();
-    
     virtual void initialise() = 0;
     virtual void update() = 0;
 

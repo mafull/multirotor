@@ -9,6 +9,7 @@
 
 #include "thread.hpp"
 
+
 using IMU_Data_Element_t = float;
 
 using IMU_Data_t = 
@@ -40,14 +41,15 @@ using IMU_Data_t =
         IMU_Data_Element_t yaw;
     };
 
-class IMU : private Loggable, public cpp_freertos::Thread
+
+class IMU : private Loggable,
+            public cpp_freertos::Thread
 {
 public:
     IMU(Logger& logger,
         Accelerometer& accelerometer,
         Gyroscope& gyroscope,
         Magnetometer& magnetometer);
-    // ~IMU();
 
     void Run();
     
@@ -83,9 +85,6 @@ public:
 protected:
 
 private:
-    bool _configured;
-    bool _initialised;
-
     Accelerometer& _accelerometer;
     Gyroscope& _gyroscope;
     Magnetometer& _magnetometer;

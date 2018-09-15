@@ -17,6 +17,7 @@ typedef enum Peripheral_Type_t
     Peripheral_Type_MAX
 } Peripheral_Type_t;
 
+
 class Peripheral
 {
 public:

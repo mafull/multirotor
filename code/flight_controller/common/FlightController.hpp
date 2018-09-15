@@ -17,7 +17,8 @@
 
 class FlightController : private Loggable
 {
-    class Init_Thread : private Loggable, public cpp_freertos::Thread
+    class Init_Thread : private Loggable,
+                        public cpp_freertos::Thread
     {
     public:
         Init_Thread(Logger& logger,

@@ -15,39 +15,28 @@ IMU::IMU(Logger& logger,
     Loggable(logger, "IMU"),
     Thread("IMU Thread", 1024, 1),
     // Private members
-    _configured(false),
-    _initialised(false),
-    // Peripherals @todo: Remove this comment
     _accelerometer(accelerometer),
     _gyroscope(gyroscope),
     _magnetometer(magnetometer)
 {
-
+    // Do nothing
 }
-
-// IMU::~IMU()
-// {
-
-// }
 
 void IMU::Run()
 {
     logInfo("Running");
 
-    logInfo("Finished");
-}
-
-void IMU::initialise()
-{
-    // Ensure it is configured but not already initialised
-    ASSERT(_configured && !_initialised);
-
     // Initialise the peripherals
-    _accelerometer.initialise();
-    _gyroscope.initialise();
-    //_magnetometer.initialise();
+    // _accelerometer.initialise();
+    // _gyroscope.initialise();
+    // _magnetometer.initialise();
 
-    _initialised = true;
+    for (;;)
+    {
+
+    }
+
+    logInfo("Finished");
 }
 
 void IMU::update()

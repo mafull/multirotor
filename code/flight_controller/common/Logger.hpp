@@ -56,12 +56,8 @@ private:
 class Loggable
 {
 public:
-    Loggable(Logger& logger, const std::string& sender) :
-        _logger(logger),
-        _sender(sender)
-    {
-
-    }
+    Loggable(Logger& logger, const std::string& sender);
+    ~Loggable();
 
 protected:
     void log(const Log_Severity_t severity, const std::string& message);

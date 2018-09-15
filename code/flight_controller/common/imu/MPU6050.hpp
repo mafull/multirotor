@@ -37,25 +37,33 @@ class MPU6050
         MPU6050& _parent;
     };
 
-
-
-
-
-
 public:
     MPU6050(I2C& i2c);
 
-    ~MPU6050();
-
-    void update();
-    bool readFromDevice();
-
     MPU6050_Accelerometer accelerometer;
     MPU6050_Gyroscope gyroscope;
-    
-protected:
 
 private:
+    void initialise();
+    bool readRawDataFromDevice();
+    void update();
+
+    void i2cReadMemory(I2C_Address_t address,
+                       uint8_t *data,
+                       uint8_t amount);
+    void i2cWriteMemory(I2C_Address_t address,
+                        uint8_t *data,
+                        uint8_t amount);
+
+    bool initAccelerometerConfig();
+    bool initConfig();
+    bool initGyroscopeConfig();
+    bool initPowerManagement();
+    bool initSampleRate();
+    bool initWhoAmI();
+
+    bool _initialised;
+
     I2C& _i2c;
 
     uint8_t _rawData[14];

@@ -40,7 +40,7 @@ int main()
     // 
     Accelerometer& accelerometer = mpu6050.accelerometer;
     Gyroscope& gyroscope = mpu6050.gyroscope;
-    Magnetometer& magnetometer = magnetometer;
+    Magnetometer& magnetometer = hmc5883l;
 
     // Create an instance of FlightController
     FlightController flightController(peripheralManager,
