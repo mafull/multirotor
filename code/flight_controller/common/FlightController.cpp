@@ -9,12 +9,12 @@ FlightController::FlightController(PeripheralManager& peripheralManager) :
     // Base constructors
     Loggable(_logger, "FlightController"),
     // Public members
-    imu(_logger),
+    //imu(_logger),
     // Private members
+    _peripheralManager(peripheralManager), // This MUST be first
     _controlThread(_logger),
-    _thread(_logger, *this),
-    _logger(),
-    _peripheralManager(peripheralManager)
+    _initThread(_logger, *this),
+    _logger(peripheralManager.uart(0))
 {
     // Ensure we only have a single instance of this class
     ASSERT(!_isInstantiated);
@@ -29,7 +29,7 @@ FlightController::~FlightController()
 void FlightController::run()
 {
     // Start the initialisation thread and scheduler
-    _thread.Start();
+    _initThread.Start();
     cpp_freertos::Thread::StartScheduler();
 
     ASSERT(true); // Should never get here
@@ -40,9 +40,8 @@ void FlightController::setUpThreads()
 {
     logInfo("Setting up threads...");
 
-    _logger.setUART(&_peripheralManager.uart(0)); // @todo: Move this?
-     imu.setConfiguration(&_peripheralManager.i2c(0));
-     imu.initialise();
+    // imu.setConfiguration(&_peripheralManager.i2c(0));
+    // imu.initialise();
 
     logInfo("All threads are ready");
 }
@@ -54,7 +53,7 @@ void FlightController::startThreads()
     _logger.Start(); // @todo: Work out why this has to go before other threads
 
     _controlThread.Start();
-    imu.Start();
+    //imu.Start();
 
     logInfo("All threads have been started");
 }

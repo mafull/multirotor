@@ -68,7 +68,7 @@ bool stm32f4_initialiseFlightController(FlightController& flightController)
     bool okay = true;
 
     //stm32f4_initialisePeripherals(flightController.peripherals);
-    stm32f4_initialiseIMU(flightController.imu);
+    //stm32f4_initialiseIMU(flightController.imu);
 
     return okay;
 }

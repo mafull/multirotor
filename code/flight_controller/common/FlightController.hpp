@@ -1,14 +1,16 @@
 #ifndef __FLIGHT_CONTROLLER_HPP
 #define __FLIGHT_CONTROLLER_HPP
 
-#include "Logger.hpp"
 #include "imu/IMU.hpp"
-#include "threads/ControlThread.hpp"
+#include "Logger.hpp"
 #include "peripherals/PeripheralManager.hpp"
+#include "threads/ControlThread.hpp"
 
+// cpp_freertos
 #include "thread.hpp"
 
 #include <string>
+
 
 class FlightController : private Loggable
 {
@@ -41,7 +43,7 @@ public:
     void log(const std::string& msg);
 
 
-    IMU imu;
+    //IMU imu;
     
 private:
     void setUpThreads();
@@ -51,7 +53,7 @@ private:
 
     
     ControlThread _controlThread;
-    Init_Thread _thread;
+    Init_Thread _initThread;
     Logger _logger;
     
     PeripheralManager _peripheralManager;

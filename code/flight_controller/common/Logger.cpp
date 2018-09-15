@@ -2,9 +2,10 @@
 
 #include <cstring>
 
-Logger::Logger() :
+Logger::Logger(UART& uart) :
     Thread("Logger Thread", 1024, 2),
-    _queue(QUEUE_SIZE, sizeof(Log_Packet_t))
+    _queue(QUEUE_SIZE, sizeof(Log_Packet_t)),
+    _uart(uart)
 {
 }
 
@@ -15,7 +16,7 @@ Logger::~Logger()
 
 void Logger::Run()
 {
-    while (!_uart) {}
+    //while (!_uart) {} // @todo: Check initialised somehow
 
     // @todo: This is nasty, either make it a function or make this thread extend Loggable (in which case, maybe make a Loggable_Private and make Loggable subclass that; _Private can have the ability to put something on the front of the queue)
     Log_Packet_t tmpPacket = {
@@ -69,12 +70,8 @@ const std::string Logger::createFormattedStringFromPacket(const Log_Packet_t& pa
 
 void Logger::write(const std::string& message)
 {
-    _uart->write(message);
+    _uart.write(message);
 }
-
-
-
-
 
 
 void Loggable::log(const Log_Severity_t severity, const std::string& message)

@@ -27,37 +27,29 @@ using Log_Severity_t =
 using Log_Packet_t = 
     struct Log_Packet_t
     {
-        char sender[QUEUE_SENDER_LENGTH]; // +1 for the null terminator
+        char sender[QUEUE_SENDER_LENGTH];
         Log_Severity_t severity;
-        char message[QUEUE_MESSAGE_LENGTH]; // +1 for the null terminator
+        char message[QUEUE_MESSAGE_LENGTH];
     };
 
 
 class Logger : public cpp_freertos::Thread
 {
 public:
-    Logger();
+    Logger(UART& uart);
     ~Logger();
 
     void Run();
 
     void log(const Log_Packet_t& packet);
 
-    // @todo: Ideally remove this and set the uart in the constructor - UART will then needs to not assert when used without beign initialised
-    void setUART(UART *uart)
-    {
-        ASSERT(uart);
-        _uart = uart;
-    }
-
 protected:
     const std::string createFormattedStringFromPacket(const Log_Packet_t& packet);
     void write(const std::string& message);
 
 private:
-    UART *_uart;
-
     cpp_freertos::Queue _queue;
+    UART& _uart;
 };
 
 

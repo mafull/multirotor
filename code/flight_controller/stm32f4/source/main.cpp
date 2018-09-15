@@ -34,7 +34,7 @@ int main()
     FlightController flightController(peripheralManager);
 
     // Attempt to initialise the instance
-    ASSERT(stm32f4_initialiseFlightController(flightController));
+    //ASSERT(stm32f4_initialiseFlightController(flightController));
 
     // Run the flight controller
     flightController.run();
