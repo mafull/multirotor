@@ -13,6 +13,7 @@ using MPU6050_ScaleFactor_t = float;
 using MPU6050_Calibration_Data_t = 
     struct MPU6050_Calibration_Data_t
     {
+        // @todo: Timestamp
         struct
         {
             MPU6050_ScaleFactor_t scaleFactor;
@@ -95,6 +96,7 @@ public:
     MPU6050_TemperatureSensor temperatureSensor;
 
 private:
+    void calibrate();
     void initialise();
     void update();
 
@@ -118,6 +120,7 @@ private:
     bool initSampleRate();
     bool initWhoAmI();
 
+    bool _calibrated;
     bool _initialised;
 
     I2C& _i2c;

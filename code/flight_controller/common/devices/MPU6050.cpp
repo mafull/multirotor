@@ -10,6 +10,8 @@
 #define MPU6050_I2C_MEMORY_ADDRESS_SMPLRT_DIV   0x19
 #define MPU6050_I2C_MEMORY_ADDRESS_WHO_AM_I     0x75
 
+#define MPU6050_CALIBRATION_DURATION_MS         5000u
+
 
 static inline int16_t int16FromTwoUint8(uint8_t high, uint8_t low)
 {
@@ -23,10 +25,69 @@ MPU6050::MPU6050(I2C& i2c) :
     gyroscope(*this),
     temperatureSensor(*this),
     // Private members
+    _calibrated(false),
     _initialised(false),
     _i2c(i2c)
 {
 
+}
+
+void MPU6050::calibrate()
+{
+    ASSERT(_initialised);
+
+    // Create new data to work on so we don't corrupt old data if calibration is not successful
+    MPU6050_Calibration_Data_t calibrationData;
+    // The scale factor will be unchanged
+    calibrationData.accelerometer.scaleFactor = _calibrationData.accelerometer.scaleFactor;
+    calibrationData.gyroscope.scaleFactor = _calibrationData.gyroscope.scaleFactor;
+
+    // Create a data structure to read data into during calibration
+    MPU6050_Data_t mpu6050Data;
+
+    // Retain a count of the number of data reads for use in averaging calculations
+    uint32_t numReads = 0;
+
+    // endTime = now() + MPU6050_CALIBRATION_DURATION_MS; // @todo Implement this
+    //while (now() < endTime)
+    for (uint16_t i; i < MPU6050_CALIBRATION_DURATION_MS; i++) // @todo: Replace this line
+    {
+        // Get new data and scale it @todo: Handle a failed read
+        const bool newData = readRawDataFromDevice();
+        decodeRawData(mpu6050Data);
+        scaleData(mpu6050Data);
+        
+        calibrationData.accelerometer.offsets.x += mpu6050Data.accelerometer.x;
+        calibrationData.accelerometer.offsets.y += mpu6050Data.accelerometer.y;
+        calibrationData.accelerometer.offsets.z += mpu6050Data.accelerometer.z;
+
+        calibrationData.gyroscope.offsets.x += mpu6050Data.gyroscope.x;
+        calibrationData.gyroscope.offsets.y += mpu6050Data.gyroscope.y;
+        calibrationData.gyroscope.offsets.z += mpu6050Data.gyroscope.z;
+
+        numReads++;
+        // @todo: DELAY SOMEHOW
+    }
+
+    // Calculate accelerometer offsets
+    // @todo: Maybe make this a single-line thing somehow
+    calibrationData.accelerometer.offsets.x /= numReads;
+    calibrationData.accelerometer.offsets.y /= numReads;
+    calibrationData.accelerometer.offsets.z /= numReads;
+    calibrationData.accelerometer.offsets.z += 1;        // Consider gravity
+
+    // Calculate gyroscope offsets
+    calibrationData.gyroscope.offsets.x /= numReads;
+    calibrationData.gyroscope.offsets.y /= numReads;
+    calibrationData.gyroscope.offsets.z /= numReads;
+
+    // Store a timestamp so we know when the calibration data was calculated
+    // calibrationData.timestamp = // @todo: Do this
+
+    // Store the new calibration data
+    _calibrationData = calibrationData;
+
+    _calibrated = true;
 }
 
 void MPU6050::initialise()
