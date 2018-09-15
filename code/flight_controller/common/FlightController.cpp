@@ -18,7 +18,8 @@ FlightController::FlightController(PeripheralManager& peripheralManager,
          accelerometer,
          gyroscope,
          magnetometer),
-    _initThread(_logger, *this),
+    _initThread(_logger,
+                *this),
     _logger(peripheralManager.uart(0))
 {
     // Ensure we only have a single instance of this class
@@ -51,6 +52,18 @@ void FlightController::startThreads()
     _imu.Start();
 
     logInfo("All threads have been started");
+}
+
+
+FlightController::Init_Thread::Init_Thread(Logger& logger,
+                                           FlightController& parent) :
+    // Base constructors
+    Loggable(logger, "Init Thread"),
+    Thread("Init Thread", 1024, 1),
+    // Private members
+    _parent(parent)
+{
+
 }
 
 void FlightController::Init_Thread::Run()

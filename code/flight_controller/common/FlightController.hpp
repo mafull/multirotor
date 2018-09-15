@@ -20,15 +20,8 @@ class FlightController : private Loggable
     class Init_Thread : private Loggable, public cpp_freertos::Thread
     {
     public:
-        Init_Thread(Logger& logger, FlightController& parent) :
-            // Base constructors
-            Loggable(logger, "Init Thread"),
-            Thread("Init Thread", 1024, 1),
-            // Private members
-            _parent(parent)
-        {
-            // Do nothing
-        }
+        Init_Thread(Logger& logger,
+                    FlightController& parent);
         //~Init_Thread();
 
         void Run();
