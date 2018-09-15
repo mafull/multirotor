@@ -5,12 +5,31 @@
 #include "imu/Gyroscope.hpp"
 #include "peripherals/I2C.hpp"
 
-
+// @todo: Move this to Accelerometer-equivalent Temperature class
 using Temperature_Data_t = 
     struct Temperature_Data_t
     {
         // @todo: Timestamp
         float temperature;
+    };
+
+using MPU6050_Offset_t = int16_t;
+using MPU6050_ScaleFactor_t = float;
+
+using MPU6050_Calibration_Data_t = 
+    struct MPU6050_Calibration_Data_t
+    {
+        struct
+        {
+            struct
+            {
+                MPU6050_Offset_t x;
+                MPU6050_Offset_t y;
+                MPU6050_Offset_t z;
+            } offsets;
+            
+            MPU6050_ScaleFactor_t scaleFactor;
+        } accelerometer, gyroscope;
     };
 
 using MPU6050_Data_t = 
@@ -67,7 +86,7 @@ private:
     bool readRawDataFromDevice();
 
     void decodeRawData(MPU6050_Data_t& data);
-    void applyOffsetsToData(MPU6050_Data_t& data);
+    void applyCalibrationOffsetsToData(MPU6050_Data_t& data);
     void scaleData(MPU6050_Data_t& data);
 
     void i2cReadMemory(I2C_Address_t address,
@@ -89,6 +108,8 @@ private:
     I2C& _i2c;
 
     uint8_t _rawData[14];
+    
+    MPU6050_Calibration_Data_t _calibrationData;
 };
 
 #endif  // __MPU6050_HPP

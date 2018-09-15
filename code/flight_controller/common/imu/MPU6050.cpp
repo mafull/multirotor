@@ -52,21 +52,25 @@ void MPU6050::update()
         return;
     }
 
-    // Generate normalised Accelerometer/Gyroscope/Temperature data from the raw data
     MPU6050_Data_t mpu6050Data;
-    decodeRawData(mpu6050Data);      // Get raw Accelerometer/Gyroscope/Temperature data
-    applyOffsetsToData(mpu6050Data); // Apply calibration offsets to the data
-    scaleData(mpu6050Data);          // Scale the data
-    // mpu6050Data.timestamp = // @todo: Do this
+
+    // Generate normalised Accelerometer/Gyroscope/Temperature data from the raw data
+    decodeRawData(mpu6050Data);                 // Get raw Accelerometer/Gyroscope/Temperature data
+    applyCalibrationOffsetsToData(mpu6050Data); // Apply calibration offsets to the data
+    scaleData(mpu6050Data);                     // Scale the data
+    // mpu6050Data.timestamp =                  // @todo: Do this
+
+    // Update timestamps
+    // @todo: Do this
+    // timestamp = 
+    // mpu6050Data.accelerometer.timestamp = timestamp;
+    // mpu6050Data.gyroscope.timestamp = timestamp;
+    // mpu6050Data.temperature.timestamp = timestamp;
 
     // Update Accelerometer and Gyroscope data with this normalised data
     accelerometer._data = mpu6050Data.accelerometer;
     gyroscope._data = mpu6050Data.gyroscope;
-
-    // Update timestamps
-    // @todo: Do this
-    // accelerometer._data.timestamp = 
-    // gyroscope._data.timestamp = 
+    // @todo: Do something with the temperature data
 }
 
 bool MPU6050::readRawDataFromDevice()
@@ -84,26 +88,45 @@ bool MPU6050::readRawDataFromDevice()
 
 void MPU6050::decodeRawData(MPU6050_Data_t& data)
 {
+    // Bytes 0 to 5 - Accelerometer
     data.accelerometer.x = int16FromTwoUint8(_rawData[0], _rawData[1]);
     data.accelerometer.y = int16FromTwoUint8(_rawData[2], _rawData[3]);
     data.accelerometer.z = int16FromTwoUint8(_rawData[4], _rawData[5]);
 
+    // Bytes 6 to 7 - Temperature
     // @todo: Clean this horribly messy line up
     data.temperature.temperature = (float)((float)((int16_t)((_rawData[6] << 8) | _rawData[7])) / (float)340.0f + (float)36.53f);
 
+    // Bytes 8 to 13 - Gyroscope
     data.gyroscope.x = int16FromTwoUint8( _rawData[8],  _rawData[9]);
     data.gyroscope.y = int16FromTwoUint8(_rawData[10], _rawData[11]);
     data.gyroscope.z = int16FromTwoUint8(_rawData[12], _rawData[13]);
 }
 
-void MPU6050::applyOffsetsToData(MPU6050_Data_t& data)
+void MPU6050::applyCalibrationOffsetsToData(MPU6050_Data_t& data)
 {
+    // Accelerometer
+    data.accelerometer.x -= _calibrationData.accelerometer.offsets.x;
+    data.accelerometer.y -= _calibrationData.accelerometer.offsets.y;
+    data.accelerometer.z -= _calibrationData.accelerometer.offsets.z;
 
+    // Gyroscope
+    data.gyroscope.x -= _calibrationData.gyroscope.offsets.x;
+    data.gyroscope.y -= _calibrationData.gyroscope.offsets.y;
+    data.gyroscope.z -= _calibrationData.gyroscope.offsets.z;
 }
 
 void MPU6050::scaleData(MPU6050_Data_t& data)
 {
+    // Accelerometer
+    data.accelerometer.x *= _calibrationData.accelerometer.scaleFactor;
+    data.accelerometer.y *= _calibrationData.accelerometer.scaleFactor;
+    data.accelerometer.z *= _calibrationData.accelerometer.scaleFactor;
 
+    // Gyroscope
+    data.gyroscope.x *= _calibrationData.gyroscope.scaleFactor;
+    data.gyroscope.y *= _calibrationData.gyroscope.scaleFactor;
+    data.gyroscope.z *= _calibrationData.gyroscope.scaleFactor;
 }
 
 
