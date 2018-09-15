@@ -5,14 +5,19 @@
 
 bool FlightController::_isInstantiated = false;
 
-FlightController::FlightController(PeripheralManager& peripheralManager) :
+FlightController::FlightController(PeripheralManager& peripheralManager,
+                                   Accelerometer& accelerometer,
+                                   Gyroscope& gyroscope,
+                                   Magnetometer& magnetometer) :
     // Base constructors
     Loggable(_logger, "FlightController"),
-    // Public members
-    //imu(_logger),
     // Private members
     _peripheralManager(peripheralManager), // This MUST be first
     _controlThread(_logger),
+    _imu(_logger,
+         accelerometer,
+         gyroscope,
+         magnetometer),
     _initThread(_logger, *this),
     _logger(peripheralManager.uart(0))
 {
@@ -32,18 +37,8 @@ void FlightController::run()
     _initThread.Start();
     cpp_freertos::Thread::StartScheduler();
 
-    ASSERT(true); // Should never get here
+    // ASSERT(true); // Should never get here
     _peripheralManager.uart(0).write("WHY AM I HERE"); // @todo: Remove this once ASSERT is working
-}
-
-void FlightController::setUpThreads()
-{
-    logInfo("Setting up threads...");
-
-    // imu.setConfiguration(&_peripheralManager.i2c(0));
-    // imu.initialise();
-
-    logInfo("All threads are ready");
 }
 
 void FlightController::startThreads()
@@ -53,7 +48,7 @@ void FlightController::startThreads()
     _logger.Start(); // @todo: Work out why this has to go before other threads
 
     _controlThread.Start();
-    //imu.Start();
+    _imu.Start();
 
     logInfo("All threads have been started");
 }
@@ -62,7 +57,6 @@ void FlightController::Init_Thread::Run()
 {
     logInfo("Running");
 
-    _parent.setUpThreads();
     _parent.startThreads();
 
     logInfo("Finished");

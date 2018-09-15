@@ -7,7 +7,10 @@ const double pi = 3.14159265358979323846;
 const IMU_Data_Element_t rad2degMultiplier = 180.0 / pi;
 #define RAD2DEG(x)      ((x) * rad2degMultiplier)
 
-IMU::IMU(Logger& logger) :
+IMU::IMU(Logger& logger,
+         Accelerometer& accelerometer,
+         Gyroscope& gyroscope,
+         Magnetometer& magnetometer) :
     // Base constructors
     Loggable(logger, "IMU"),
     Thread("IMU Thread", 1024, 1),
@@ -15,9 +18,9 @@ IMU::IMU(Logger& logger) :
     _configured(false),
     _initialised(false),
     // Peripherals @todo: Remove this comment
-    _accelerometer(nullptr),
-    _gyroscope(nullptr),
-    _magnetometer(nullptr)
+    _accelerometer(accelerometer),
+    _gyroscope(gyroscope),
+    _magnetometer(magnetometer)
 {
 
 }
@@ -34,50 +37,32 @@ void IMU::Run()
     logInfo("Finished");
 }
 
-void IMU::setConfiguration(I2C *i2c)
-{
-    ASSERT(i2c);
-
-    // Ensure it is not already initialised
-    ASSERT(!_initialised);
-
-    // Ensure the required peripherals have been added
-    ASSERT(_accelerometer && _gyroscope && _magnetometer);
-
-    // Pass the I2C handle to the peripherals
-    _accelerometer->setI2C(i2c);
-    _gyroscope->setI2C(i2c);
-    _magnetometer->setI2C(i2c);
-
-    _configured = true;
-}
-
 void IMU::initialise()
 {
     // Ensure it is configured but not already initialised
     ASSERT(_configured && !_initialised);
 
     // Initialise the peripherals
-    _accelerometer->initialise();
-    _gyroscope->initialise();
-    //_magnetometer->initialise();
+    _accelerometer.initialise();
+    _gyroscope.initialise();
+    //_magnetometer.initialise();
 
     _initialised = true;
 }
 
 void IMU::update()
 {
-    _accelerometer->update();
-    _gyroscope->update();
-    //_magnetometer->update();
+    _accelerometer.update();
+    _gyroscope.update();
+    //_magnetometer.update();
 
 
 
 
     // GET SENSOR DATA
-    const Accelerometer_Data_t& aData = _accelerometer->getData();
-    const Gyroscope_Data_t& gData = _gyroscope->getData();
-    // const Magnetometer_Data_t& mData = _magnetometer->getData();
+    const Accelerometer_Data_t& aData = _accelerometer.getData();
+    const Gyroscope_Data_t& gData = _gyroscope.getData();
+    // const Magnetometer_Data_t& mData = _magnetometer.getData();
     
 
     // CALCULATE DT

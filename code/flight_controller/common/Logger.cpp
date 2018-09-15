@@ -3,7 +3,7 @@
 #include <cstring>
 
 Logger::Logger(UART& uart) :
-    Thread("Logger Thread", 1024, 2),
+    Thread("Logger Thread", 1024, 1),
     _queue(QUEUE_SIZE, sizeof(Log_Packet_t)),
     _uart(uart)
 {

@@ -43,7 +43,10 @@ using IMU_Data_t =
 class IMU : private Loggable, public cpp_freertos::Thread
 {
 public:
-    IMU(Logger& logger);
+    IMU(Logger& logger,
+        Accelerometer& accelerometer,
+        Gyroscope& gyroscope,
+        Magnetometer& magnetometer);
     // ~IMU();
 
     void Run();
@@ -59,40 +62,22 @@ public:
         return _data;
     }
 
-    void setAccelerometer(Accelerometer *accelerometer)
-    {
-        ASSERT(accelerometer);
-        _accelerometer = accelerometer;
-    }
-
-    void setGyroscope(Gyroscope *gyroscope)
-    {
-        ASSERT(gyroscope);
-        _gyroscope = gyroscope;
-    }
-
-    void setMagnetometer(Magnetometer *magnetometer)
-    {
-        ASSERT(magnetometer);
-        _magnetometer = magnetometer;
-    }
-
     void getAccelerometerData(Accelerometer_Data_t *data)
     {
         ASSERT(data);
-        *data = _accelerometer->getData();
+        *data = _accelerometer.getData();
     }
 
     void getGyroscopeData(Gyroscope_Data_t *data)
     {
         ASSERT(data);
-        *data = _gyroscope->getData();
+        *data = _gyroscope.getData();
     }
 
     void getMagnetometerData(Magnetometer_Data_t *data)
     {
         ASSERT(data);
-        *data = _magnetometer->getData();
+        *data = _magnetometer.getData();
     }
 
 protected:
@@ -101,9 +86,9 @@ private:
     bool _configured;
     bool _initialised;
 
-    Accelerometer *_accelerometer;
-    Gyroscope *_gyroscope;
-    Magnetometer *_magnetometer;
+    Accelerometer& _accelerometer;
+    Gyroscope& _gyroscope;
+    Magnetometer& _magnetometer;
 
     IMU_Data_t _data;
 };

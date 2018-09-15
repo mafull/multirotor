@@ -8,11 +8,13 @@ static int16_t int16FromTwoUint8(uint8_t& high, uint8_t low)
     return static_cast<int16_t>((high << 8) | low);
 }
 
-MPU6050::MPU6050() :
+MPU6050::MPU6050(I2C& i2c) :
+    // Public members
     accelerometer(*this),
     gyroscope(*this),
-    _i2c(nullptr),
-    _rawData()
+    // Private members
+    _i2c(i2c),
+    _rawData({0})
 {
 
 }
@@ -43,12 +45,12 @@ void MPU6050::update()
 
 bool MPU6050::readFromDevice()
 {
-    ASSERT(_i2c);
+    //ASSERT(_i2c);
 
     // ADD CHECK FOR MAXIMUM READ RATE (e.g. read acc then gyro instantly)
     bool newData = true;
     
-    _i2c->readMemory(
+    _i2c.readMemory(
         MPU6050_I2C_DEVICE_ADDRESS,
         MPU6050_I2C_MEMORY_ADDRESS_DATA,
         _rawData,
@@ -70,7 +72,7 @@ MPU6050::MPU6050_Accelerometer::MPU6050_Accelerometer(MPU6050& parent) :
 
 void MPU6050::MPU6050_Accelerometer::initialise()
 {
-    _parent.setI2C(_i2c);
+
 }
 
 void MPU6050::MPU6050_Accelerometer::update()
@@ -92,7 +94,7 @@ MPU6050::MPU6050_Gyroscope::MPU6050_Gyroscope(MPU6050& parent) :
 
 void MPU6050::MPU6050_Gyroscope::initialise()
 {
-    _parent.setI2C(_i2c);
+
 }
 
 void MPU6050::MPU6050_Gyroscope::update()

@@ -3,8 +3,8 @@
 #include "stm32f4_config.hpp"
 
 //
-#include "imu/HMC5883L.hpp"
-#include "imu/MPU6050.hpp"
+// #include "imu/HMC5883L.hpp"
+// #include "imu/MPU6050.hpp"
 // Peripherals
 #include "peripherals/STM32F4_DigitalOutput.hpp"
 #include "peripherals/STM32F4_I2C.hpp"
@@ -14,8 +14,8 @@ static STM32F4_I2C i2c1;
 static STM32F4_UART uart1;
 static STM32F4_UART uart2;
 
-static HMC5883L hmc5883l;
-static MPU6050 mpu6050;
+// static HMC5883L hmc5883l;
+// static MPU6050 mpu6050;
 
 void SystemClock_Config(void)
 {
@@ -80,6 +80,20 @@ bool stm32f4_initialisePeripheralManager(PeripheralManager& peripheralManager)
     stm32f4_initialisePeripherals(peripheralManager);
 }
 
+// Accelerometer& stm32f4_getAccelerometer()
+// {
+//     return mpu6050.accelerometer;
+// }
+
+// Gyroscope& stm32f4_getGyroscope()
+// {
+//     return mpu6050.gyroscope;
+// }
+
+// Magnetometer& stm32f4_getMagnetometer()
+// {
+//     return hmc5883l;
+// }
 
 
 void stm32f4_initialiseIMU(IMU& imu)
@@ -87,9 +101,9 @@ void stm32f4_initialiseIMU(IMU& imu)
     //mpu6050.setConfiguration(x);
     //hmc5883l.setConfiguration(x);
 
-    imu.setAccelerometer(&mpu6050.accelerometer);
-    imu.setGyroscope(&mpu6050.gyroscope);
-    imu.setMagnetometer(&hmc5883l);
+    // imu.setAccelerometer(&mpu6050.accelerometer);
+    // imu.setGyroscope(&mpu6050.gyroscope);
+    // imu.setMagnetometer(&hmc5883l);
 }
 
 void stm32f4_initialisePeripherals(PeripheralManager& peripheralManager)

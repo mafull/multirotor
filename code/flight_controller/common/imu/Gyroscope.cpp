@@ -1,6 +1,7 @@
 #include "Gyroscope.hpp"
 
-Gyroscope::Gyroscope()
+Gyroscope::Gyroscope() :
+    _data({0})
 {
 
 }

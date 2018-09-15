@@ -1,6 +1,7 @@
 #include "Magnetometer.hpp"
 
-Magnetometer::Magnetometer()
+Magnetometer::Magnetometer() :
+    _data({0})
 {
 
 }

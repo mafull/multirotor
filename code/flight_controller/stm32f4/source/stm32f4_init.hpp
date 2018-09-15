@@ -6,6 +6,10 @@ bool stm32f4_initialisePeripheralManager(PeripheralManager& peripheralManager);
 void stm32f4_initialiseIMU(IMU& imu);
 void stm32f4_initialisePeripherals(PeripheralManager& peripheralManager);
 
+Accelerometer& stm32f4_getAccelerometer();
+Gyroscope& stm32f4_getGyroscope();
+Magnetometer& stm32f4_getMagnetometer();
+
 void stm32f4_initialiseDigitalInput();
 void stm32f4_initialiseDigitalOutput();
 void stm32f4_initialiseI2C();

@@ -12,6 +12,9 @@
 
 #include "stm32f4_init.hpp"
 
+#include "imu/HMC5883L.hpp"
+#include "imu/MPU6050.hpp"
+
 #include "Assert.hpp"
 #include "FlightController.hpp"
 
@@ -29,9 +32,21 @@ int main()
     // PERIPHERALS
     PeripheralManager peripheralManager;
     stm32f4_initialisePeripheralManager(peripheralManager);
-    
+
+    // 
+    MPU6050 mpu6050(peripheralManager.i2c(0));
+    HMC5883L hmc5883l(peripheralManager.i2c(0));
+
+    // 
+    Accelerometer& accelerometer = mpu6050.accelerometer;
+    Gyroscope& gyroscope = mpu6050.gyroscope;
+    Magnetometer& magnetometer = magnetometer;
+
     // Create an instance of FlightController
-    FlightController flightController(peripheralManager);
+    FlightController flightController(peripheralManager,
+                                      accelerometer,
+                                      gyroscope,
+                                      magnetometer);
 
     // Attempt to initialise the instance
     //ASSERT(stm32f4_initialiseFlightController(flightController));
