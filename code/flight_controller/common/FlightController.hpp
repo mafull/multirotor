@@ -2,9 +2,12 @@
 #define __FLIGHT_CONTROLLER_HPP
 
 // Project includes
-#include "imu/IMU.hpp"
+#include "IMU.hpp"
 #include "Logger.hpp"
 #include "peripherals/PeripheralManager.hpp"
+#include "sensors/Accelerometer.hpp"
+#include "sensors/Gyroscope.hpp"
+#include "sensors/Magnetometer.hpp"
 #include "threads/ControlThread.hpp"
 
 // Library includes
@@ -23,7 +26,7 @@ class FlightController : private Loggable
     public:
         Init_Thread(Logger& logger,
                     FlightController& parent);
-        
+
         void Run();
 
     private:

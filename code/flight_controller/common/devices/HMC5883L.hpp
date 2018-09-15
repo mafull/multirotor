@@ -1,8 +1,8 @@
 #ifndef __HMC5883_L_HPP
 #define __HMC5883_L_HPP
 
-#include "imu/Magnetometer.hpp"
 #include "peripherals/I2C.hpp"
+#include "sensors/Magnetometer.hpp"
 
 class HMC5883L : public Magnetometer
 {

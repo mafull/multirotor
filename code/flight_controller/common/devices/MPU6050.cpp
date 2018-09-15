@@ -21,6 +21,7 @@ MPU6050::MPU6050(I2C& i2c) :
     // Public members
     accelerometer(*this),
     gyroscope(*this),
+    temperatureSensor(*this),
     // Private members
     _initialised(false),
     _i2c(i2c)
@@ -56,21 +57,20 @@ void MPU6050::update()
 
     // Generate normalised Accelerometer/Gyroscope/Temperature data from the raw data
     decodeRawData(mpu6050Data);                 // Get raw Accelerometer/Gyroscope/Temperature data
-    applyCalibrationOffsetsToData(mpu6050Data); // Apply calibration offsets to the data
     scaleData(mpu6050Data);                     // Scale the data
+    applyCalibrationOffsetsToData(mpu6050Data); // Apply calibration offsets to the data
     // mpu6050Data.timestamp =                  // @todo: Do this
 
     // Update timestamps
     // @todo: Do this
-    // timestamp = 
-    // mpu6050Data.accelerometer.timestamp = timestamp;
-    // mpu6050Data.gyroscope.timestamp = timestamp;
-    // mpu6050Data.temperature.timestamp = timestamp;
+    // mpu6050Data.accelerometer.timestamp = mpu6050Data.timestamp;
+    // mpu6050Data.gyroscope.timestamp = mpu6050Data.timestamp;
+    // mpu6050Data.temperature.timestamp = mpu6050Data.timestamp;
 
     // Update Accelerometer and Gyroscope data with this normalised data
     accelerometer._data = mpu6050Data.accelerometer;
     gyroscope._data = mpu6050Data.gyroscope;
-    // @todo: Do something with the temperature data
+    temperatureSensor._data = mpu6050Data.temperatureSensor;
 }
 
 bool MPU6050::readRawDataFromDevice()
@@ -86,23 +86,6 @@ bool MPU6050::readRawDataFromDevice()
     return newData;
 }
 
-void MPU6050::decodeRawData(MPU6050_Data_t& data)
-{
-    // Bytes 0 to 5 - Accelerometer
-    data.accelerometer.x = int16FromTwoUint8(_rawData[0], _rawData[1]);
-    data.accelerometer.y = int16FromTwoUint8(_rawData[2], _rawData[3]);
-    data.accelerometer.z = int16FromTwoUint8(_rawData[4], _rawData[5]);
-
-    // Bytes 6 to 7 - Temperature
-    // @todo: Clean this horribly messy line up
-    data.temperature.temperature = (float)((float)((int16_t)((_rawData[6] << 8) | _rawData[7])) / (float)340.0f + (float)36.53f);
-
-    // Bytes 8 to 13 - Gyroscope
-    data.gyroscope.x = int16FromTwoUint8( _rawData[8],  _rawData[9]);
-    data.gyroscope.y = int16FromTwoUint8(_rawData[10], _rawData[11]);
-    data.gyroscope.z = int16FromTwoUint8(_rawData[12], _rawData[13]);
-}
-
 void MPU6050::applyCalibrationOffsetsToData(MPU6050_Data_t& data)
 {
     // Accelerometer
@@ -114,6 +97,25 @@ void MPU6050::applyCalibrationOffsetsToData(MPU6050_Data_t& data)
     data.gyroscope.x -= _calibrationData.gyroscope.offsets.x;
     data.gyroscope.y -= _calibrationData.gyroscope.offsets.y;
     data.gyroscope.z -= _calibrationData.gyroscope.offsets.z;
+
+    // Temperature
+    data.temperatureSensor.temperature -= _calibrationData.temperatureSensor.offset;
+}
+
+void MPU6050::decodeRawData(MPU6050_Data_t& data)
+{
+    // Bytes 0 to 5 - Accelerometer
+    data.accelerometer.x = int16FromTwoUint8(_rawData[0], _rawData[1]);
+    data.accelerometer.y = int16FromTwoUint8(_rawData[2], _rawData[3]);
+    data.accelerometer.z = int16FromTwoUint8(_rawData[4], _rawData[5]);
+
+    // Bytes 6 to 7 - Temperature
+    data.temperatureSensor.temperature = int16FromTwoUint8(_rawData[6], _rawData[7]);
+
+    // Bytes 8 to 13 - Gyroscope
+    data.gyroscope.x = int16FromTwoUint8( _rawData[8],  _rawData[9]);
+    data.gyroscope.y = int16FromTwoUint8(_rawData[10], _rawData[11]);
+    data.gyroscope.z = int16FromTwoUint8(_rawData[12], _rawData[13]);
 }
 
 void MPU6050::scaleData(MPU6050_Data_t& data)
@@ -127,6 +129,9 @@ void MPU6050::scaleData(MPU6050_Data_t& data)
     data.gyroscope.x *= _calibrationData.gyroscope.scaleFactor;
     data.gyroscope.y *= _calibrationData.gyroscope.scaleFactor;
     data.gyroscope.z *= _calibrationData.gyroscope.scaleFactor;
+
+    // Temperature
+    data.temperatureSensor.temperature *= _calibrationData.temperatureSensor.scaleFactor;
 }
 
 
@@ -268,6 +273,23 @@ void MPU6050::MPU6050_Gyroscope::initialise()
 }
 
 void MPU6050::MPU6050_Gyroscope::update()
+{
+    _parent.update();
+}
+
+
+MPU6050::MPU6050_TemperatureSensor::MPU6050_TemperatureSensor(MPU6050& parent) :
+    _parent(parent)
+{
+
+}
+
+void MPU6050::MPU6050_TemperatureSensor::initialise()
+{
+    _parent.initialise();
+}
+
+void MPU6050::MPU6050_TemperatureSensor::update()
 {
     _parent.update();
 }

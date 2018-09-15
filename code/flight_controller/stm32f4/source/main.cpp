@@ -12,8 +12,8 @@
 
 #include "stm32f4_init.hpp"
 
-#include "imu/HMC5883L.hpp"
-#include "imu/MPU6050.hpp"
+#include "devices/HMC5883L.hpp"
+#include "devices/MPU6050.hpp"
 
 #include "Assert.hpp"
 #include "FlightController.hpp"
@@ -36,7 +36,7 @@ int main()
     // 
     MPU6050 mpu6050(peripheralManager.i2c(0));
     HMC5883L hmc5883l(peripheralManager.i2c(0));
-
+    
     // 
     Accelerometer& accelerometer = mpu6050.accelerometer;
     Gyroscope& gyroscope = mpu6050.gyroscope;
