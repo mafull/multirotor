@@ -7,6 +7,7 @@ const double pi = 3.14159265358979323846;
 const IMU_Data_Element_t rad2degMultiplier = 180.0 / pi;
 #define RAD2DEG(x)      ((x) * rad2degMultiplier)
 
+
 IMU::IMU(Logger& logger,
          Accelerometer& accelerometer,
          Gyroscope& gyroscope,

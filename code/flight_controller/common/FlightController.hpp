@@ -23,8 +23,7 @@ class FlightController : private Loggable
     public:
         Init_Thread(Logger& logger,
                     FlightController& parent);
-        //~Init_Thread();
-
+        
         void Run();
 
     private:

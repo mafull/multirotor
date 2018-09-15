@@ -16,6 +16,7 @@ static inline int16_t int16FromTwoUint8(uint8_t high, uint8_t low)
     return static_cast<int16_t>((high << 8) | low);
 }
 
+
 MPU6050::MPU6050(I2C& i2c) :
     // Public members
     accelerometer(*this),
@@ -41,6 +42,33 @@ void MPU6050::initialise()
     _initialised = true;
 }
 
+void MPU6050::update()
+{
+    // Read data from the device
+    const bool newData = readRawDataFromDevice();
+    if (!newData) // No new data was read
+    {
+        // Return without updating accelerometer/gyroscope data
+        return;
+    }
+
+    // Generate normalised Accelerometer/Gyroscope/Temperature data from the raw data
+    MPU6050_Data_t mpu6050Data;
+    decodeRawData(mpu6050Data);      // Get raw Accelerometer/Gyroscope/Temperature data
+    applyOffsetsToData(mpu6050Data); // Apply calibration offsets to the data
+    scaleData(mpu6050Data);          // Scale the data
+    // mpu6050Data.timestamp = // @todo: Do this
+
+    // Update Accelerometer and Gyroscope data with this normalised data
+    accelerometer._data = mpu6050Data.accelerometer;
+    gyroscope._data = mpu6050Data.gyroscope;
+
+    // Update timestamps
+    // @todo: Do this
+    // accelerometer._data.timestamp = 
+    // gyroscope._data.timestamp = 
+}
+
 bool MPU6050::readRawDataFromDevice()
 {
     // @todo: Add check for maximum read rate (e.g. readring acc then gyro instantly)
@@ -54,36 +82,36 @@ bool MPU6050::readRawDataFromDevice()
     return newData;
 }
 
-void MPU6050::update()
+void MPU6050::decodeRawData(MPU6050_Data_t& data)
 {
-    // Read data from the device
-    const bool newData = readRawDataFromDevice();
-    if (!newData) // No new data was read
-    {
-        // Return without updating accelerometer/gyroscope data
-        return;
-    }
+    data.accelerometer.x = int16FromTwoUint8(_rawData[0], _rawData[1]);
+    data.accelerometer.y = int16FromTwoUint8(_rawData[2], _rawData[3]);
+    data.accelerometer.z = int16FromTwoUint8(_rawData[4], _rawData[5]);
 
-    // Update accelerometer data
-    accelerometer._data.x = int16FromTwoUint8(_rawData[0], _rawData[1]);
-    accelerometer._data.y = int16FromTwoUint8(_rawData[2], _rawData[3]);
-    accelerometer._data.z = int16FromTwoUint8(_rawData[4], _rawData[5]);
-    // @todo: Timestamp
+    // @todo: Clean this horribly messy line up
+    data.temperature.temperature = (float)((float)((int16_t)((_rawData[6] << 8) | _rawData[7])) / (float)340.0f + (float)36.53f);
 
-    // Update temperature data
-    // MPU6050_Data_Raw.temperature = (float)((float)((int16_t)((tmp[6] << 8) | tmp[7])) / (float)340.0f + (float)36.53f);
-
-    // Update gyroscope data
-    gyroscope._data.x = int16FromTwoUint8( _rawData[8],  _rawData[9]);
-    gyroscope._data.y = int16FromTwoUint8(_rawData[10], _rawData[11]);
-    gyroscope._data.z = int16FromTwoUint8(_rawData[12], _rawData[13]);
-    // @todo: Timestamp
+    data.gyroscope.x = int16FromTwoUint8( _rawData[8],  _rawData[9]);
+    data.gyroscope.y = int16FromTwoUint8(_rawData[10], _rawData[11]);
+    data.gyroscope.z = int16FromTwoUint8(_rawData[12], _rawData[13]);
 }
+
+void MPU6050::applyOffsetsToData(MPU6050_Data_t& data)
+{
+
+}
+
+void MPU6050::scaleData(MPU6050_Data_t& data)
+{
+
+}
+
 
 void MPU6050::i2cReadMemory(I2C_Address_t memoryAddress,
                             uint8_t *data,
                             uint8_t amount)
 {
+    // Read data from the MPU6050' memory
     _i2c.readMemory(MPU6050_I2C_DEVICE_ADDRESS,
                     memoryAddress,
                     data,
@@ -94,6 +122,7 @@ void MPU6050::i2cWriteMemory(I2C_Address_t memoryAddress,
                              uint8_t *data,
                              uint8_t amount)
 {
+    // Write data to the MPU6050's memory
     _i2c.writeMemory(MPU6050_I2C_DEVICE_ADDRESS,
                      memoryAddress,
                      data,
@@ -102,6 +131,7 @@ void MPU6050::i2cWriteMemory(I2C_Address_t memoryAddress,
 
 bool MPU6050::initAccelerometerConfig()
 {
+    // @todo: Make this and the other init step functions cleaner (e.g. setBit())
     // Set accelerometer range to +-4 g (AFS_SEL = 1)
     uint8_t tmp;
     i2cReadMemory(MPU6050_I2C_MEMORY_ADDRESS_ACCEL_CONFIG,
