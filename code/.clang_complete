@@ -1,0 +1,9 @@
+-Iflight_controller/common
+-Iflight_controller/stm32f4/source
+-Iflight_controller/third_party/CMSIS/core
+-Iflight_controller/third_party/CMSIS/device
+-Iflight_controller/third_party/FreeRTOS/Source/CMSIS_RTOS
+-Iflight_controller/third_party/FreeRTOS/Source/include
+-Iflight_controller/third_party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+-Iflight_controller/third_party/FreeRTOS_CPP_Wrapper/include
+-Iflight_controller/third_party/HAL_Driver/Inc
