@@ -46,10 +46,9 @@ void FlightController::startThreads()
 {
     logInfo("Starting threads...");
 
-    _logger.Start(); // @todo: Work out why this has to go before other threads
-
     _controlThread.Start();
     _imu.Start();
+    _logger.Start();
 
     logInfo("All threads have been started");
 }

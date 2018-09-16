@@ -1,5 +1,5 @@
 #include "ControlThread.hpp"
-
+#include "stm32f4xx_hal.h"
 // ControlThread::ControlThread()
 // {
 
@@ -21,6 +21,8 @@ void ControlThread::Run()
     {
         logDebug("Tick");
         Delay(1000);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
+        
         switch (mode)
         {
         case Mode_None:

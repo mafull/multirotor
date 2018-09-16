@@ -34,7 +34,7 @@ void IMU::Run()
 
     for (;;)
     {
-
+        Delay(300);
     }
 
     logInfo("Finished");

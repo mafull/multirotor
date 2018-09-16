@@ -23,15 +23,13 @@
 /* Private functions ---------------------------------------------------------*/
 
 /******************************************************************************/
-/*            	  	    Processor Exceptions Handlers                         */
+/*                      Processor Exceptions Handlers                         */
 /******************************************************************************/
 
 /**
-  * @brief  This function handles SysTick Handler, but only if no RTOS defines it.
-  * @param  None
-  * @retval None
+  * @brief  This function handles SysTick Handler
   */
 void SysTick_Handler(void)
 {
-	osSystickHandler();
+    osSystickHandler(); // @todo: This uses cmsis_os.h but CPP stuff doesn't?
 }
