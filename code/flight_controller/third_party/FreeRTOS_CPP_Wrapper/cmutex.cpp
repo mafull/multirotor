@@ -69,6 +69,7 @@
 #include "mutex.hpp"
 
 
+#include "task.h"
 using namespace cpp_freertos;
 
 

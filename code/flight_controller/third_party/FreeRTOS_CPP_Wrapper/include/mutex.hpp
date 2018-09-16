@@ -86,6 +86,7 @@
 #endif
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include "task.h"
 
 namespace cpp_freertos {
 
