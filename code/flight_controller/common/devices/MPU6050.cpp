@@ -38,9 +38,10 @@ void MPU6050::calibrate()
 
     // Create new data to work on so we don't corrupt old data if calibration is not successful
     MPU6050_Calibration_Data_t calibrationData;
-    // The scale factor will be unchanged
+    // The scale factor and tempterature calibration data will be unchanged
     calibrationData.accelerometer.scaleFactor = _calibrationData.accelerometer.scaleFactor;
     calibrationData.gyroscope.scaleFactor = _calibrationData.gyroscope.scaleFactor;
+    calibrationData.temperatureSensor = _calibrationData.temperatureSensor;
 
     // Create a data structure to read data into during calibration
     MPU6050_Data_t mpu6050Data;
@@ -94,6 +95,7 @@ void MPU6050::initialise()
 {
     ASSERT(!_initialised);
 
+    // @todo: These probably shouldn't be asserts
     ASSERT(initWhoAmI());
     ASSERT(initPowerManagement());
     ASSERT(initSampleRate());
@@ -110,7 +112,7 @@ void MPU6050::update()
     const bool newData = readRawDataFromDevice();
     if (!newData) // No new data was read
     {
-        // Return without updating accelerometer/gyroscope data
+        // Return without updating device data
         return;
     }
 
