@@ -200,7 +200,7 @@ void HAL_MspInit(void)
     HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
 
-void HAL_UART_MspInit(UART_HandleTypeDef* huart)
+void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
     GPIO_InitTypeDef GPIO_InitStruct;
     if(huart->Instance==USART1)
@@ -224,6 +224,38 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 
         // @todo: Add to class? Like enabling EXTI for button press
         __HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
+    }
+}
+
+void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c)
+{
+    GPIO_InitTypeDef GPIO_InitStruct;
+    if(hi2c->Instance==I2C1)
+    {
+#define I2C1_ADDRESS_BMP280                             0xEC    // 0x76
+#define I2C1_ADDRESS_EEPROM                             0xA0    // 0x50
+#define I2C1_ADDRESS_HMC5883L                           0x3C    // 0x1E
+#define I2C1_ADDRESS_MPU6050                            0xD0    // 0x68
+#define I2C1_CLOCK_SPEED                                    400000
+#define I2C1_SCL_PIN                                            GPIO_PIN_6
+#define I2C1_SCL_PORT                                           GPIOB
+#define I2C1_SDA_PIN                                            GPIO_PIN_7
+#define I2C1_SDA_PORT                                           GPIOB
+        
+        __GPIOB_CLK_ENABLE();
+
+        GPIO_InitStruct.Pin = I2C1_SCL_PIN;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+        GPIO_InitStruct.Pull = GPIO_PULLUP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
+        HAL_GPIO_Init(I2C1_SCL_PORT, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = I2C1_SDA_PIN;
+        GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
+        HAL_GPIO_Init(I2C1_SDA_PORT, &GPIO_InitStruct);
+            
+        __I2C1_CLK_ENABLE();
     }
 }
 }

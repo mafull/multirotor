@@ -38,14 +38,14 @@ void STM32F4_I2C::writeMemory(
     uint8_t *data,
     uint8_t amount)
 {
-    ASSERT(HAL_I2C_Mem_Write(
-        &_handle,
-        (deviceAddress << 1),
-        memoryAddress,
-        1,
-        data,
-        1,
-        100) == HAL_OK);
+    HAL_StatusTypeDef result = HAL_I2C_Mem_Write(&_handle,
+                                                 (deviceAddress << 1),
+                                                 memoryAddress,
+                                                 1,
+                                                 data,
+                                                 amount,
+                                                 100);
+    // ASSERT(result == HAL_OK); // @todo: Handle a failed write
 }
 
 void STM32F4_I2C::readMemory(
@@ -54,12 +54,12 @@ void STM32F4_I2C::readMemory(
     uint8_t *data,
     uint8_t amount)
 {
-    ASSERT(HAL_I2C_Mem_Read(
-        &_handle,
-        (deviceAddress << 1),
-        memoryAddress,
-        1,
-        data,
-        amount,
-        100) == HAL_OK);
+    HAL_StatusTypeDef result = HAL_I2C_Mem_Read(&_handle,
+                                                (deviceAddress << 1),
+                                                memoryAddress,
+                                                1,
+                                                data,
+                                                amount,
+                                                100);
+    // ASSERT(result == HAL_OK); // @todo: Handle a failed read
 }

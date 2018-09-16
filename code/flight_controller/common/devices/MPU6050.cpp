@@ -96,12 +96,18 @@ void MPU6050::initialise()
     ASSERT(!_initialised);
 
     // @todo: These probably shouldn't be asserts
-    ASSERT(initWhoAmI());
-    ASSERT(initPowerManagement());
-    ASSERT(initSampleRate());
-    ASSERT(initConfig());
-    ASSERT(initGyroscopeConfig());
-    ASSERT(initAccelerometerConfig());
+    // ASSERT(initWhoAmI());
+    // ASSERT(initPowerManagement());
+    // ASSERT(initSampleRate());
+    // ASSERT(initConfig());
+    // ASSERT(initGyroscopeConfig());
+    // ASSERT(initAccelerometerConfig());
+    initWhoAmI();
+    initPowerManagement();
+    initSampleRate();
+    initConfig();
+    initGyroscopeConfig();
+    initAccelerometerConfig();
 
     _initialised = true;
 }
@@ -274,7 +280,7 @@ bool MPU6050::initPowerManagement()
                    &tmp,
                    1);
     // Delay(1000); @todo: Somehow add a delay here (+ check?)
-
+    for (int i = 0; i < 1e6; i++) {}
     // Set the time source to the (stable) PLL gyro-x reference
     tmp = 0x01;
     i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_PWR_MGMT_1,

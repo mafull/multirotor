@@ -1,5 +1,5 @@
 #include "IMU.hpp"
-
+#include "stm32f4xx_hal.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
 
@@ -28,13 +28,18 @@ void IMU::Run()
     logInfo("Running");
 
     // Initialise the peripherals
-    // _accelerometer.initialise();
+    _accelerometer.initialise();
     // _gyroscope.initialise();
     // _magnetometer.initialise();
 
+    logInfo("Initialised");
+
     for (;;)
     {
-        Delay(300);
+        Delay(10);
+        update();
+        logInfo("AccRoll: " + std::to_string(_data.accelerometer.roll));
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, _data.accelerometer.roll > 0 ? GPIO_PIN_SET : GPIO_PIN_RESET);
     }
 
     logInfo("Finished");
@@ -43,7 +48,7 @@ void IMU::Run()
 void IMU::update()
 {
     _accelerometer.update();
-    _gyroscope.update();
+    //_gyroscope.update();
     //_magnetometer.update();
 
 
@@ -59,18 +64,18 @@ void IMU::update()
     IMU_Data_Element_t dt = 0.1f;
 
     // GYRO-BASED ATTITUDE
-    _data.gyroscope.roll +=  gData.x * dt;
+    _data.gyroscope.roll  += gData.x * dt;
     _data.gyroscope.pitch += gData.y * dt;
-    _data.gyroscope.yaw +=   gData.z * dt;
+    _data.gyroscope.yaw   += gData.z * dt;
 
 
     // ACCELEROMETER-BASED ATTITUDE
     IMU_Data_Element_t ax2 = pow(aData.x, 2);
     IMU_Data_Element_t ay2 = pow(aData.y, 2);
     IMU_Data_Element_t az2 = pow(aData.z, 2);
-    _data.accelerometer.roll = -RAD2DEG(atan2(aData.y, sqrt(ax2 + az2)));
-    _data.accelerometer.pitch = RAD2DEG(atan2(aData.x, sqrt(ay2 + az2)));
-    _data.accelerometer.yaw =  -RAD2DEG(atan2(aData.x, sqrt(ax2 + az2)));
+    _data.accelerometer.roll  = -RAD2DEG(atan2(aData.y, sqrt(ax2 + az2)));
+    _data.accelerometer.pitch =  RAD2DEG(atan2(aData.x, sqrt(ay2 + az2)));
+    _data.accelerometer.yaw   = -RAD2DEG(atan2(aData.x, sqrt(ax2 + az2)));
 
     // TILT-COMPENSATED MAGNETOMETER-BASED HEADING
     // _data.magnetometer.heading
