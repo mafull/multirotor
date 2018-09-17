@@ -38,7 +38,7 @@ void FlightController::run()
     _initThread.Start();
     cpp_freertos::Thread::StartScheduler();
 
-    // ASSERT(true); // Should never get here
+    // ASSERT(false); // Should never get here
     _peripheralManager.uart(0).write("WHY AM I HERE"); // @todo: Remove this once ASSERT is working
 }
 

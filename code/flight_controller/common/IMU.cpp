@@ -2,6 +2,7 @@
 #include "stm32f4xx_hal.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include "Assert.hpp"
 
 const double pi = 3.14159265358979323846;
 const IMU_Data_Element_t rad2degMultiplier = 180.0 / pi;
@@ -27,6 +28,9 @@ void IMU::Run()
 {
     logInfo("Running");
 
+    Delay(3300);
+    logInfo("About to die");
+    ASSERT(false);
     // Initialise the peripherals
     _accelerometer.initialise();
     // _gyroscope.initialise();
@@ -39,7 +43,8 @@ void IMU::Run()
         Delay(10);
         update();
         logInfo("AccRoll: " + std::to_string(_data.accelerometer.roll));
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, _data.accelerometer.roll > 0 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, _data.accelerometer.roll > 0 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
     }
 
     logInfo("Finished");

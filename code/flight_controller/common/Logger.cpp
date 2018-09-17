@@ -1,5 +1,5 @@
 #include "Logger.hpp"
-
+#include "stm32f4xx_hal.h"
 #include <cstring>
 
 Logger::Logger(UART& uart) :
@@ -36,6 +36,8 @@ void Logger::Run()
 
         if (success) // Successfully removed an item from the queue
         {
+            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+
             // Created a formatted string from the packet
             auto formattedString = createFormattedStringFromPacket(receivedPacket);
 

@@ -23,6 +23,8 @@ void assert_callback(const char *file, int line);
 /**
  * The main entry point of the application
  */
+UART *uart;
+Logger *logger;
 
 int main()
 {
@@ -32,6 +34,8 @@ int main()
     // PERIPHERALS
     PeripheralManager peripheralManager;
     stm32f4_initialisePeripheralManager(peripheralManager);
+    
+    uart = &peripheralManager.uart(0);
 
     // 
     MPU6050 mpu6050(peripheralManager.i2c(0));
@@ -48,6 +52,7 @@ int main()
                                       gyroscope,
                                       magnetometer);
 
+    logger = &flightController._logger;
     // Attempt to initialise the instance
     //ASSERT(stm32f4_initialiseFlightController(flightController));
 
@@ -64,9 +69,13 @@ int main()
  */
 void assert_callback(const char *file, int line) // @todo: Do this
 {
+
     // Do something here
     // flightController.peripherals.uart(0).write("#");
-    // flightController.peripherals.uart(0).write("ASSERT: " + std::string(file) + std::to_string(line));
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET); // @todo: #define
+    //logger->Suspend();
+    uart->write("ASSERT: " + std::string(file) + ":" + std::to_string(line));
+    for (;;) { }
 }
 
 
