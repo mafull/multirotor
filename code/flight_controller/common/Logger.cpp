@@ -61,7 +61,7 @@ const std::string Logger::createFormattedStringFromPacket(const Log_Packet_t& pa
     snprintf(
         cStr,                  // Target string
         PACKET_CSTRING_LENGTH, // Max output string length
-        "%*.*s %.1u %.*s\n",   // Format string
+        "#%*.*s|%.1u|%.*s\n",  // Format string
         // Sender
         QUEUE_SENDER_LENGTH,   // Width (min length)
         QUEUE_SENDER_LENGTH,   // Precision (max length)

@@ -52,7 +52,7 @@ int main()
                                       gyroscope,
                                       magnetometer);
 
-    logger = &flightController._logger;
+    //logger = &flightController._logger;
     // Attempt to initialise the instance
     //ASSERT(stm32f4_initialiseFlightController(flightController));
 
