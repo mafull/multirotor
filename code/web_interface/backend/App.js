@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use("/api", routes);
 
 
-// Initialsie comms module
+// Initialise the comms module
 comms.init();
 
 
