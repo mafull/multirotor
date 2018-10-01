@@ -12,6 +12,8 @@ let logCountFromSenders = {};
 
 var allLogMessages = [];
 
+let wsHandle = null;
+
 
 const init = () => {
     SerialPort.list((err, avaialblePorts) => {
@@ -128,6 +130,9 @@ const processReceivedData = receivedData => {
         };
         storeLogMessage(logMessage);
 
+        // Send it via the web socket if initialised
+        wsHandle && wsHandle.send(JSON.stringify(logMessage));
+
         // Continue searching for log messages if any data remains
         remainingStr = matchResult[4];
     } while (remainingStr != "");
@@ -136,10 +141,20 @@ const processReceivedData = receivedData => {
 }
 
 
+const setWsHandle = handle => {
+    wsHandle = handle;
+}
+
+
 module.exports = {
     init: () => init(),
 
+    // Getters
     getLogMessages: sender => getLogMessages(sender),
 
+    // Setters
+    setWSHandle: handle => setWsHandle(handle),
+
+    // Data
     stats: { logCountFromSenders }
 };

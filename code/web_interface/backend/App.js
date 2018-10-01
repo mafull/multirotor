@@ -1,5 +1,6 @@
 import bodyParser   from "body-parser";
 import express      from "express";
+import expressWs    from "express-ws";
 
 import comms        from "./comms";
 
@@ -20,6 +21,22 @@ app.use("/api", routes);
 
 // Initialise the comms module
 comms.init();
+
+
+// Initialise express web sockets
+expressWs(app);
+app.ws("/api/ws/logger", (ws, req) => {
+    // Add the ws handle to the comms module
+    comms.setWSHandle(ws);
+    ws.on("close", () => {
+        comms.setWSHandle(null);
+    });
+
+    
+    ws.send("Hi friend!");
+
+
+});
 
 
 // Start the server
