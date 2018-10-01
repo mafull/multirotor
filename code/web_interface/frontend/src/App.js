@@ -8,7 +8,17 @@ class App extends Component {
             console.log("Opened ws connection to backend");
         }
         this.wsConnection.onmessage = message => {
-            console.log(`Received: ${message.data}`);
+            // Attempt to parse the message data into a JSON object
+            try {
+                const logMessage = JSON.parse(message.data);
+                const logMessageStr = `${logMessage.sender}|${logMessage.severity}|${logMessage.message}`;
+                console.log(logMessageStr);
+            } catch (e) {
+                // Failed to parse - the data is not an object
+                console.log(message.data);
+            } finally {
+                // Do nothing
+            }
         }
     }
 
