@@ -1,28 +1,9 @@
-import React, { Component }   from 'react';
+import React, { Component } from "react";
+
+import MainComponent        from "./components/MainComponent";
 
 
 class App extends Component {
-    componentDidMount() {
-        this.wsConnection = new WebSocket("ws://localhost:3001/api/ws/logger");
-        this.wsConnection.onopen = () => {
-            console.log("Opened ws connection to backend");
-        }
-        this.wsConnection.onmessage = message => {
-            // Attempt to parse the message data into a JSON object
-            try {
-                const logMessage = JSON.parse(message.data);
-                const logMessageStr = `${logMessage.sender}|${logMessage.severity}|${logMessage.message}`;
-                console.log(logMessageStr);
-            } catch (e) {
-                // Failed to parse - the data is not an object
-                console.log(message.data);
-            } finally {
-                // Do nothing
-            }
-        }
-    }
-
-
     render() {
         return (
             <div className="App">
@@ -32,6 +13,7 @@ class App extends Component {
                 <p className="App-intro">
                     To get started, edit <code>src/App.js</code> and save to reload.
                 </p>
+                <MainComponent />
             </div>
         );
     }

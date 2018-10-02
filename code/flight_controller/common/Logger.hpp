@@ -1,9 +1,9 @@
 #ifndef __LOGGER_HPP
 #define __LOGGER_HPP
 
-#define QUEUE_MESSAGE_LENGTH 128u
-#define QUEUE_SENDER_LENGTH 16u
-#define QUEUE_SIZE      20u
+#define QUEUE_MESSAGE_LENGTH    107u
+#define QUEUE_SENDER_LENGTH     20u
+#define QUEUE_SIZE              20u
 //#define QUEUE_ITEM_SIZE (sizeof(char) * QUEUE_MESSAGE_LENGTH)
 #define PACKET_CSTRING_LENGTH (sizeof(Log_Packet_t) + 3u)
 
