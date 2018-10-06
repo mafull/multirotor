@@ -6,8 +6,11 @@
 #define MPU6050_I2C_MEMORY_ADDRESS_CONFIG       0x1A
 #define MPU6050_I2C_MEMORY_ADDRESS_DATA         0x3B
 #define MPU6050_I2C_MEMORY_ADDRESS_GYRO_CONFIG  0x1B
+#define MPU6050_I2C_MEMORY_ADDRESS_INT_ENABLE   0x38
+#define MPU6050_I2C_MEMORY_ADDRESS_INT_PIN_CFG  0x37
 #define MPU6050_I2C_MEMORY_ADDRESS_PWR_MGMT_1   0x6B
 #define MPU6050_I2C_MEMORY_ADDRESS_SMPLRT_DIV   0x19
+#define MPU6050_I2C_MEMORY_ADDRESS_USER_CTRL    0x6A
 #define MPU6050_I2C_MEMORY_ADDRESS_WHO_AM_I     0x75
 
 #define MPU6050_CALIBRATION_DURATION_MS         5000u
@@ -102,12 +105,16 @@ void MPU6050::initialise()
     // ASSERT(initConfig());
     // ASSERT(initGyroscopeConfig());
     // ASSERT(initAccelerometerConfig());
+    // ASSERT(initInterruptPin());
+    // ASSERT(initI2CBypass());
     initWhoAmI();
     initPowerManagement();
     initSampleRate();
     initConfig();
     initGyroscopeConfig();
     initAccelerometerConfig();
+    initInterrupt();
+    initI2CBypass();
 
     _initialised = true;
 }
@@ -226,89 +233,202 @@ void MPU6050::i2cWriteMemory(I2C_Address_t memoryAddress,
                      amount);
 }
 
+/**
+ *  Write to the ACCEL_CONFIG register to configure the accelerometer full-scale
+ *  output range
+ *
+ *  @return true if successful
+ */
 bool MPU6050::initAccelerometerConfig()
 {
-    // @todo: Make this and the other init step functions cleaner (e.g. setBit())
-    // Set accelerometer range to +-4 g (AFS_SEL = 1)
-    uint8_t tmp;
-    i2cReadMemory(MPU6050_I2C_MEMORY_ADDRESS_ACCEL_CONFIG,
-                  &tmp,
-                  1);
-    tmp = (tmp & 0xE7) | ((uint8_t)1 << 3);
+    // Set accelerometer range to +-8 g (AFS_SEL = 2)
+    uint8_t tmp = ((uint8_t)2u << 3u);
     i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_ACCEL_CONFIG,
                    &tmp,
-                   1);
+                   1u);
 
     return true; // @todo: Add check
 }
 
+/**
+ *  Write to the CONFIG register to disable FSYNC input and configure the DLPF
+ *
+ *  @return true if successful
+ */
 bool MPU6050::initConfig()
 {
-    // Set DLPF setting @todo: What is the value?
-    uint8_t tmp;
-    i2cReadMemory(MPU6050_I2C_MEMORY_ADDRESS_CONFIG,
-                  &tmp,
-                  1);
-    tmp = (tmp & 0xFB) | (uint8_t)2;
+
+    /* Disable FSYNC and configure the DLPF for ~3ms delay
+        DLPF setting 2: 2 in bits 0-2
+        FSYNC disabled: 0 in bits 3-5
+    */
+    uint8_t tmp = 0x02u;
     i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_CONFIG,
                    &tmp,
-                   1);
+                   1u);
 
     return true; // @todo: Add check
 }
 
+/**
+ *  Write to the GYRO_CONFIG register to configure the gyroscope full-scale
+ *  output range
+ *
+ *  @return true if successful
+ */
 bool MPU6050::initGyroscopeConfig()
 {
     // Set gyroscope range to +-500 deg/s (FS_SEL = 1)
-    uint8_t tmp;
-    i2cReadMemory(MPU6050_I2C_MEMORY_ADDRESS_GYRO_CONFIG,
-                  &tmp,
-                  1);
-    tmp = (tmp & 0xE7) | ((uint8_t)1 << 3);
+    uint8_t tmp = ((uint8_t)1u << 3u);
     i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_GYRO_CONFIG,
                    &tmp,
-                   1);
+                   1u);
 
     return true; // @todo: Add check
 }
 
+/**
+ *  Write to the INT_PIN_CFG and USER_CTRL registers to enable the I2C bypass to
+ *  allow the host MCU to communicate with auxiliary devices
+ *
+ *  @return true if successful
+ */
+bool MPU6050::initI2CBypass()
+{
+    uint8_t tmp;
+
+    // INT_PIN_CFG
+    // Read the current value so as not to change any other settings
+    i2cReadMemory(MPU6050_I2C_MEMORY_ADDRESS_INT_PIN_CFG,
+                  &tmp,
+                  1u);
+
+    // Enable the I2C bypass
+    tmp |= ((uint8_t)1u << 1u);
+    i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_INT_PIN_CFG,
+                   &tmp,
+                   1u);
+
+    // USER_CTRL
+    // Same as before
+    i2cReadMemory(MPU6050_I2C_MEMORY_ADDRESS_USER_CTRL,
+                  &tmp,
+                  1u);
+
+    // Disable I2C master mode
+    tmp &= ~((uint8_t)1u << 5u); // &= ~ not ^= in case the bit is not pre-set
+    i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_USER_CTRL,
+                   &tmp,
+                   1u);
+
+
+    return true; // @todo: Add check
+}
+
+/**
+ *  Write to the INT_PIN_CFG and INT_ENABLE registers to configure the interrupt
+ *  pin and enable the interrupt
+ *
+ *  @return true if successful
+ */
+bool MPU6050::initInterrupt()
+{
+    uint8_t tmp;
+
+    // INT_PIN_CFG
+    // Read the current value so as not to change any other settings
+    i2cReadMemory(MPU6050_I2C_MEMORY_ADDRESS_INT_PIN_CFG,
+                  &tmp,
+                  1u);
+
+    // Configure the interrupt pin
+    tmp |= ((uint8_t)1u << 4u); // Interrupt status bits cleared after any read
+    i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_INT_PIN_CFG,
+                   &tmp,
+                   1u);
+
+    // INT_ENABLE
+    // Enable the data ready interrupt
+    tmp |= ((uint8_t)1u << 0u);
+    i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_INT_ENABLE,
+                   &tmp,
+                   1u);
+
+    return true; // @todo: Add check
+}
+
+/**
+ *  Write to the PWR_MGMT_1 register to reset the device, wake it up and
+ *  configure the clock source
+ *
+ *  @return true if successful
+ */
 bool MPU6050::initPowerManagement()
 {
-    // Wake up the device and wait for the PLL to get established @todo: Make func. desc.
-    uint8_t tmp = 0x00;
+    uint8_t tmp;
+    
+    // Reset and wake up the device
+    tmp = ((uint8_t)1u << 7u); // @todo: Make BIT SET macro/func
     i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_PWR_MGMT_1,
                    &tmp,
-                   1);
-    // Delay(1000); @todo: Somehow add a delay here (+ check?)
-    for (int i = 0; i < 1e6; i++) {}
-    // Set the time source to the (stable) PLL gyro-x reference
-    tmp = 0x01;
+                   1u);
+    
+    // Wait for the PLL to get established (gyro to stabilise)
+    // Delay(50); @todo: Somehow add a delay here (+ check?)
+    for (int i = 0u; i < 1e6; i++) {}
+
+    // Set the time source to the (stable) PLL gyro-z reference
+    tmp = 0x03u;
     i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_PWR_MGMT_1,
                    &tmp,
-                   1);
+                   1u);
 
     return true; // @todo: Add check
 }
 
+/**
+ *  Write to the SMPLRT_DIV register to configure the sample rate
+ *
+ *  @return true if successful
+ */
 bool MPU6050::initSampleRate()
 {
+    /* From the docs:
+        Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV)
+        so
+        SMPLRT_DIV = (Gyroscope Output Rate / Sample Rate) - 1
+
+       Gyro rate is 1kHz when DLPF enabled
+       so
+       Sample rate of 1kHz:
+        SMPLRT_DIV = (1000 / 1000) - 1
+        SMPLRT_DIV = 0
+    */
+
     // Set sample rate to 1kHz
-    uint8_t tmp = 7;
+    uint8_t tmp = 0x00u;
     i2cWriteMemory(MPU6050_I2C_MEMORY_ADDRESS_SMPLRT_DIV,
                    &tmp,
-                   1);
+                   1u);
 
     return true; // @todo: Add check
 }
 
+/**
+ *  Read from the WHO_AM_I register to check that communication is working
+ *
+ *  @return true if successful
+ */
 bool MPU6050::initWhoAmI()
 {
-    // Check the WHO_AM_I register @todo: Make func. desc.
+    // Read the value of WHO_AM_I
     uint8_t tmp;
     i2cReadMemory(MPU6050_I2C_MEMORY_ADDRESS_WHO_AM_I,
                   &tmp,
-                  1);
-    return (tmp == 0x68);
+                  1u);
+
+    // Check that it matches the device address
+    return (tmp == MPU6050_I2C_DEVICE_ADDRESS);
 }
 
 

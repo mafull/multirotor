@@ -153,11 +153,11 @@ void stm32f4_initialiseI2C()
     i2cInit.NoStretchMode   = I2C_NOSTRETCH_DISABLED;
 
     // Set the clock speed for I2C1 and update the configuration
-    init.ClockSpeed = I2C1_CLOCK_SPEED;
-    i2c1.setConfiguration(I2C1, init);
+    i2cInit.ClockSpeed = I2C1_CLOCK_SPEED;
+    i2c1.setConfiguration(I2C1, i2cInit);
 
-    DMA_InitTypeDef dmaInit;
-    dmaInit.
+    // DMA_InitTypeDef dmaInit;
+    // dmaInit.
 
     // Initialise the instance
     i2c1.initialise();

@@ -113,9 +113,12 @@ private:
                         uint8_t *data,
                         uint8_t amount);
 
+    // @todo: Rename these
     bool initAccelerometerConfig();
     bool initConfig();
     bool initGyroscopeConfig();
+    bool initI2CBypass();
+    bool initInterrupt();
     bool initPowerManagement();
     bool initSampleRate();
     bool initWhoAmI();
