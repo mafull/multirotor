@@ -19,6 +19,7 @@ static STM32F4_UART uart2;
 
 void SystemClock_Config(void)
 {
+    // @todo: Clean up/comment
     RCC_OscInitTypeDef RCC_OscInitStruct;
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
 
@@ -128,13 +129,13 @@ void stm32f4_initialiseDigitalOutput()
     __GPIOD_CLK_ENABLE(); // @todo: #define
 
     // Configure GPIO pins
+    GPIO_InitStruct.Mode    = GPIO_MODE_OUTPUT_PP;
     // GPIO_InitStruct.Pin = GPIO_PIN_1; // @todo: #define
     GPIO_InitStruct.Pin     = GPIO_PIN_1 |
                               GPIO_PIN_12 |
                               GPIO_PIN_13 |
                               GPIO_PIN_14 |
                               GPIO_PIN_15;
-    GPIO_InitStruct.Mode    = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull    = GPIO_NOPULL;
     GPIO_InitStruct.Speed   = GPIO_SPEED_LOW;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct); // @todo: #define
@@ -142,25 +143,33 @@ void stm32f4_initialiseDigitalOutput()
 
 void stm32f4_initialiseI2C()
 {
-    // Create a common initialisation structure
+    // Create a common I2C initialisation structure
     I2C_InitTypeDef i2cInit;
-    i2cInit.DutyCycle       = I2C_DUTYCYCLE_2;
-    i2cInit.OwnAddress1     = 0;
     i2cInit.AddressingMode  = I2C_ADDRESSINGMODE_7BIT;
     i2cInit.DualAddressMode = I2C_DUALADDRESS_DISABLED;
-    i2cInit.OwnAddress2     = 0;
+    i2cInit.DutyCycle       = I2C_DUTYCYCLE_2;
     i2cInit.GeneralCallMode = I2C_GENERALCALL_DISABLED;
     i2cInit.NoStretchMode   = I2C_NOSTRETCH_DISABLED;
-
+    i2cInit.OwnAddress1     = 0;
+    i2cInit.OwnAddress2     = 0;
+    
     // Set the clock speed for I2C1 and update the configuration
     i2cInit.ClockSpeed = I2C1_CLOCK_SPEED;
     i2c1.setConfiguration(I2C1, i2cInit);
 
-    // DMA_InitTypeDef dmaInit;
-    // dmaInit.
-
     // Initialise the instance
     i2c1.initialise();
+
+
+
+    // Enable DMA1 clock
+    __DMA1_CLK_ENABLE();
+
+    // Enable interrupts for DMA1 streams 0 and 6
+    HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
+    HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
 }
 
 void stm32f4_initialisePWMInput()
@@ -175,7 +184,7 @@ void stm32f4_initialisePWMOutput()
 
 void stm32f4_initialiseUART()
 {
-    // Create a common initialisation structure
+    // Create a common UART initialisation structure
     UART_InitTypeDef uartInit;
     uartInit.WordLength     = UART_WORDLENGTH_8B;
     uartInit.StopBits       = UART_STOPBITS_1;
@@ -199,6 +208,58 @@ void stm32f4_initialiseUART()
 
 // CALLBACKS
 extern "C" {
+void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c)
+{
+    GPIO_InitTypeDef GPIO_InitStruct;
+    if(hi2c->Instance==I2C1)
+    {
+        __GPIOB_CLK_ENABLE();
+
+        GPIO_InitStruct.Pin         = I2C1_SCL_PIN;
+        GPIO_InitStruct.Mode        = GPIO_MODE_AF_OD;
+        GPIO_InitStruct.Pull        = GPIO_PULLUP;
+        GPIO_InitStruct.Speed       = GPIO_SPEED_HIGH;
+        GPIO_InitStruct.Alternate   = GPIO_AF4_I2C1;
+        HAL_GPIO_Init(I2C1_SCL_PORT, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin         = I2C1_SDA_PIN;
+        GPIO_InitStruct.Alternate   = GPIO_AF4_I2C1;
+        HAL_GPIO_Init(I2C1_SDA_PORT, &GPIO_InitStruct);
+            
+        __I2C1_CLK_ENABLE();
+
+
+
+
+
+        // Create a common DMA initialisation structure
+        DMA_HandleTypeDef dmahandle;
+        dmaHandle.Init.FIFOMode               = DMA_FIFOMODE_DISABLE;
+        dmaHandle.Init.MemDataAlignment       = DMA_MDATAALIGN_BYTE;
+        dmaHandle.Init.MemInc                 = DMA_MINC_ENABLE;
+        dmaHandle.Init.Mode                   = DMA_NORMAL;
+        dmaHandle.Init.PeriphDataAlignment    = DMA_PDATAALIGN_BYTE;
+        dmaHandle.Init.PeriphInc              = DMA_PINC_ENABLE;
+        dmaHandle.Init.Priority               = DMA_PRIORITY_HIGH;
+
+        // Set the channel and direction for I2C1 RX and update the configuration
+        dmaHandle.Init.Direction              = DMA_PERIPH_TO_MEMORY;
+        dmaHandle.Init.Channel                = DMA_CHANNEL_1;
+        // @todo: Handle this like the I2C/UART modules
+        dmaHandle.Instance                    = DMA1_Stream0;
+        HAL_DMA_INIT(&dmaHandle);
+        __HAL_LINKDMA(hi2c, hdmarx, dmaInit);
+
+        // Set the channel and direction for I2C1 TX and update the configuration
+        dmaHandle.Init.Direction              = DMA_MEMORY_TO_PERIPH;
+        dmaHandle.Init.Channel                = DMA_CHANNEL_1;
+        // @todo: Handle this like the I2C/UART modules
+        dmaHandle.Instance                    = DMA1_Stream6;
+        HAL_DMA_INIT(&dmaHandle);
+        __HAL_LINKDMA(hi2c, hdmatx, dmaInit);
+    }
+}
+
 void HAL_MspInit(void)
 {
     HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
@@ -235,25 +296,4 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
     }
 }
 
-void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c)
-{
-    GPIO_InitTypeDef GPIO_InitStruct;
-    if(hi2c->Instance==I2C1)
-    {
-        __GPIOB_CLK_ENABLE();
-
-        GPIO_InitStruct.Pin         = I2C1_SCL_PIN;
-        GPIO_InitStruct.Mode        = GPIO_MODE_AF_OD;
-        GPIO_InitStruct.Pull        = GPIO_PULLUP;
-        GPIO_InitStruct.Speed       = GPIO_SPEED_HIGH;
-        GPIO_InitStruct.Alternate   = GPIO_AF4_I2C1;
-        HAL_GPIO_Init(I2C1_SCL_PORT, &GPIO_InitStruct);
-
-        GPIO_InitStruct.Pin         = I2C1_SDA_PIN;
-        GPIO_InitStruct.Alternate   = GPIO_AF4_I2C1;
-        HAL_GPIO_Init(I2C1_SDA_PORT, &GPIO_InitStruct);
-            
-        __I2C1_CLK_ENABLE();
-    }
-}
 }
