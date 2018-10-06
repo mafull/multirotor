@@ -129,32 +129,35 @@ void stm32f4_initialiseDigitalOutput()
 
     // Configure GPIO pins
     // GPIO_InitStruct.Pin = GPIO_PIN_1; // @todo: #define
-    GPIO_InitStruct.Pin = GPIO_PIN_1 |
-                          GPIO_PIN_12 |
-                          GPIO_PIN_13 |
-                          GPIO_PIN_14 |
-                          GPIO_PIN_15;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Pin     = GPIO_PIN_1 |
+                              GPIO_PIN_12 |
+                              GPIO_PIN_13 |
+                              GPIO_PIN_14 |
+                              GPIO_PIN_15;
+    GPIO_InitStruct.Mode    = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull    = GPIO_NOPULL;
+    GPIO_InitStruct.Speed   = GPIO_SPEED_LOW;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct); // @todo: #define
 }
 
 void stm32f4_initialiseI2C()
 {
     // Create a common initialisation structure
-    I2C_InitTypeDef init;
-    init.DutyCycle = I2C_DUTYCYCLE_2;
-    init.OwnAddress1 = 0;
-    init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-    init.DualAddressMode = I2C_DUALADDRESS_DISABLED;
-    init.OwnAddress2 = 0;
-    init.GeneralCallMode = I2C_GENERALCALL_DISABLED;
-    init.NoStretchMode = I2C_NOSTRETCH_DISABLED;
+    I2C_InitTypeDef i2cInit;
+    i2cInit.DutyCycle       = I2C_DUTYCYCLE_2;
+    i2cInit.OwnAddress1     = 0;
+    i2cInit.AddressingMode  = I2C_ADDRESSINGMODE_7BIT;
+    i2cInit.DualAddressMode = I2C_DUALADDRESS_DISABLED;
+    i2cInit.OwnAddress2     = 0;
+    i2cInit.GeneralCallMode = I2C_GENERALCALL_DISABLED;
+    i2cInit.NoStretchMode   = I2C_NOSTRETCH_DISABLED;
 
     // Set the clock speed for I2C1 and update the configuration
     init.ClockSpeed = I2C1_CLOCK_SPEED;
     i2c1.setConfiguration(I2C1, init);
+
+    DMA_InitTypeDef dmaInit;
+    dmaInit.
 
     // Initialise the instance
     i2c1.initialise();
@@ -173,21 +176,21 @@ void stm32f4_initialisePWMOutput()
 void stm32f4_initialiseUART()
 {
     // Create a common initialisation structure
-    UART_InitTypeDef init;
-    init.WordLength = UART_WORDLENGTH_8B;
-    init.StopBits= UART_STOPBITS_1;
-    init.Parity = UART_PARITY_NONE;
-    init.Mode = UART_MODE_TX_RX;
-    init.HwFlowCtl = UART_HWCONTROL_NONE;
-    init.OverSampling = UART_OVERSAMPLING_16;
+    UART_InitTypeDef uartInit;
+    uartInit.WordLength     = UART_WORDLENGTH_8B;
+    uartInit.StopBits       = UART_STOPBITS_1;
+    uartInit.Parity         = UART_PARITY_NONE;
+    uartInit.Mode           = UART_MODE_TX_RX;
+    uartInit.HwFlowCtl      = UART_HWCONTROL_NONE;
+    uartInit.OverSampling   = UART_OVERSAMPLING_16;
 
     // Set the baud rate for UART1 and update the configuration
-    init.BaudRate = UART1_BAUD_RATE;
-    uart1.setConfiguration(USART1, init);
+    uartInit.BaudRate       = UART1_BAUD_RATE;
+    uart1.setConfiguration(USART1, uartInit);
 
     // Set the baud rate for UART2 and update the configuration
-    init.BaudRate = UART2_BAUD_RATE;
-    uart2.setConfiguration(USART2, init);
+    uartInit.BaudRate       = UART2_BAUD_RATE;
+    uart2.setConfiguration(USART2, uartInit);
 
     // Initialise both instances
     uart1.initialise();
@@ -213,15 +216,15 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
         __USART1_CLK_ENABLE();
         __GPIOA_CLK_ENABLE(); // @todo: Make this dependent on port
   
-        GPIO_InitStruct.Pin = UART1_RX_PIN;
-        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
-        GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-        GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+        GPIO_InitStruct.Pin         = UART1_RX_PIN;
+        GPIO_InitStruct.Mode        = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull        = GPIO_NOPULL;
+        GPIO_InitStruct.Speed       = GPIO_SPEED_HIGH;
+        GPIO_InitStruct.Alternate   = GPIO_AF7_USART1;
         HAL_GPIO_Init(UART1_RX_PORT, &GPIO_InitStruct);
 
-        GPIO_InitStruct.Pin = UART1_TX_PIN;
-        GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+        GPIO_InitStruct.Pin         = UART1_TX_PIN;
+        GPIO_InitStruct.Alternate   = GPIO_AF7_USART1;
         HAL_GPIO_Init(UART1_TX_PORT, &GPIO_InitStruct);
 
         HAL_NVIC_SetPriority(USART1_IRQn, 1, 1);
@@ -237,27 +240,17 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c)
     GPIO_InitTypeDef GPIO_InitStruct;
     if(hi2c->Instance==I2C1)
     {
-#define I2C1_ADDRESS_BMP280                             0xEC    // 0x76
-#define I2C1_ADDRESS_EEPROM                             0xA0    // 0x50
-#define I2C1_ADDRESS_HMC5883L                           0x3C    // 0x1E
-#define I2C1_ADDRESS_MPU6050                            0xD0    // 0x68
-#define I2C1_CLOCK_SPEED                                    400000
-#define I2C1_SCL_PIN                                            GPIO_PIN_6
-#define I2C1_SCL_PORT                                           GPIOB
-#define I2C1_SDA_PIN                                            GPIO_PIN_7
-#define I2C1_SDA_PORT                                           GPIOB
-        
         __GPIOB_CLK_ENABLE();
 
-        GPIO_InitStruct.Pin = I2C1_SCL_PIN;
-        GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-        GPIO_InitStruct.Pull = GPIO_PULLUP;
-        GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-        GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
+        GPIO_InitStruct.Pin         = I2C1_SCL_PIN;
+        GPIO_InitStruct.Mode        = GPIO_MODE_AF_OD;
+        GPIO_InitStruct.Pull        = GPIO_PULLUP;
+        GPIO_InitStruct.Speed       = GPIO_SPEED_HIGH;
+        GPIO_InitStruct.Alternate   = GPIO_AF4_I2C1;
         HAL_GPIO_Init(I2C1_SCL_PORT, &GPIO_InitStruct);
 
-        GPIO_InitStruct.Pin = I2C1_SDA_PIN;
-        GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
+        GPIO_InitStruct.Pin         = I2C1_SDA_PIN;
+        GPIO_InitStruct.Alternate   = GPIO_AF4_I2C1;
         HAL_GPIO_Init(I2C1_SDA_PORT, &GPIO_InitStruct);
             
         __I2C1_CLK_ENABLE();
