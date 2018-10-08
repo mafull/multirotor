@@ -22,6 +22,7 @@ class Peripheral
 {
 public:
     virtual void initialise() = 0;
+    virtual bool isInitialised() { return _initialised; }
 
 protected:
     Peripheral(Peripheral_Type_t type) :
