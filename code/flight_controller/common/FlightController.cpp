@@ -70,13 +70,6 @@ void FlightController::Init_Thread::Run()
     logInfo("Running");
 
     _parent.startThreads();
-    // uint8_t tmp = 0x00;
-    // _parent._peripheralManager.i2c(0).readMemory(0x68,
-    //            0x75,
-    //            &tmp,
-    //            1);
-
-    // logDebug("WHO_AM_I: " + std::to_string(tmp));
 
     logInfo("Finished");
 }

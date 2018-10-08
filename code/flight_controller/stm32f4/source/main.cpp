@@ -18,7 +18,8 @@
 #include "Assert.hpp"
 #include "FlightController.hpp"
 
-void assert_callback(const char *file, int line);
+void assert_callback(const char *file, unsigned int line);
+assert_funcptr_t assert_failed_TODO = &assert_callback;
 
 /**
  * The main entry point of the application
@@ -26,16 +27,17 @@ void assert_callback(const char *file, int line);
 UART *uart;
 Logger *logger;
 
+PeripheralManager peripheralManager;
+
 int main()
 {
     // Initialise the assert handler
-    assert_init(&assert_callback);
+    // assert_init(&assert_callback); // @todo: Maybe re-implement this
 
     // PERIPHERALS
-    PeripheralManager peripheralManager;
+    // PeripheralManager peripheralManager;
     stm32f4_initialisePeripheralManager(peripheralManager);
-    
-    uart = &peripheralManager.uart(0);
+    uart = &peripheralManager.uart(0); // @todo: Don't like this
 
     // 
     MPU6050 mpu6050(peripheralManager.i2c(0));
@@ -67,14 +69,14 @@ int main()
  * @param[in] file The filename where the assert failed
  * @param[in] line The line number where the assert failed
  */
-void assert_callback(const char *file, int line) // @todo: Do this
-{
 
-    // Do something here
-    // flightController.peripherals.uart(0).write("#");
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET); // @todo: #define
+void assert_callback(const char *file, unsigned int line) // @todo: Do this
+{
     //logger->Suspend();
-    uart->write("ASSERT: " + std::string(file) + ":" + std::to_string(line));
+
+    // Switch on the ASSERT LED and print the file name and line number
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET); // @todo: #define
+    uart->write("\nASSERT: " + std::string(file) + ":" + std::to_string(line) + "\n");
     for (;;) { }
 }
 

@@ -20,7 +20,7 @@ void ControlThread::Run()
     for (;;)
     {
         logDebug("Tick");
-        Delay(1000);
+        Delay(10e3);
         HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
         
         switch (mode)

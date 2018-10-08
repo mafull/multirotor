@@ -20,9 +20,8 @@ using Mode_t =
     };
 
 
-
-
-class ControlThread : private Loggable, public cpp_freertos::Thread
+class ControlThread : private Loggable,
+                      public cpp_freertos::Thread
 {
 public:
     ControlThread(Logger& logger) :
