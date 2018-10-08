@@ -29,6 +29,10 @@ Logger *logger;
 
 PeripheralManager peripheralManager;
 
+MPU6050 *mpu6050;
+HMC5883L *hmc5883l;
+FlightController *flightController;
+
 int main()
 {
     // Initialise the assert handler
@@ -40,16 +44,19 @@ int main()
     uart = &peripheralManager.uart(0); // @todo: Don't like this
 
     // 
-    MPU6050 mpu6050(peripheralManager.i2c(0));
-    HMC5883L hmc5883l(peripheralManager.i2c(0));
+    // MPU6050 mpu6050(peripheralManager.i2c(0));
+    // HMC5883L hmc5883l(peripheralManager.i2c(0));
+    mpu6050 = new MPU6050(peripheralManager.i2c(0));
+    hmc5883l = new HMC5883L(peripheralManager.i2c(0));
     
     // 
-    Accelerometer& accelerometer = mpu6050.accelerometer;
-    Gyroscope& gyroscope = mpu6050.gyroscope;
-    Magnetometer& magnetometer = hmc5883l;
+    Accelerometer& accelerometer = mpu6050->accelerometer;
+    Gyroscope& gyroscope = mpu6050->gyroscope;
+    Magnetometer& magnetometer = *hmc5883l;
 
     // Create an instance of FlightController
-    FlightController flightController(peripheralManager,
+    // FlightController flightController(peripheralManager,
+    flightController = new FlightController(peripheralManager,
                                       accelerometer,
                                       gyroscope,
                                       magnetometer);
@@ -59,7 +66,8 @@ int main()
     //ASSERT(stm32f4_initialiseFlightController(flightController));
 
     // Run the flight controller
-    flightController.run();
+    // flightController.run();
+    flightController->run();
 
     return 0;
 }
