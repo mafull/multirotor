@@ -41,7 +41,7 @@ const init = () => {
             // Define the "data" callback
             multirotorSerialPort.on("data", (receivedData) => {
                 // Print the raw received data
-                //process.stdout.write(receivedData);
+                process.stdout.write(receivedData);
 
                 // Process the data and print updated stats if there are new messages
                 if (processReceivedData(receivedData)) {
