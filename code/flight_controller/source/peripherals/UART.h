@@ -15,8 +15,8 @@
  */
 typedef enum UART_Instance_e
 {
-    UART_Instance_UART1 = 0u,
-    UART_Instance_UART2,
+    UART1 = 0u,
+    UART2,
 
     UART_Instance_MAX
 } UART_Instance_t;

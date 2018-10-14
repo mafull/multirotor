@@ -1,4 +1,3 @@
-#if 0
 /**
   ******************************************************************************
   * @file    stm32f4xx_it.c
@@ -41,4 +40,3 @@ void SysTick_Handler(void)
 	osSystickHandler();
 #endif
 }
-#endif
