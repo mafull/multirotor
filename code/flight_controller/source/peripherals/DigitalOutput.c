@@ -26,6 +26,7 @@ DigitalOutput_State_t DigitalOutput_GetState(DigitalOutput_Instance_t instance)
                 == GPIO_PIN_SET) ? On : Off;
 }
 
+
 bool DigitalOutput_Initialise(DigitalOutput_Instance_t instance)
 {
     ENSURE(instance < DigitalOutput_Instance_MAX);
@@ -45,6 +46,7 @@ bool DigitalOutput_Initialise(DigitalOutput_Instance_t instance)
 
     return handle->initialised;
 }
+
 
 bool DigitalOutput_SetState(DigitalOutput_Instance_t instance,
                             DigitalOutput_State_t newState)
