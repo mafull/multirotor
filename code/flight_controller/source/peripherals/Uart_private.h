@@ -8,7 +8,7 @@
 
 
 // --- Public header ---
-#include "peripherals/UART.h"
+#include "peripherals/Uart.h"
 
 // --- Library includes ---
 // HAL_Driver
@@ -32,13 +32,13 @@
 /**
  *
  */
-typedef struct UART_Handle_s
+typedef struct Uart_Handle_s
 {
-    UART_Instance_t instance;
+    Uart_Instance_t instance;
     bool initialised;
 
     UART_HandleTypeDef halHandle;
-} UART_Handle_t;
+} Uart_Handle_t;
 
 
 /******************************************************************************
@@ -48,7 +48,7 @@ typedef struct UART_Handle_s
 /**
  *
  */
-extern UART_Handle_t UART_handles[UART_Instance_MAX];
+extern Uart_Handle_t Uart_handles[Uart_Instance_MAX];
 
 
 #endif // __UART_PRIVATE_H

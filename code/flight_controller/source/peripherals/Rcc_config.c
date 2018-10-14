@@ -1,6 +1,6 @@
 // --- Private header ---
 #define RCC_PRIVATE
-    #include "RCC_private.h"
+    #include "peripherals/Rcc_private.h"
 #undef RCC_PRIVATE
 
 
@@ -8,7 +8,7 @@
   Private Data
  ******************************************************************************/
 
-RCC_ClkInitTypeDef RCC_clkInitStruct =
+RCC_ClkInitTypeDef Rcc_clkInitStruct =
     {
         .AHBCLKDivider  = RCC_SYSCLK_DIV1,
         .APB1CLKDivider = RCC_HCLK_DIV4,
@@ -19,9 +19,9 @@ RCC_ClkInitTypeDef RCC_clkInitStruct =
         .SYSCLKSource   = RCC_SYSCLKSOURCE_PLLCLK
     };
 
-extern uint32_t RCC_flashLatency = FLASH_LATENCY_5;
+uint32_t Rcc_flashLatency = FLASH_LATENCY_5;
 
-extern RCC_OscInitTypeDef RCC_oscInitStruct = 
+RCC_OscInitTypeDef Rcc_oscInitStruct =
     {
         .HSEState = RCC_HSE_ON,
         .OscillatorType = RCC_OSCILLATORTYPE_HSE,

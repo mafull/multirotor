@@ -8,7 +8,7 @@
 
 
 // --- Public header ---
-#include "peripherals/RCC.h"
+#include "peripherals/Rcc.h"
 
 // --- Library includes ---
 // HAL_Driver
@@ -22,17 +22,17 @@
 /**
  *
  */
-extern RCC_ClkInitTypeDef RCC_clkInitStruct;
+extern RCC_ClkInitTypeDef Rcc_clkInitStruct;
 
 /**
  *
  */
-extern uint32_t RCC_flashLatency;
+extern uint32_t Rcc_flashLatency;
 
 /**
  *
  */
-extern RCC_OscInitTypeDef RCC_oscInitStruct;
+extern RCC_OscInitTypeDef Rcc_oscInitStruct;
 
 
 #endif // __RCC_PRIVATE_H

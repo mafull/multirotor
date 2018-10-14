@@ -1,9 +1,9 @@
 // --- Public header ---
-#include "peripherals/RCC.h"
+#include "peripherals/Rcc.h"
 
 // --- Private header ---
 #define RCC_PRIVATE
-    #include "peripherals/RCC_private.h"
+    #include "peripherals/Rcc_private.h"
 #undef RCC_PRIVATE
 
 
@@ -14,7 +14,7 @@
   Public Function Implementations
  ******************************************************************************/
 
-bool RCC_Initialise(void)
+bool Rcc_Initialise(void)
 {
     ENSURE(true); // @todo: Add check for not already initialised
 
@@ -25,8 +25,8 @@ bool RCC_Initialise(void)
     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
     // @todo: Use return values == HAL_OK
-    HAL_RCC_OscConfig(&RCC_oscInitStruct);
-    HAL_RCC_ClockConfig(&RCC_clkInitStruct, RCC_flashLatency);
+    HAL_RCC_OscConfig(&Rcc_oscInitStruct);
+    HAL_RCC_ClockConfig(&Rcc_clkInitStruct, Rcc_flashLatency);
 
     HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000u); // @todo: Make setting
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);

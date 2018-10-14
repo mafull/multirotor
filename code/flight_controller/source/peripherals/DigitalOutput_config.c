@@ -1,6 +1,6 @@
 // --- Private header ---
 #define DIGITAL_OUTPUT_PRIVATE
-    #include "DigitalOutput_private.h"
+    #include "peripherals/DigitalOutput_private.h"
 #undef DIGITAL_OUTPUT_PRIVATE
 
 
@@ -11,7 +11,7 @@
 DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX] = 
     {
         {
-            .instance   = AssertLED,
+            .instance   = AssertLed,
 
             .initStruct = 
             {
@@ -23,7 +23,7 @@ DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX] =
             .port       = GPIOD
         },
         {
-            .instance   = ControlLED,
+            .instance   = ControlLed,
 
             .initStruct = 
             {
@@ -35,7 +35,7 @@ DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX] =
             .port       = GPIOD
         },
         {
-            .instance   = IMULED,
+            .instance   = IMULed,
 
             .initStruct = 
             {
@@ -47,7 +47,7 @@ DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX] =
             .port       = GPIOD
         },
         {
-            .instance   = LoggerLED,
+            .instance   = LoggerLed,
 
             .initStruct = 
             {
@@ -59,7 +59,7 @@ DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX] =
             .port       = GPIOD
         },
         {
-            .instance   = UnusedLED,
+            .instance   = UnusedLed,
 
             .initStruct = 
             {
