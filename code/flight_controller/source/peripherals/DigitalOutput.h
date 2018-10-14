@@ -15,11 +15,11 @@
  */
 typedef enum DigitalOutput_Instance_e
 {
-    AssertLED = 0u,
-    ControlLED,
-    IMULED,
-    LoggerLED,
-    UnusedLED,
+    AssertLed = 0u,
+    ControlLed,
+    IMULed,
+    LoggerLed,
+    UnusedLed,
     
     DigitalOutput_Instance_MAX
 } DigitalOutput_Instance_t;

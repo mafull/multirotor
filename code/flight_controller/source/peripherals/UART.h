@@ -13,13 +13,13 @@
 /**
  *
  */
-typedef enum UART_Instance_e
+typedef enum Uart_Instance_e
 {
-    UART1 = 0u,
-    UART2,
+    Uart1 = 0u,
+    Uart2,
 
-    UART_Instance_MAX
-} UART_Instance_t;
+    Uart_Instance_MAX
+} Uart_Instance_t;
 
 
 /******************************************************************************
@@ -29,12 +29,12 @@ typedef enum UART_Instance_e
 /**
  *
  */
-bool UART_Initialise(UART_Instance_t instance);
+bool Uart_Initialise(Uart_Instance_t instance);
 
 /**
  *
  */
-bool UART_Write(UART_Instance_t instance, char *message);
+bool Uart_Write(Uart_Instance_t instance, char *message);
 
 
 #endif // __UART_H

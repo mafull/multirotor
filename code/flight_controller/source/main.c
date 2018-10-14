@@ -2,8 +2,9 @@
 // #include "FlightController.h"
 
 #include "peripherals/DigitalOutput.h"
-#include "peripherals/RCC.h"
-#include "peripherals/UART.h"
+#include "peripherals/I2c.h"
+#include "peripherals/Rcc.h"
+#include "peripherals/Uart.h"
 #include "stm32f4xx_hal.h"
 
 
@@ -12,56 +13,58 @@ int main(void)
 {
     //FlightController_Run();
 
-    RCC_Initialise();
+    Rcc_Initialise();
 
-    DigitalOutput_Initialise(AssertLED);
-    DigitalOutput_Initialise(ControlLED);
-    DigitalOutput_Initialise(IMULED);
-    DigitalOutput_Initialise(LoggerLED);
-    DigitalOutput_Initialise(UnusedLED);
+    DigitalOutput_Initialise(AssertLed);
+    DigitalOutput_Initialise(ControlLed);
+    DigitalOutput_Initialise(IMULed);
+    DigitalOutput_Initialise(LoggerLed);
+    DigitalOutput_Initialise(UnusedLed);
 
-    UART_Initialise(UART1);
+    I2c_Initialise(I2c1);
+
+    Uart_Initialise(Uart1);
 
     bool on = false;
     uint32_t count = 0u;
     while (++count)
     {
-        DigitalOutput_SetState(AssertLED, on ? On : Off);
+        DigitalOutput_SetState(AssertLed, on ? On : Off);
 
         if (!(count % 1))
         {
             DigitalOutput_SetState(
-                ControlLED, 
-                (DigitalOutput_GetState(ControlLED) == Off) ? On : Off);
+                ControlLed, 
+                (DigitalOutput_GetState(ControlLed) == Off) ? On : Off);
         }
 
         if (!(count % 2))
         {
             DigitalOutput_SetState(
-                IMULED, 
-                (DigitalOutput_GetState(IMULED) == Off) ? On : Off);
+                IMULed, 
+                (DigitalOutput_GetState(IMULed) == Off) ? On : Off);
         }
 
         if (!(count % 4))
         {
             DigitalOutput_SetState(
-                LoggerLED, 
-                (DigitalOutput_GetState(LoggerLED) == Off) ? On : Off);
+                LoggerLed, 
+                (DigitalOutput_GetState(LoggerLed) == Off) ? On : Off);
         }
 
         if (!(count % 8))
         {
             DigitalOutput_SetState(
-                UnusedLED, 
-                (DigitalOutput_GetState(UnusedLED) == Off) ? On : Off);
+                UnusedLed, 
+                (DigitalOutput_GetState(UnusedLed) == Off) ? On : Off);
         }
 
 
-        UART_Write(UART1, "Tick ");
-        UART_Write(UART1, (on ? "ON" : "OFF"));
-        UART_Write(UART1, "\n");
+        Uart_Write(Uart1, "Tick ");
+        Uart_Write(Uart1, (on ? "ON" : "OFF"));
+        Uart_Write(Uart1, "\n");
 
-        on = (DigitalOutput_GetState(AssertLED) == Off);
+        on = (DigitalOutput_GetState(AssertLed) == Off);
         HAL_Delay(500);
     }
 

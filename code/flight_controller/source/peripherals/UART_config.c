@@ -1,6 +1,6 @@
 // --- Private header ---
 #define UART_PRIVATE
-    #include "peripherals/UART_private.h"
+    #include "peripherals/Uart_private.h"
 #undef UART_PRIVATE
 
 
@@ -8,14 +8,13 @@
   Private Data
  ******************************************************************************/
 
-UART_Handle_t UART_handles[UART_Instance_MAX] = 
+Uart_Handle_t Uart_handles[Uart_Instance_MAX] = 
     {
         {
-            .instance = UART1,
+            .instance = Uart1,
 
             .halHandle =
                 {
-                    .Instance = USART1,
                     .Init =
                         {
                             .BaudRate       = 115200u,
@@ -25,15 +24,15 @@ UART_Handle_t UART_handles[UART_Instance_MAX] =
                             .Parity         = UART_PARITY_NONE,
                             .StopBits       = UART_STOPBITS_1,
                             .WordLength     = UART_WORDLENGTH_8B
-                        }
+                        },
+                    .Instance = USART1
                 }
         },
         {
-            .instance = UART2,
+            .instance = Uart2,
 
             .halHandle =
                 {
-                    .Instance = USART2,
                     .Init =
                         {
                             .BaudRate       = 115200u,
@@ -43,7 +42,8 @@ UART_Handle_t UART_handles[UART_Instance_MAX] =
                             .Parity         = UART_PARITY_NONE,
                             .StopBits       = UART_STOPBITS_1,
                             .WordLength     = UART_WORDLENGTH_8B
-                        }
+                        },
+                    .Instance = USART2
                 }
         }
     };

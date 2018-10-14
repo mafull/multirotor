@@ -1,9 +1,9 @@
 // --- Public header ---
-#include "peripherals/UART.h"
+#include "peripherals/Uart.h"
 
 // --- Private header ---
 #define UART_PRIVATE
-    #include "peripherals/UART_private.h"
+    #include "peripherals/Uart_private.h"
 #undef UART_PRIVATE
 
 // Standard includes
@@ -17,11 +17,11 @@
   Public Function Implementations
  ******************************************************************************/
 
-bool UART_Initialise(UART_Instance_t instance)
+bool Uart_Initialise(Uart_Instance_t instance)
 {
-    ENSURE(instance < UART_Instance_MAX);
+    ENSURE(instance < Uart_Instance_MAX);
 
-    UART_Handle_t *const handle = &UART_handles[(uint8_t)instance];
+    Uart_Handle_t *const handle = &Uart_handles[(uint8_t)instance];
 
     ENSURE(instance == handle->instance);
     ENSURE(!handle->initialised);
@@ -32,11 +32,11 @@ bool UART_Initialise(UART_Instance_t instance)
 }
 
 
-bool UART_Write(UART_Instance_t instance, char *message)
+bool Uart_Write(Uart_Instance_t instance, char *message)
 {
-    ENSURE(instance < UART_Instance_MAX);
+    ENSURE(instance < Uart_Instance_MAX);
 
-    UART_Handle_t *const handle = &UART_handles[(uint8_t)instance]; // @todo: Maybe make this a macro
+    Uart_Handle_t *const handle = &Uart_handles[(uint8_t)instance]; // @todo: Maybe make this a macro
 
     ENSURE(handle->initialised);
 
@@ -47,7 +47,7 @@ bool UART_Write(UART_Instance_t instance, char *message)
 }
 
 
-void HAL_UART_MspInit(UART_HandleTypeDef *huart)
+void HAL_UART_MspInit(UART_HandleTypeDef *huart) // @todo: Do this properly
 {
     GPIO_InitTypeDef GPIO_InitStruct;
     if(huart->Instance==USART1)

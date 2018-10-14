@@ -13,7 +13,7 @@
 /**
  *
  */
-bool RCC_Initialise(void); // @todo: use/remove bool
+bool Rcc_Initialise(void); // @todo: use/remove bool
 
 
 #endif // __RCC_H
