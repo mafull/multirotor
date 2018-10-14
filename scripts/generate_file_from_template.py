@@ -38,8 +38,7 @@ def get_name_uppercase_underscore(name):
 
 # Generate a file name using the extension of the template
 def generate_file_name(name, template_file_path):
-    root, extension = os.path.splitext(template_file_path)
-    return name + extension
+    return template_file_path.split('/')[-1].replace("TEMPLATE", name)
 
 # Write the raw generated data to the target file
 def generate_file(file_path, filled_template):
