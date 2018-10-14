@@ -59,10 +59,16 @@ int main(void)
                 (DigitalOutput_GetState(UnusedLed) == Off) ? On : Off);
         }
 
+        uint8_t whoAmI = 0x00;
+        I2c_ReadMemory(I2c1, 0x68, 0x75, &whoAmI, 1u);
 
-        Uart_Write(Uart1, "Tick ");
-        Uart_Write(Uart1, (on ? "ON" : "OFF"));
-        Uart_Write(Uart1, "\n");
+        static char msg[128] = "";
+        snprintf(msg,
+                 128,
+                 "Tick: %3s | WHO_AM_I: 0x%02X\n",
+                 on ? "ON" : "OFF",
+                 whoAmI);
+        Uart_Write(Uart1, msg);
 
         on = (DigitalOutput_GetState(AssertLed) == Off);
         HAL_Delay(500);

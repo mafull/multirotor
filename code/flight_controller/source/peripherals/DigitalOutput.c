@@ -21,6 +21,8 @@ DigitalOutput_State_t DigitalOutput_GetState(DigitalOutput_Instance_t instance)
     DigitalOutput_Handle_t *const handle =
             &DigitalOutput_handles[(uint8_t)instance]; // @todo: Make this a function...
 
+    ENSURE(handle->initialised);
+
     return (HAL_GPIO_ReadPin(handle->port,
                              handle->initStruct.Pin)
                 == GPIO_PIN_SET) ? On : Off;
@@ -41,7 +43,6 @@ bool DigitalOutput_Initialise(DigitalOutput_Instance_t instance)
     __HAL_RCC_GPIOD_CLK_ENABLE();
     HAL_GPIO_Init(handle->port, &handle->initStruct);
 
-
     handle->initialised = true;
 
     return handle->initialised;
@@ -56,7 +57,9 @@ bool DigitalOutput_SetState(DigitalOutput_Instance_t instance,
     DigitalOutput_Handle_t *const handle =
             &DigitalOutput_handles[(uint8_t)instance]; // @todo: Make this a function...
 
-    const DigitalOutput_State_t currentState = 
+    ENSURE(handle->initialised);
+
+    const DigitalOutput_State_t currentState = // @todo: Make func?
         (HAL_GPIO_ReadPin(handle->port,
                           handle->initStruct.Pin) == GPIO_PIN_SET) ? On : Off;
 
