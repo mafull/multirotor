@@ -6,8 +6,8 @@
     #include "peripherals/Rcc_private.h"
 #undef RCC_PRIVATE
 
-
-#define ENSURE(x) // @todo: Implement externally
+// --- Project includes ---
+#include "macros.h"
 
 
 /******************************************************************************

@@ -6,11 +6,11 @@
     #include "peripherals/Uart_private.h"
 #undef UART_PRIVATE
 
+// --- Project includes ---
+#include "macros.h"
+
 // Standard includes
 #include <string.h>
-
-
-#define ENSURE(x) // @todo: Implement externally
 
 
 /******************************************************************************

@@ -6,9 +6,8 @@
     #include "peripherals/DigitalOutput_private.h"
 #undef DIGITAL_OUTPUT_PRIVATE
 
-
-#define ENSURE(x) // @todo: Implement externally
-#define UNREACHABLE(x) // @todo: Implement externally
+// --- Project includes ---
+#include "macros.h"
 
 
 /******************************************************************************

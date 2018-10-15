@@ -6,8 +6,8 @@
     #include "peripherals/I2c_private.h"
 #undef I2C_PRIVATE
 
-
-#define ENSURE(x) // @todo: Implement externally
+// --- Project includes ---
+#include "macros.h"
 
 
 /******************************************************************************
