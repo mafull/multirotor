@@ -26,7 +26,25 @@ Uart_Handle_t Uart_handles[Uart_Instance_MAX] =
                             .WordLength     = UART_WORDLENGTH_8B
                         },
                     .Instance = USART1
-                }
+                },
+            .rxInitStruct = 
+                {
+                    .Alternate  = GPIO_AF7_USART1,
+                    .Mode       = GPIO_MODE_AF_OD,
+                    .Pin        = GPIO_PIN_10,
+                    .Pull       = GPIO_NOPULL,
+                    .Speed      = GPIO_SPEED_HIGH
+                },
+            .rxPort = GPIOA,
+            .txInitStruct = 
+                {
+                    .Alternate  = GPIO_AF7_USART1,
+                    .Mode       = GPIO_MODE_AF_OD,
+                    .Pin        = GPIO_PIN_9,
+                    .Pull       = GPIO_NOPULL,
+                    .Speed      = GPIO_SPEED_HIGH
+                },
+            .txPort = GPIOA
         },
         {
             .instance = Uart2,
@@ -35,7 +53,7 @@ Uart_Handle_t Uart_handles[Uart_Instance_MAX] =
                 {
                     .Init =
                         {
-                            .BaudRate       = 115200u,
+                            .BaudRate       = 38400u,
                             .HwFlowCtl      = UART_HWCONTROL_NONE,
                             .Mode           = UART_MODE_TX_RX,
                             .OverSampling   = UART_OVERSAMPLING_16,
@@ -44,6 +62,24 @@ Uart_Handle_t Uart_handles[Uart_Instance_MAX] =
                             .WordLength     = UART_WORDLENGTH_8B
                         },
                     .Instance = USART2
-                }
+                },
+            .rxInitStruct = 
+                {
+                    .Alternate  = GPIO_AF7_USART2,
+                    .Mode       = GPIO_MODE_AF_OD,
+                    .Pin        = GPIO_PIN_6,
+                    .Pull       = GPIO_NOPULL,
+                    .Speed      = GPIO_SPEED_HIGH
+                },
+            .rxPort = GPIOD,
+            .txInitStruct = 
+                {
+                    .Alternate  = GPIO_AF7_USART2,
+                    .Mode       = GPIO_MODE_AF_OD,
+                    .Pin        = GPIO_PIN_5,
+                    .Pull       = GPIO_NOPULL,
+                    .Speed      = GPIO_SPEED_HIGH
+                },
+            .txPort = GPIOD
         }
     };

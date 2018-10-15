@@ -35,9 +35,16 @@
 typedef struct Uart_Handle_s
 {
     Uart_Instance_t instance;
+
     bool initialised;
+    Uart_Callback_Function_t callback;
 
     UART_HandleTypeDef halHandle;
+
+    GPIO_InitTypeDef rxInitStruct;
+    GPIO_TypeDef *rxPort;
+    GPIO_InitTypeDef txInitStruct;
+    GPIO_TypeDef *txPort;
 } Uart_Handle_t;
 
 
@@ -49,6 +56,34 @@ typedef struct Uart_Handle_s
  *
  */
 extern Uart_Handle_t Uart_handles[Uart_Instance_MAX];
+
+
+/******************************************************************************
+  Private Function Prototypes
+ ******************************************************************************/
+
+/**
+ * Enable a GPIO port clock
+ *
+ * @param port The GPIO port whose clock is to be enabled
+ */
+void Uart_EnablePortClock(GPIO_TypeDef *port);
+
+/**
+ * Enable a UART peripheral clock
+ *
+ * @param instance The UART peripheral whose clock is to be enabled
+ */
+void Uart_EnableUartClock(USART_TypeDef *instance);
+
+/**
+ * Get the relevant interrupt number for the UART instance
+ *
+ * @param instance The UART peripheral whose interrupt number is required
+ *
+ * @return The interrupt number for the desired UART instance
+ */
+IRQn_Type Uart_GetUartInterruptNumber(USART_TypeDef *instance);
 
 
 #endif // __UART_PRIVATE_H
