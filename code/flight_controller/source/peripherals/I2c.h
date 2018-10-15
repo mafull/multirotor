@@ -39,6 +39,11 @@ bool I2c_Initialise(I2c_Instance_t instance);
 /**
  *
  */
+bool I2c_IsInitialised(I2c_Instance_t instance);
+
+/**
+ *
+ */
 bool I2c_ReadMemory(I2c_Instance_t instance,
                     uint16_t deviceAddress,
                     uint16_t memoryAddress,

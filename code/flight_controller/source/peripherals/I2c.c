@@ -28,6 +28,14 @@ bool I2c_Initialise(I2c_Instance_t instance)
     return handle->initialised;
 }
 
+
+bool I2c_IsInitialised(I2c_Instance_t instance)
+{
+    ENSURE(instance < I2c_Instance_MAX);
+    return I2c_handles[(uint8_t)instance].initialised;
+}
+
+
 bool I2c_ReadMemory(I2c_Instance_t instance,
                     uint16_t deviceAddress,
                     uint16_t memoryAddress,
@@ -48,6 +56,7 @@ bool I2c_ReadMemory(I2c_Instance_t instance,
                              amount,
                              I2C_TRANSMIT_TIMEOUT) == HAL_OK);
 }
+
 
 bool I2c_WriteMemory(I2c_Instance_t instance,
                      uint16_t deviceAddress,

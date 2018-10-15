@@ -50,6 +50,13 @@ bool Uart_Initialise(Uart_Instance_t instance)
 }
 
 
+bool Uart_IsInitialised(Uart_Instance_t instance)
+{
+    ENSURE(instance < Uart_Instance_MAX);
+    return Uart_handles[(uint8_t)instance].initialised;
+}
+
+
 void Uart_SetCallback(Uart_Instance_t instance, Uart_Callback_Function_t callback)
 {
     ENSURE(instance < Uart_Instance_MAX);

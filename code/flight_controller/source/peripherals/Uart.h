@@ -39,6 +39,11 @@ bool Uart_Initialise(Uart_Instance_t instance);
 /**
  *
  */
+bool Uart_IsInitialised(Uart_Instance_t instance);
+
+/**
+ *
+ */
 void Uart_SetCallback(Uart_Instance_t instance,
                       Uart_Callback_Function_t callback);
 
