@@ -42,4 +42,14 @@ typedef struct DigitalOutput_Handle_s
 extern DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX];
 
 
+/******************************************************************************
+  Private Function Prototypes
+ ******************************************************************************/
+
+/**
+ *
+ */
+void DigitalOutput_EnablePortClock(GPIO_TypeDef *port);
+
+
 #endif // __DIGITAL_OUTPUT_PRIVATE_H

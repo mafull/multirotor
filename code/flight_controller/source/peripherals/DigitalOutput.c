@@ -8,6 +8,7 @@
 
 
 #define ENSURE(x) // @todo: Implement externally
+#define UNREACHABLE(x) // @todo: Implement externally
 
 
 /******************************************************************************
@@ -39,8 +40,7 @@ bool DigitalOutput_Initialise(DigitalOutput_Instance_t instance)
     ENSURE(instance == handle->instance);
     ENSURE(!handle->initialised);
 
-    // @todo: Enable port clock properly
-    __HAL_RCC_GPIOD_CLK_ENABLE();
+    DigitalOutput_EnablePortClock(handle->port);
     HAL_GPIO_Init(handle->port, &handle->initStruct);
 
     handle->initialised = true;
@@ -73,4 +73,24 @@ bool DigitalOutput_SetState(DigitalOutput_Instance_t instance,
     }
     
     return success;
+}
+
+
+/******************************************************************************
+  Public Function Implementations
+ ******************************************************************************/
+
+void DigitalOutput_EnablePortClock(GPIO_TypeDef *port)
+{
+    ENSURE(port);
+
+    if      (port == GPIOA) __HAL_RCC_GPIOA_CLK_ENABLE();
+    else if (port == GPIOB) __HAL_RCC_GPIOB_CLK_ENABLE();
+    else if (port == GPIOC) __HAL_RCC_GPIOC_CLK_ENABLE();
+    else if (port == GPIOD) __HAL_RCC_GPIOD_CLK_ENABLE();
+    else if (port == GPIOE) __HAL_RCC_GPIOE_CLK_ENABLE();
+    else if (port == GPIOF) __HAL_RCC_GPIOF_CLK_ENABLE();
+    else if (port == GPIOG) __HAL_RCC_GPIOG_CLK_ENABLE();
+    else if (port == GPIOH) __HAL_RCC_GPIOH_CLK_ENABLE();
+    else                    UNREACHABLE();
 }
