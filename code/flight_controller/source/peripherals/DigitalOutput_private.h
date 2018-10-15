@@ -20,7 +20,8 @@
  ******************************************************************************/
 
 /**
- *
+ * Structure defining a handle that contains configuration data for a Digital
+ * Output
  */
 typedef struct DigitalOutput_Handle_s
 {
@@ -37,7 +38,8 @@ typedef struct DigitalOutput_Handle_s
  ******************************************************************************/
 
 /**
- *
+ * Handles containing the configuration data for each Digital Output present in
+ * DigitalOutput_Instance_t
  */
 extern DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX];
 
@@ -47,7 +49,9 @@ extern DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX];
  ******************************************************************************/
 
 /**
+ * Enable a GPIO port clock
  *
+ * @param port The GPIO port whose clock is to be enabled
  */
 void DigitalOutput_EnablePortClock(GPIO_TypeDef *port);
 
