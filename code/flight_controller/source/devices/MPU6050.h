@@ -7,6 +7,7 @@
 // --- Library includes ---
 
 // --- Standard includes ---
+#include <stdbool.h>
 
 
 /******************************************************************************
@@ -31,5 +32,7 @@
 /**
  *
  */
+bool MPU6050_Initialise(void);
+
 
 #endif // __MPU6050_H
