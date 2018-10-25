@@ -37,7 +37,7 @@ typedef struct Uart_Handle_s
     Uart_Instance_t instance;
 
     bool initialised;
-    Uart_Callback_Function_t callback;
+    Uart_CallbackFunction_t callback;
 
     UART_HandleTypeDef halHandle;
 

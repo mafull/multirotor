@@ -1,43 +1,58 @@
-#ifndef __MPU6050_H
-#define __MPU6050_H
+// Incorrect usage guard
+#ifndef IMU_PRIVATE
+    #error Private interface should not be included here!
+#endif // IMU_PRIVATE
 
+#ifndef __IMU_PRIVATE_H
+#define __IMU_PRIVATE_H
+
+
+// --- Public header ---
+#include "Imu.h"
 
 // --- Project includes ---
 
 // --- Library includes ---
 
 // --- Standard includes ---
-#include <stdbool.h>
 
 
 /******************************************************************************
-  Public Defines
+  Private Defines
  ******************************************************************************/
 
 
 /******************************************************************************
-  Public Data Types
+  Private Data Types
  ******************************************************************************/
 
 
 /******************************************************************************
-  Public Data
- ******************************************************************************/
-
-
-/******************************************************************************
-  Public Function Prototypes
+  Private Data
  ******************************************************************************/
 
 /**
  *
  */
-bool MPU6050_Initialise(void);
+extern Imu_Data_t Imu_data;
 
 /**
  *
  */
-bool MPU6050_GetData(void);
+extern bool Imu_isInitialised;
+
+/**
+ *
+ */
+extern bool Imu_isDataNew;
 
 
-#endif // __MPU6050_H
+/******************************************************************************
+  Private Function Prototypes
+ ******************************************************************************/
+
+/**
+ *
+ */
+
+#endif // __IMU_PRIVATE_H

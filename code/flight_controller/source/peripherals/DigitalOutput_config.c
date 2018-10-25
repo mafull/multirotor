@@ -18,7 +18,7 @@ DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX] =
                 .Mode   = GPIO_MODE_OUTPUT_PP,
                 .Pin    = GPIO_PIN_1,
                 .Pull   = GPIO_NOPULL,
-                .Speed  = GPIO_SPEED_LOW,
+                .Speed  = GPIO_SPEED_LOW
             },
             .port       = GPIOD
         },
@@ -30,7 +30,7 @@ DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX] =
                 .Mode   = GPIO_MODE_OUTPUT_PP,
                 .Pin    = GPIO_PIN_12,
                 .Pull   = GPIO_NOPULL,
-                .Speed  = GPIO_SPEED_LOW,
+                .Speed  = GPIO_SPEED_LOW
             },
             .port       = GPIOD
         },
@@ -42,7 +42,7 @@ DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX] =
                 .Mode   = GPIO_MODE_OUTPUT_PP,
                 .Pin    = GPIO_PIN_13,
                 .Pull   = GPIO_NOPULL,
-                .Speed  = GPIO_SPEED_LOW,
+                .Speed  = GPIO_SPEED_LOW
             },
             .port       = GPIOD
         },
@@ -54,7 +54,7 @@ DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX] =
                 .Mode   = GPIO_MODE_OUTPUT_PP,
                 .Pin    = GPIO_PIN_14,
                 .Pull   = GPIO_NOPULL,
-                .Speed  = GPIO_SPEED_LOW,
+                .Speed  = GPIO_SPEED_LOW
             },
             .port       = GPIOD
         },
@@ -66,7 +66,7 @@ DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX] =
                 .Mode   = GPIO_MODE_OUTPUT_PP,
                 .Pin    = GPIO_PIN_15,
                 .Pull   = GPIO_NOPULL,
-                .Speed  = GPIO_SPEED_LOW,
+                .Speed  = GPIO_SPEED_LOW
             },
             .port       = GPIOD
         }

@@ -1,5 +1,5 @@
-#ifndef __MPU6050_H
-#define __MPU6050_H
+#ifndef __IMU_H
+#define __IMU_H
 
 
 // --- Project includes ---
@@ -19,6 +19,20 @@
   Public Data Types
  ******************************************************************************/
 
+typedef float Imu_DataType_t;
+
+typedef struct Imu_Data_s
+{
+    struct
+    {
+        Imu_DataType_t roll;
+    } angles;
+    
+    struct
+    {
+        Imu_DataType_t roll;
+    } rates;
+} Imu_Data_t;
 
 /******************************************************************************
   Public Data
@@ -32,12 +46,22 @@
 /**
  *
  */
-bool MPU6050_Initialise(void);
+bool Imu_GetNewData(Imu_Data_t *const data);
 
 /**
  *
  */
-bool MPU6050_GetData(void);
+bool Imu_Initialise(void);
+
+/**
+ *
+ */
+bool Imu_IsInitialised(void);
+
+/**
+ *
+ */
+void Imu_Update(void);
 
 
-#endif // __MPU6050_H
+#endif // __IMU_H

@@ -12,7 +12,7 @@
 // Standard includes
 #include <string.h>
 
-    
+
 /******************************************************************************
   Public Function Implementations
  ******************************************************************************/
@@ -57,7 +57,7 @@ bool Uart_IsInitialised(Uart_Instance_t instance)
 }
 
 
-void Uart_SetCallback(Uart_Instance_t instance, Uart_Callback_Function_t callback)
+void Uart_SetCallback(Uart_Instance_t instance, Uart_CallbackFunction_t callback)
 {
     ENSURE(instance < Uart_Instance_MAX);
     ENSURE(callback);

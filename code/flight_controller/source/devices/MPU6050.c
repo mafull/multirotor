@@ -9,6 +9,7 @@
 
 // --- Project includes ---
 #include "macros.h"
+#include "peripherals/ExternalInterrupt.h"
 #include "peripherals/I2c.h"
 #include "peripherals/Uart.h"
 
@@ -24,6 +25,7 @@
 bool MPU6050_Initialise(void)
 {
     ENSURE(I2c_IsInitialised(I2c1)); // @todo: Make I2c1 a config thing
+    ENSURE(ExternalInterrupt_IsInitialised(MPU6050_Int)); // @todo: Make MPU6050_Int a config thing
 
     bool success = true;
     uint8_t tmp = 0x00u;
@@ -174,6 +176,7 @@ bool MPU6050_Initialise(void)
 #endif
     return success;
 }
+
 
 /******************************************************************************
   Private Function Implementations
