@@ -2,7 +2,7 @@
 #define __DIGITAL_OUTPUT_H
 
 
-// Standard includes
+// --- Standard includes ---
 #include <stdbool.h>
 
 
@@ -48,13 +48,18 @@ typedef enum DigitalOutput_State_e
 DigitalOutput_State_t DigitalOutput_GetState(DigitalOutput_Instance_t instance);
 
 /**
- * Initialise a Digital Output
+ * Initialise all Digital Outputs
  *
- * @param instance The Digital Output to initialise
- *
- * @return true If initialisation is successful
+ * @retval true If initialisation is successful
  */
-bool DigitalOutput_Initialise(DigitalOutput_Instance_t instance);
+bool DigitalOutput_Initialise(void);
+
+/**
+ * Check if the available Digital Outputs are initialised
+ *
+ * @retval true If initialised
+ */
+bool DigitalOutput_IsInitialised(void);
 
 /**
  * Set the state of a Digital Output

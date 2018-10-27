@@ -10,9 +10,8 @@
 // --- Public header ---
 #include "peripherals/DigitalOutput.h"
 
-// --- Library includes ---
-// HAL_Driver
-#include "stm32f4xx_hal.h"
+// --- Project includes ---
+#include "Gpio.h"
 
 
 /******************************************************************************
@@ -20,17 +19,12 @@
  ******************************************************************************/
 
 /**
- * Structure defining a handle that contains configuration data for a Digital
- * Output
+ *
  */
-typedef struct DigitalOutput_Handle_s
+typedef struct DigitalOutput_ConfigData_s
 {
-    DigitalOutput_Instance_t instance;
-    bool initialised;
-
-    GPIO_InitTypeDef initStruct;
-    GPIO_TypeDef *port;
-} DigitalOutput_Handle_t;
+    Gpio_Instance_t gpioInstance;
+} DigitalOutput_ConfigData_t;
 
 
 /******************************************************************************
@@ -38,22 +32,14 @@ typedef struct DigitalOutput_Handle_s
  ******************************************************************************/
 
 /**
- * Handles containing the configuration data for each Digital Output present in
- * DigitalOutput_Instance_t
+ *
  */
-extern DigitalOutput_Handle_t DigitalOutput_handles[DigitalOutput_Instance_MAX];
-
-
-/******************************************************************************
-  Private Function Prototypes
- ******************************************************************************/
+const extern DigitalOutput_ConfigData_t DigitalOutput_configData[DigitalOutput_Instance_MAX];
 
 /**
- * Enable a GPIO port clock
  *
- * @param port The GPIO port whose clock is to be enabled
  */
-void DigitalOutput_EnablePortClock(GPIO_TypeDef *port);
+extern bool DigitalOutput_isInitialised;
 
 
 #endif // __DIGITAL_OUTPUT_PRIVATE_H
