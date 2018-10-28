@@ -10,10 +10,6 @@
 // --- Project includes ---
 #include "macros.h"
 
-// --- Library includes ---
-
-// --- Standard includes ---
-
 
 /******************************************************************************
   Private Data
