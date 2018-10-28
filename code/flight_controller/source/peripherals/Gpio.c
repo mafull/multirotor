@@ -26,6 +26,18 @@ bool Gpio_isInitialised = false;
   Public Function Implementations
  ******************************************************************************/
 
+Gpio_State_t Gpio_GetState(Gpio_Instance_t instance)
+{
+    ENSURE(instance < Gpio_Instance_MAX);
+    ENSURE(Gpio_isInitialised);
+
+    const Gpio_ConfigData_t *const conf = &Gpio_configData[instance];
+    const GPIO_PinState state = HAL_GPIO_ReadPin(conf->port, conf->initStruct.Pin);
+
+    return (state == GPIO_PIN_SET) ? High : Low;
+}
+
+
 bool Gpio_Initialise(void)
 {
     ENSURE(!Gpio_isInitialised);
@@ -47,6 +59,26 @@ bool Gpio_Initialise(void)
 bool Gpio_IsInitialised(void)
 {
     return Gpio_isInitialised;
+}
+
+
+bool Gpio_SetState(Gpio_Instance_t instance, Gpio_State_t newState)
+{
+    ENSURE(instance < Gpio_Instance_MAX);
+    ENSURE(Gpio_isInitialised);
+
+    bool success = false;
+    if (Gpio_GetState(instance) != newState)
+    {
+        const Gpio_ConfigData_t *const conf = &Gpio_configData[instance];
+
+        HAL_GPIO_WritePin(conf->port,
+                          conf->initStruct.Pin,
+                          newState == High ? GPIO_PIN_SET : GPIO_PIN_RESET);
+        success = true;
+    }
+
+    return success;
 }
 
 

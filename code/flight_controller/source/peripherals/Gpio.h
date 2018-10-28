@@ -28,7 +28,7 @@ typedef enum Gpio_Instance_e
     // Digital Outputs
     Gpio_AssertLed = 0u,
     Gpio_ControlLed,
-    Gpio_IMULed,
+    Gpio_ImuLed,
     Gpio_LoggerLed,
     Gpio_UnusedLed,
 
@@ -47,10 +47,24 @@ typedef enum Gpio_Instance_e
     Gpio_Instance_MAX
 } Gpio_Instance_t;
 
+/**
+ * Enum defining the possible states of a GPIO pin
+ */
+typedef enum Gpio_State_e
+{
+    High,
+    Low
+} Gpio_State_t;
+
 
 /******************************************************************************
   Public Data
  ******************************************************************************/
+
+/**
+ *
+ */
+Gpio_State_t Gpio_GetState(Gpio_Instance_t instance);
 
 /**
  * Initialise all available GPIO instances
@@ -65,6 +79,12 @@ bool Gpio_Initialise(void);
  * @retval true If initialised
  */
 bool Gpio_IsInitialised(void);
+
+/**
+ *
+ */
+bool Gpio_SetState(Gpio_Instance_t instance, Gpio_State_t newState);
+
 
 
 /******************************************************************************
