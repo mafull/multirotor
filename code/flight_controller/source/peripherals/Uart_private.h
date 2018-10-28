@@ -11,7 +11,6 @@
 #include "peripherals/Uart.h"
 
 // --- Library includes ---
-// HAL_Driver
 #include "stm32f4xx_hal.h"
 
 

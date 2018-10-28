@@ -10,11 +10,8 @@
 // --- Public header ---
 #include "peripherals/Timer.h"
 
-// --- Project includes ---
-
 // --- Library includes ---
-
-// --- Standard includes ---
+#include "stm32f4xx_hal.h"
 
 
 /******************************************************************************
@@ -26,10 +23,29 @@
   Private Data Types
  ******************************************************************************/
 
+/**
+ *
+ */
+typedef struct Timer_ConfigData_s
+{
+    TIM_TypeDef *halInstance;
+    TIM_Base_InitTypeDef initStruct;
+} Timer_ConfigData_t;
+
 
 /******************************************************************************
   Private Data
  ******************************************************************************/
+
+/**
+ *
+ */
+extern const Timer_ConfigData_t Timer_configData[Timer_Instance_MAX];
+
+/**
+ *
+ */
+extern bool Timer_isInitialised;
 
 
 /******************************************************************************
@@ -39,5 +55,7 @@
 /**
  *
  */
+void Timer_EnableTimerClock(TIM_TypeDef *instance);
+
 
 #endif // __TIMER_PRIVATE_H

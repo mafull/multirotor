@@ -26,13 +26,39 @@ typedef enum Gpio_Instance_e
     Gpio_MPU6050_Int,
     Gpio_UserButton,
 
-    // Peripheral pins
+    // I2C
     Gpio_I2c1_Scl,
     Gpio_I2c1_Sda,
+
+    // UART
     Gpio_Uart1_Rx,
     Gpio_Uart1_Tx,
     Gpio_Uart2_Rx,
     Gpio_Uart2_Tx,
+
+    // Timer 1
+    Gpio_Tim1_Ch1,
+    Gpio_Tim1_Ch2,
+    Gpio_Tim1_Ch3,
+    Gpio_Tim1_Ch4,
+
+    // Timer 2
+    Gpio_Tim2_Ch1,
+    Gpio_Tim2_Ch2,
+    Gpio_Tim2_Ch3,
+    Gpio_Tim2_Ch4,
+
+    // Timer 3
+    Gpio_Tim3_Ch1,
+    Gpio_Tim3_Ch2,
+    Gpio_Tim3_Ch3,
+    Gpio_Tim3_Ch4,
+
+    // Timer 4
+    // Gpio_Tim4_Ch1,
+    // Gpio_Tim4_Ch2,
+    // Gpio_Tim4_Ch3,
+    // Gpio_Tim4_Ch4,
 
     Gpio_Instance_MAX
 } Gpio_Instance_t;
