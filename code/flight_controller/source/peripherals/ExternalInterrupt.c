@@ -10,10 +10,6 @@
 // --- Project includes ---
 #include "macros.h"
 
-// --- Library includes ---
-
-// --- Standard includes ---
-
 
 /******************************************************************************
   Private Data
@@ -32,8 +28,14 @@ bool ExternalInterrupt_Initialise(void)
 {
     ENSURE(!ExternalInterrupt_isInitialised);
 
-    // All we need to do is check that the GPIOs are initialised
     ENSURE(Gpio_IsInitialised()); // @todo: Maybe make this the ret value, don't assert?
+
+    for (uint8_t i = 0u; i < ExternalInterrupt_Instance_MAX; i++)
+    {
+        const ExternalInterrupt_ConfigData_t *const conf = &ExternalInterrupt_configData[i]; // @todo: Make a macro...
+        HAL_NVIC_SetPriority(conf->irqN, 1, 0); // @todo: Change priorities/add to config data
+        HAL_NVIC_EnableIRQ(conf->irqN);
+    }
 
     ExternalInterrupt_isInitialised = true;
     return ExternalInterrupt_isInitialised;
@@ -49,7 +51,12 @@ bool ExternalInterrupt_IsInitialised(void)
 void ExternalInterrupt_SetCallback(ExternalInterrupt_Instance_t instance,
                                    ExternalInterrupt_CallbackFunction_t callback)
 {
-    // @todo: Somehow add to extern ExternalInterrupt_callbackFunctions
+    ENSURE(instance < ExternalInterrupt_Instance_MAX);
+    ENSURE(ExternalInterrupt_isInitialised);
+    ENSURE(callback);
+
+    const ExternalInterrupt_ConfigData_t *const conf = &ExternalInterrupt_configData[instance]; // @todo: Make a macro...
+    ExternalInterrupt_callbackFunctions[conf->line] = callback;
 }
 
 
@@ -77,19 +84,18 @@ void ExternalInterrupt_SetCallback(ExternalInterrupt_Instance_t instance,
 // EXTIn_HANDLER(3)
 // EXTIn_HANDLER(4)
 
-// void EXTI0_IRQHandler(void)
-// {
-//     const ExternalInterrupt_CallbackFunction_t callback = ExternalInterrupt_callbackFunctions[0];
+void EXTI0_IRQHandler(void)
+{
+    const ExternalInterrupt_CallbackFunction_t callback = ExternalInterrupt_callbackFunctions[0];
     
-//     if (callback)
-//     {
-//         const bool isHigh = (HAL_GPIO_ReadPin(handle->port,
-//                           handle->initStruct.Pin) == GPIO_PIN_SET)
-//         callback();
-//     }
+    if (callback)
+    {
+        const Gpio_State_t gpioState = (Gpio_GetState(Gpio_UserButton));
+        callback(gpioState);
+    }
 
-//     EXTI->PR = (1 << 0); // @todo: Maybe use __HAL_GPIO_EXTI_CLEAR_IT()
-// }
+    EXTI->PR = (1 << 0); // @todo: Maybe use __HAL_GPIO_EXTI_CLEAR_IT()
+}
 
 /*
 void EXTI0_IRQHandler(void)

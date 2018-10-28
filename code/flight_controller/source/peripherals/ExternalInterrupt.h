@@ -2,8 +2,6 @@
 #define __EXTERNAL_INTERRUPT_H
 
 
-// --- Project includes ---
-
 // --- Library includes ---
 
 // --- Standard includes ---
@@ -15,9 +13,18 @@
  ******************************************************************************/
 
 /**
+ * Enum defining the possible states of an External Interrupt
+ */
+typedef enum ExternalInterrupt_State_e
+{
+    Risen,
+    Fallen
+} ExternalInterrupt_State_t;
+
+/**
  *
  */
-typedef void (*ExternalInterrupt_CallbackFunction_t)(bool);
+typedef void (*ExternalInterrupt_CallbackFunction_t)(ExternalInterrupt_State_t);
 
 /**
  *

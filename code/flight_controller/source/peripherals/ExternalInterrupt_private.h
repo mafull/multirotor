@@ -13,6 +13,10 @@
 // --- Project Includes ---
 #include "peripherals/Gpio.h"
 
+// --- Library Includes
+// HAL Driver
+#include "stm32f4xx_hal.h"
+
 
 /******************************************************************************
   Private Defines
@@ -35,6 +39,8 @@
 typedef struct ExternalInterrupt_ConfigData_s
 {
     Gpio_Instance_t gpioInstance;
+    uint16_t line;
+    IRQn_Type irqN;
 } ExternalInterrupt_ConfigData_t;
 
 
