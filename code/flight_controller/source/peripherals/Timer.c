@@ -24,6 +24,30 @@ bool Timer_isInitialised = false;
   Public Function Implementations
  ******************************************************************************/
 
+bool Timer_ConfigureOC(Timer_Instance_t instance, Timer_OCConfigData_t *ocConf)
+{
+    ENSURE(instance < Timer_Instance_MAX);
+    ENSURE(ocConf);
+    ENSURE(Timer_isInitialised);
+
+    return (HAL_TIM_PWM_ConfigChannel(&Timer_handles[instance],
+                                      &ocConf->initStruct,
+                                      ocConf->channel) == HAL_OK);
+}
+
+
+uint32_t Timer_GetPWMPulseWidth(Timer_Instance_t instance, uint32_t channel)
+{
+    ENSURE(instance < Timer_Instance_MAX);
+    ENSURE(IS_TIM_CHANNELS(channel));
+    ENSURE(Timer_isInitialised);
+
+    const TIM_HandleTypeDef *const handle = &Timer_handles[instance];
+
+    return __HAL_TIM_SET_COMPARE(handle->Instance, channel);
+}
+
+
 bool Timer_Initialise(void)
 {
     ENSURE(!Timer_isInitialised);
@@ -49,6 +73,46 @@ bool Timer_Initialise(void)
 bool Timer_IsInitialised(void)
 {
     return Timer_isInitialised;
+}
+
+
+void Timer_SetPWMPulseWidth(Timer_Instance_t instance,
+                            uint32_t channel,
+                            uint32_t pulseWidth)
+{
+    ENSURE(instance < Timer_Instance_MAX);
+    ENSURE(IS_TIM_CHANNELS(channel));
+    ENSURE(Timer_isInitialised);
+
+    const TIM_HandleTypeDef *const handle = &Timer_handles[instance];
+
+    __HAL_TIM_SET_COMPARE(handle->Instance, channel, pulseWidth);
+}
+
+
+bool Timer_StartPWM(Timer_Instance_t instance, uint32_t channel)
+{
+    ENSURE(instance < Timer_Instance_MAX);
+    ENSURE(IS_TIM_CHANNELS(channel));
+    ENSURE(Timer_isInitialised);
+
+    const TIM_HandleTypeDef *const handle = &Timer_handles[instance];
+
+    HAL_TIM_PWM_Start(handle, channel);
+    return true; // @todo: Maybe store state or check if it's already started?
+}
+
+
+bool Timer_StopPWM(Timer_Instance_t instance, uint32_t channel)
+{
+    ENSURE(instance < Timer_Instance_MAX);
+    ENSURE(IS_TIM_CHANNELS(channel));
+    ENSURE(Timer_isInitialised);
+
+    const TIM_HandleTypeDef *const handle = &Timer_handles[instance];
+
+    HAL_TIM_PWM_Stop(handle, channel);
+    return true; // @todo: Maybe store state or check if it's already started?
 }
 
 

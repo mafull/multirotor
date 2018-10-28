@@ -11,25 +11,42 @@
 #include "peripherals/PwmOutput.h"
 
 // --- Project includes ---
+#include "peripherals/Timer.h"
+#define TIMER_PRIVATE
+    #include "peripherals/Timer_private.h"
+#undef TIMER_PRIVATE
 
 // --- Library includes ---
-
-// --- Standard includes ---
-
-
-/******************************************************************************
-  Private Defines
- ******************************************************************************/
+#include "stm32f4xx_hal.h"
 
 
 /******************************************************************************
   Private Data Types
  ******************************************************************************/
 
+/**
+ *
+ */
+typedef struct PwmOutput_ConfigData_s
+{
+    Timer_Instance_t timerInstance;
+    Timer_OCConfigData_t ocConfigData;
+} PwmOutput_ConfigData_t;
+
 
 /******************************************************************************
   Private Data
  ******************************************************************************/
+
+/**
+ *
+ */
+extern const PwmOutput_ConfigData_t PwmOutput_configData[PwmOutput_Instance_MAX];
+
+/**
+ *
+ */
+extern bool PwmOutput_isInitialised;
 
 
 /******************************************************************************
