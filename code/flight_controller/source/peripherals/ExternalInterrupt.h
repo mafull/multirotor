@@ -45,6 +45,11 @@ typedef enum ExternalInterrupt_Instance_e
 /**
  *
  */
+void ExternalInterrupt_EnableIT(ExternalInterrupt_Instance_t instance, bool enable);
+
+/**
+ *
+ */
 bool ExternalInterrupt_Initialise(void);
 
 /**

@@ -25,6 +25,17 @@ bool ExternalInterrupt_isInitialised = false;
   Public Function Implementations
  ******************************************************************************/
 
+void ExternalInterrupt_EnableIT(ExternalInterrupt_Instance_t instance, bool enable)
+{
+    ENSURE(instance < ExternalInterrupt_Instance_MAX);
+    ENSURE(ExternalInterrupt_isInitialised);
+
+    const ExternalInterrupt_ConfigData_t *const conf = &ExternalInterrupt_configData[instance]; // @todo: Make a macro...
+
+    enable ? HAL_NVIC_EnableIRQ(conf->irqN) : HAL_NVIC_DisableIRQ(conf->irqN);
+}
+
+
 bool ExternalInterrupt_Initialise(void)
 {
     ENSURE(!ExternalInterrupt_isInitialised);
@@ -38,7 +49,6 @@ bool ExternalInterrupt_Initialise(void)
         ExternalInterrupt_gpioPins[conf->line] = conf->gpioInstance;
 
         HAL_NVIC_SetPriority(conf->irqN, 1, 0); // @todo: Change priorities/add to config data
-        HAL_NVIC_EnableIRQ(conf->irqN);
     }
 
     ExternalInterrupt_isInitialised = true;
