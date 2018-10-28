@@ -32,13 +32,11 @@
 /**
  *
  */
-typedef struct I2c_Handle_s
+typedef struct I2c_ConfigData_s
 {
-    I2c_Instance_t instance;
-    bool initialised;
-
-    I2C_HandleTypeDef halHandle;
-} I2c_Handle_t;
+    I2C_TypeDef *halInstance;
+    I2C_InitTypeDef initStruct;
+} I2c_ConfigData_t;
 
 
 /******************************************************************************
@@ -48,7 +46,27 @@ typedef struct I2c_Handle_s
 /**
  *
  */
-extern I2c_Handle_t I2c_handles[I2c_Instance_MAX];
+extern const I2c_ConfigData_t I2c_configData[I2c_Instance_MAX];
+
+/**
+ *
+ */
+extern I2C_HandleTypeDef I2c_handles[I2c_Instance_MAX];
+
+/**
+ *
+ */
+extern bool I2c_isInitialised;
+
+
+/******************************************************************************
+  Private Function Prototypes
+ ******************************************************************************/
+
+/**
+ *
+ */
+void I2c_EnableI2cClock(I2C_TypeDef *instance);
 
 
 #endif // __I2C_PRIVATE_H

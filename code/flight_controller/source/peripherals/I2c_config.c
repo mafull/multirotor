@@ -8,25 +8,14 @@
   Private Data
  ******************************************************************************/
 
-I2c_Handle_t I2c_handles[] = 
+const I2c_ConfigData_t I2c_configData[I2c_Instance_MAX] = 
     {
-        {
-            .instance = I2c1,
-
-            .halHandle =
-                {
-                    .Init = 
-                        {
-                            .AddressingMode  = I2C_ADDRESSINGMODE_7BIT,
-                            .ClockSpeed      = 400000u,
-                            .DualAddressMode = I2C_DUALADDRESS_DISABLED,
-                            .DutyCycle       = I2C_DUTYCYCLE_2,
-                            .GeneralCallMode = I2C_GENERALCALL_DISABLED,
-                            .NoStretchMode   = I2C_NOSTRETCH_DISABLED,
-                            .OwnAddress1     = 0u,
-                            .OwnAddress2     = 0u
-                        },
-                    .Instance = I2C1
-                }
-        }
+        /*
+          |Inst.| I2C Init Struct
+          |     | | Clock Speed
+          |     | |       | Duty Cycle     | Own Address 1
+          |     | |       |                |  | Own Address 2
+          |     | |       |                |  |  | General Call Mode       | Nostretch Mode
+        */
+        { I2C1, { 400000, I2C_DUTYCYCLE_2, 0, 0, I2C_GENERALCALL_DISABLED, I2C_NOSTRETCH_DISABLED } }, // I2c1
     };

@@ -8,31 +8,50 @@
 
 // --- Project includes ---
 #include "macros.h"
+#include "peripherals/Gpio.h"
+
+
+/******************************************************************************
+  Private Data
+ ******************************************************************************/
+
+bool I2c_isInitialised = false;
+
+I2C_HandleTypeDef I2c_handles[I2c_Instance_MAX];
 
 
 /******************************************************************************
   Public Function Implementations
  ******************************************************************************/
 
-bool I2c_Initialise(I2c_Instance_t instance)
+bool I2c_Initialise(void)
 {
-    ENSURE(instance < I2c_Instance_MAX);
+    ENSURE(!I2c_isInitialised);
 
-    I2c_Handle_t *const handle = &I2c_handles[(uint8_t)instance]; // @todo: Make func/macro (global?)
 
-    ENSURE(instance == handle->instance);
-    ENSURE(!handle->initialised);
+    ENSURE(Gpio_IsInitialised()); // @todo: Maybe make this the ret value, don't assert?
 
-    handle->initialised = (HAL_I2C_Init(&handle->halHandle) == HAL_OK);
+    bool success = true;
+    for (uint8_t i = 0; success && (i < I2c_Instance_MAX); i++)
+    {
+        const I2c_ConfigData_t *const conf = &I2c_configData[i];
+        I2C_HandleTypeDef *const handle = &I2c_handles[i];
 
-    return handle->initialised;
+        I2c_EnableI2cClock(conf->halInstance);
+
+        handle->Instance = conf->halInstance;
+        handle->Init = conf->initStruct;
+        success = (HAL_I2C_Init(handle) == HAL_OK);
+    }
+
+    I2c_isInitialised = success;
+    return I2c_isInitialised;
 }
 
 
-bool I2c_IsInitialised(I2c_Instance_t instance)
+bool I2c_IsInitialised(void)
 {
-    ENSURE(instance < I2c_Instance_MAX);
-    return I2c_handles[(uint8_t)instance].initialised;
+    return I2c_isInitialised;
 }
 
 
@@ -43,13 +62,13 @@ bool I2c_ReadMemory(I2c_Instance_t instance,
                     uint8_t amount)
 {
     ENSURE(instance < I2c_Instance_MAX);
+    ENSURE(I2c_isInitialised);
 
-    I2c_Handle_t *const handle = &I2c_handles[(uint8_t)instance];
+    I2C_HandleTypeDef *const handle = &I2c_handles[instance];
 
-    ENSURE(handle->initialised);
-    
-    return (HAL_I2C_Mem_Read(&handle->halHandle,
-                             (deviceAddress << 1), // @todo Make func?
+    // Attempt to read from the memory
+    return (HAL_I2C_Mem_Read(handle,
+                             (deviceAddress << 1), // @todo Make func/macro?
                              memoryAddress,
                              1u,
                              data,
@@ -65,12 +84,12 @@ bool I2c_WriteMemory(I2c_Instance_t instance,
                      uint8_t amount)
 {
     ENSURE(instance < I2c_Instance_MAX);
+    ENSURE(I2c_isInitialised);
 
-    I2c_Handle_t *const handle = &I2c_handles[(uint8_t)instance];
+    I2C_HandleTypeDef *const handle = &I2c_handles[instance];
 
-    ENSURE(handle->initialised);
-
-    return (HAL_I2C_Mem_Write(&handle->halHandle,
+    // Attempt to write to the memory
+    return (HAL_I2C_Mem_Write(handle,
                               (deviceAddress << 1), // @todo Make func?
                               memoryAddress,
                               1u,
@@ -84,55 +103,12 @@ bool I2c_WriteMemory(I2c_Instance_t instance,
   Private Function Implementations
  ******************************************************************************/
 
-
-void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c)
+void I2c_EnableI2cClock(I2C_TypeDef *instance)
 {
-    GPIO_InitTypeDef GPIO_InitStruct;
-    if(hi2c->Instance==I2C1)
-    {
-        __GPIOB_CLK_ENABLE();
+    ENSURE(instance);
 
-        GPIO_InitStruct.Pin         = GPIO_PIN_6; //I2C1_SCL_PIN;
-        GPIO_InitStruct.Mode        = GPIO_MODE_AF_OD;
-        GPIO_InitStruct.Pull        = GPIO_PULLUP;
-        GPIO_InitStruct.Speed       = GPIO_SPEED_HIGH;
-        GPIO_InitStruct.Alternate   = GPIO_AF4_I2C1;
-        HAL_GPIO_Init(GPIOB/*I2C1_SCL_PORT*/, &GPIO_InitStruct);
-
-        GPIO_InitStruct.Pin         = GPIO_PIN_7; //I2C1_SDA_PIN;
-        GPIO_InitStruct.Alternate   = GPIO_AF4_I2C1;
-        HAL_GPIO_Init(GPIOB/*I2C1_SDA_PORT*/, &GPIO_InitStruct);
-            
-        __I2C1_CLK_ENABLE();
-
-
-
-
-
-        // // Create a common DMA initialisation structure
-        // DMA_HandleTypeDef dmahandle;
-        // dmaHandle.Init.FIFOMode               = DMA_FIFOMODE_DISABLE;
-        // dmaHandle.Init.MemDataAlignment       = DMA_MDATAALIGN_BYTE;
-        // dmaHandle.Init.MemInc                 = DMA_MINC_ENABLE;
-        // dmaHandle.Init.Mode                   = DMA_NORMAL;
-        // dmaHandle.Init.PeriphDataAlignment    = DMA_PDATAALIGN_BYTE;
-        // dmaHandle.Init.PeriphInc              = DMA_PINC_ENABLE;
-        // dmaHandle.Init.Priority               = DMA_PRIORITY_HIGH;
-
-        // // Set the channel and direction for I2C1 RX and update the configuration
-        // dmaHandle.Init.Direction              = DMA_PERIPH_TO_MEMORY;
-        // dmaHandle.Init.Channel                = DMA_CHANNEL_1;
-        // // @todo: Handle this like the I2C/UART modules
-        // dmaHandle.Instance                    = DMA1_Stream0;
-        // HAL_DMA_INIT(&dmaHandle);
-        // __HAL_LINKDMA(hi2c, hdmarx, dmaInit);
-
-        // // Set the channel and direction for I2C1 TX and update the configuration
-        // dmaHandle.Init.Direction              = DMA_MEMORY_TO_PERIPH;
-        // dmaHandle.Init.Channel                = DMA_CHANNEL_1;
-        // // @todo: Handle this like the I2C/UART modules
-        // dmaHandle.Instance                    = DMA1_Stream6;
-        // HAL_DMA_INIT(&dmaHandle);
-        // __HAL_LINKDMA(hi2c, hdmatx, dmaInit);
-    }
+    if      (instance == I2C1)  __HAL_RCC_I2C1_CLK_ENABLE();
+    else if (instance == I2C2)  __HAL_RCC_I2C2_CLK_ENABLE();
+    else if (instance == I2C3)  __HAL_RCC_I2C3_CLK_ENABLE();
+    else                        UNREACHABLE();
 }
