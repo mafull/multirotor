@@ -16,6 +16,7 @@
  ******************************************************************************/
 
 ExternalInterrupt_CallbackFunction_t ExternalInterrupt_callbackFunctions[EXTERNAL_INTERRUPT_LINE_COUNT] = { 0 };
+Gpio_Instance_t ExternalInterrupt_gpioPins[EXTERNAL_INTERRUPT_LINE_COUNT] = { 0 };
 
 bool ExternalInterrupt_isInitialised = false;
 
@@ -33,6 +34,9 @@ bool ExternalInterrupt_Initialise(void)
     for (uint8_t i = 0u; i < ExternalInterrupt_Instance_MAX; i++)
     {
         const ExternalInterrupt_ConfigData_t *const conf = &ExternalInterrupt_configData[i]; // @todo: Make a macro...
+
+        ExternalInterrupt_gpioPins[conf->line] = conf->gpioInstance;
+
         HAL_NVIC_SetPriority(conf->irqN, 1, 0); // @todo: Change priorities/add to config data
         HAL_NVIC_EnableIRQ(conf->irqN);
     }
@@ -64,62 +68,48 @@ void ExternalInterrupt_SetCallback(ExternalInterrupt_Instance_t instance,
   Private Function Implementations
  ******************************************************************************/
 
-
-
-
-// #define EXTIn_HANDLER(n) \
-//     void EXTI##n##_IRQHandler(void) \
-//     { \
-//         const ExternalInterrupt_CallbackFunction_t callback = ExternalInterrupt_callbackFunctions[n]; \
-//         if (callback) \
-//         { \
-//             callback(true); \
-//         } \
-//         EXTI->PR = (1 << n); \
-//     }
-
-// EXTIn_HANDLER(0)
-// EXTIn_HANDLER(1)
-// EXTIn_HANDLER(2)
-// EXTIn_HANDLER(3)
-// EXTIn_HANDLER(4)
-
-void EXTI0_IRQHandler(void)
+void ExternalInterrupt_GenericHandler(uint8_t line)
 {
-    const ExternalInterrupt_CallbackFunction_t callback = ExternalInterrupt_callbackFunctions[0];
-    
-    if (callback)
+    ENSURE(line < EXTERNAL_INTERRUPT_LINE_COUNT);
+
+    const uint16_t lineDef = (uint16_t)(1 << line);
+    if (__HAL_GPIO_EXTI_GET_IT(lineDef))
     {
-        const Gpio_State_t gpioState = (Gpio_GetState(Gpio_UserButton));
-        callback(gpioState);
-    }
+        const ExternalInterrupt_CallbackFunction_t callback = ExternalInterrupt_callbackFunctions[line];
+        
+        if (callback)
+        {
+            const Gpio_Instance_t gpioInstance = ExternalInterrupt_gpioPins[line];
+            const Gpio_State_t gpioState = (Gpio_GetState(gpioInstance));
+            callback((gpioState == High) ? Risen : Fallen);
+        }
 
-    EXTI->PR = (1 << 0); // @todo: Maybe use __HAL_GPIO_EXTI_CLEAR_IT()
-}
-
-/*
-void EXTI0_IRQHandler(void)
-{
-    // Checks whether the interrupt from EXTI0 or not
-    if (EXTI_GetITStatus(EXTI_Line0))
-    {
-        // Toggle orange LED (GPIO13)
-        GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
-
-        // Clears the EXTI line pending bit
-        EXTI_ClearITPendingBit(EXTI_Line0);
+        __HAL_GPIO_EXTI_CLEAR_IT(lineDef);
     }
 }
-*/
 
-// HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-// {
 
-// }
+#define EXTIn_HANDLER(n) \
+    void EXTI##n##_IRQHandler(void) \
+    { \
+        ExternalInterrupt_GenericHandler(n); \
+    }
 
-// void EXTI1_IRQHandler(void)
-// void EXTI2_IRQHandler(void)
-// void EXTI3_IRQHandler(void)
-// void EXTI4_IRQHandler(void)
-// void EXTI9_5_IRQHandler(void)
-// void EXTI15_10_IRQHandler(void)
+
+#define EXTIn1_n2_HANDLER(n1, n2) \
+    void EXTI##n1##_##n2##_IRQHandler(void) \
+    { \
+        for (uint8_t i = n1; i <= n2; i++) \
+        { \
+            ExternalInterrupt_GenericHandler(i); \
+        } \
+    }
+
+
+EXTIn_HANDLER(0);
+EXTIn_HANDLER(1);
+EXTIn_HANDLER(2);
+EXTIn_HANDLER(3);
+EXTIn_HANDLER(4);
+EXTIn1_n2_HANDLER(9, 5);
+EXTIn1_n2_HANDLER(15, 10);

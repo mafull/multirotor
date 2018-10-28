@@ -39,7 +39,7 @@
 typedef struct ExternalInterrupt_ConfigData_s
 {
     Gpio_Instance_t gpioInstance;
-    uint16_t line;
+    uint8_t line;
     IRQn_Type irqN;
 } ExternalInterrupt_ConfigData_t;
 
@@ -62,6 +62,16 @@ extern ExternalInterrupt_CallbackFunction_t ExternalInterrupt_callbackFunctions[
  *
  */
 extern bool ExternalInterrupt_isInitialised;
+
+
+/******************************************************************************
+  Private Function Prototypes
+ ******************************************************************************/
+
+/**
+ *
+ */
+void ExternalInterrupt_GenericHandler(uint8_t line);
 
 
 #endif // __EXTERNAL_INTERRUPT_PRIVATE_H
