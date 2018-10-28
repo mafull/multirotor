@@ -14,68 +14,78 @@
 
 
 /******************************************************************************
+  Private Data
+ ******************************************************************************/
+
+UART_HandleTypeDef Uart_handles[Uart_Instance_MAX];
+
+bool Uart_isInitialised = false;
+
+
+/******************************************************************************
   Public Function Implementations
  ******************************************************************************/
 
-bool Uart_Initialise(Uart_Instance_t instance)
+bool Uart_Initialise(void)
 {
-    ENSURE(instance < Uart_Instance_MAX);
+    ENSURE(!Uart_isInitialised);
 
-    // Get the relevant handle
-    Uart_Handle_t *const handle = &Uart_handles[(uint8_t)instance];
 
-    // Ensure its instance is configured correctly and it's not initialised
-    ENSURE(instance == handle->instance);
-    ENSURE(!handle->initialised);
+    ENSURE(Gpio_IsInitialised()); // @todo: Maybe make this the ret value, don't assert?
 
-    // Initialise rx and tx pins
-    Uart_EnablePortClock(handle->rxPort);
-    Uart_EnablePortClock(handle->txPort);
-    HAL_GPIO_Init(handle->rxPort, &handle->rxInitStruct);
-    HAL_GPIO_Init(handle->txPort, &handle->txInitStruct);
+    bool success = true;
+    for (uint8_t i = 0; i < Uart_Instance_MAX; i++)
+    {
+        const Uart_ConfigData_t *const conf = &Uart_configData[i];
+        UART_HandleTypeDef *const handle = &Uart_handles[i];
 
-    // Configure the interrupt handler
-    IRQn_Type irqn = Uart_GetUartInterruptNumber(handle->halHandle.Instance);
-    HAL_NVIC_SetPriority(irqn, 1u, 1u); // @todo: Configurable priorities
-    HAL_NVIC_EnableIRQ(irqn);
 
-    // Enable the RXNE interrupt
-    __HAL_UART_ENABLE_IT(&handle->halHandle, UART_IT_RXNE);
+        // Configure the interrupt handler
+        // IRQn_Type irqn = Uart_GetUartInterruptNumber(conf->halInstance);
+        // HAL_NVIC_SetPriority(irqn, 1u, 1u); // @todo: Configurable priorities
+        // HAL_NVIC_EnableIRQ(irqn);
 
-    // Attempt to initialise the UART peripheral itself
-    Uart_EnableUartClock(handle->halHandle.Instance);
-    handle->initialised = (HAL_UART_Init(&handle->halHandle) == HAL_OK);
+        // Enable the RXNE interrupt
+        // __HAL_UART_ENABLE_IT(handle, UART_IT_RXNE);
 
-    return handle->initialised;
+        Uart_EnableUartClock(conf->halInstance);
+
+        // Attempt to initialise the UART peripheral itself
+        handle->Instance = conf->halInstance;
+        handle->Init = conf->initStruct;
+        success = (HAL_UART_Init(handle) == HAL_OK);
+    }
+
+    Uart_isInitialised = success;
+    return Uart_isInitialised;
 }
 
 
-bool Uart_IsInitialised(Uart_Instance_t instance)
+bool Uart_IsInitialised(void)
 {
-    ENSURE(instance < Uart_Instance_MAX);
-    return Uart_handles[(uint8_t)instance].initialised;
+    return Uart_isInitialised;
 }
 
 
-void Uart_SetCallback(Uart_Instance_t instance, Uart_CallbackFunction_t callback)
-{
-    ENSURE(instance < Uart_Instance_MAX);
-    ENSURE(callback);
+// void Uart_SetCallback(Uart_Instance_t instance, Uart_CallbackFunction_t callback)
+// {
+//     ENSURE(instance < Uart_Instance_MAX);
+//     ENSURE(callback);
 
-    Uart_handles[(uint8_t)instance].callback = callback;
-}
+//     Uart_handles[(uint8_t)instance].callback = callback;
+// }
 
 
 bool Uart_Write(Uart_Instance_t instance, char *message)
 {
     ENSURE(instance < Uart_Instance_MAX);
+    ENSURE(message);
+    ENSURE(Uart_isInitialised);
 
-    // Get the relevant handle and ensure it is initialised
-    Uart_Handle_t *const handle = &Uart_handles[(uint8_t)instance]; // @todo: Maybe make this a macro
-    ENSURE(handle->initialised);
+    UART_HandleTypeDef *const handle = &Uart_handles[instance]; // @todo: Maybe make this a macro
 
     // Attempt to send the message
-    return (HAL_UART_Transmit(&handle->halHandle,
+    return (HAL_UART_Transmit(handle,
                               (uint8_t *)message,
                               strnlen(message, 128u), // @todo: Add max length define
                               UART_TRANSMIT_TIMEOUT) == HAL_OK);
@@ -85,21 +95,6 @@ bool Uart_Write(Uart_Instance_t instance, char *message)
 /******************************************************************************
   Public Function Implementations
  ******************************************************************************/
-
-void Uart_EnablePortClock(GPIO_TypeDef *port)
-{
-    ENSURE(port);
-
-    if      (port == GPIOA) __HAL_RCC_GPIOA_CLK_ENABLE();
-    else if (port == GPIOB) __HAL_RCC_GPIOB_CLK_ENABLE();
-    else if (port == GPIOC) __HAL_RCC_GPIOC_CLK_ENABLE();
-    else if (port == GPIOD) __HAL_RCC_GPIOD_CLK_ENABLE();
-    else if (port == GPIOE) __HAL_RCC_GPIOE_CLK_ENABLE();
-    else if (port == GPIOF) __HAL_RCC_GPIOF_CLK_ENABLE();
-    else if (port == GPIOG) __HAL_RCC_GPIOG_CLK_ENABLE();
-    else if (port == GPIOH) __HAL_RCC_GPIOH_CLK_ENABLE();
-    else                    UNREACHABLE();
-}
 
 void Uart_EnableUartClock(USART_TypeDef *instance)
 {
@@ -113,6 +108,7 @@ void Uart_EnableUartClock(USART_TypeDef *instance)
     else if (instance == USART6)    __USART6_CLK_ENABLE();
     else                            UNREACHABLE();
 }
+
 
 IRQn_Type Uart_GetUartInterruptNumber(USART_TypeDef *instance)
 {
@@ -130,25 +126,26 @@ IRQn_Type Uart_GetUartInterruptNumber(USART_TypeDef *instance)
     return irqn;
 }
 
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     ENSURE(huart);
 
     // Find the relevant handle
-    Uart_Handle_t *handle = NULL;
-    for (uint8_t i = 0u; i < Uart_Instance_MAX; i++)
-    {
-        handle = &Uart_handles[i];
-        if (handle->halHandle.Instance != huart->Instance)
-        {
-            handle = NULL;
-            continue;
-        }
-    }
-    ENSURE(handle);
+    // Uart_Handle_t *handle = NULL;
+    // for (uint8_t i = 0u; i < Uart_Instance_MAX; i++)
+    // {
+    //     handle = &Uart_handles[i];
+    //     if (handle->halHandle.Instance != huart->Instance)
+    //     {
+    //         handle = NULL;
+    //         continue;
+    //     }
+    // }
+    // ENSURE(handle);
 
-    if (!handle->callback)
-    {
-        handle->callback(handle->halHandle.Instance->DR);
-    }
+    // if (!handle->callback)
+    // {
+    //     handle->callback(handle->halHandle.Instance->DR);
+    // }
 }

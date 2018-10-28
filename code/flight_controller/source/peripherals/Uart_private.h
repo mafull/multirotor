@@ -32,20 +32,11 @@
 /**
  *
  */
-typedef struct Uart_Handle_s
+typedef struct Uart_ConfigData_s
 {
-    Uart_Instance_t instance;
-
-    bool initialised;
-    Uart_CallbackFunction_t callback;
-
-    UART_HandleTypeDef halHandle;
-
-    GPIO_InitTypeDef rxInitStruct;
-    GPIO_TypeDef *rxPort;
-    GPIO_InitTypeDef txInitStruct;
-    GPIO_TypeDef *txPort;
-} Uart_Handle_t;
+    USART_TypeDef *halInstance;
+    UART_InitTypeDef initStruct;
+} Uart_ConfigData_t;
 
 
 /******************************************************************************
@@ -55,19 +46,22 @@ typedef struct Uart_Handle_s
 /**
  *
  */
-extern Uart_Handle_t Uart_handles[Uart_Instance_MAX];
+extern const Uart_ConfigData_t Uart_configData[Uart_Instance_MAX];
+
+/**
+ *
+ */
+extern UART_HandleTypeDef Uart_handles[Uart_Instance_MAX];
+
+/**
+ *
+ */
+extern bool Uart_isInitialised;
 
 
 /******************************************************************************
   Private Function Prototypes
  ******************************************************************************/
-
-/**
- * Enable a GPIO port clock
- *
- * @param port The GPIO port whose clock is to be enabled
- */
-void Uart_EnablePortClock(GPIO_TypeDef *port);
 
 /**
  * Enable a UART peripheral clock

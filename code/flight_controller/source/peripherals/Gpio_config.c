@@ -29,8 +29,8 @@ const Gpio_ConfigData_t Gpio_configData[Gpio_Instance_MAX] =
         // Peripheral pins
         { GPIOB, {  GPIO_PIN_6,     GPIO_MODE_AF_OD, GPIO_PULLUP, GPIO_SPEED_HIGH,   GPIO_AF4_I2C1 } }, // Gpio_I2c1_Scl
         { GPIOB, {  GPIO_PIN_7,     GPIO_MODE_AF_OD, GPIO_PULLUP, GPIO_SPEED_HIGH,   GPIO_AF4_I2C1 } }, // Gpio_I2c1_Scl
-        // { GPIOA, { GPIO_PIN_10,     GPIO_MODE_AF_OD, GPIO_NOPULL, GPIO_SPEED_HIGH, GPIO_AF7_USART1 } }, // Gpio_Uart1_Rx
-        // { GPIOA, {  GPIO_PIN_9,     GPIO_MODE_AF_OD, GPIO_NOPULL, GPIO_SPEED_HIGH, GPIO_AF7_USART1 } }, // Gpio_Uart1_Tx
-        // { GPIOD, {  GPIO_PIN_6,     GPIO_MODE_AF_OD, GPIO_NOPULL, GPIO_SPEED_HIGH, GPIO_AF7_USART2 } }, // Gpio_Uart2_Rx
-        // { GPIOD, {  GPIO_PIN_5,     GPIO_MODE_AF_OD, GPIO_NOPULL, GPIO_SPEED_HIGH, GPIO_AF7_USART2 } }, // Gpio_Uart2_Tx
+        { GPIOA, { GPIO_PIN_10,     GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_HIGH, GPIO_AF7_USART1 } }, // Gpio_Uart1_Rx
+        { GPIOA, {  GPIO_PIN_9,     GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_HIGH, GPIO_AF7_USART1 } }, // Gpio_Uart1_Tx
+        { GPIOD, {  GPIO_PIN_6,     GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_HIGH, GPIO_AF7_USART2 } }, // Gpio_Uart2_Rx
+        { GPIOD, {  GPIO_PIN_5,     GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_HIGH, GPIO_AF7_USART2 } }, // Gpio_Uart2_Tx
     };

@@ -34,18 +34,18 @@ typedef enum Uart_Instance_e
 /**
  *
  */
-bool Uart_Initialise(Uart_Instance_t instance);
+bool Uart_Initialise(void);
 
 /**
  *
  */
-bool Uart_IsInitialised(Uart_Instance_t instance);
+bool Uart_IsInitialised(void);
 
 /**
  *
  */
-void Uart_SetCallback(Uart_Instance_t instance,
-                      Uart_CallbackFunction_t callback);
+// void Uart_SetCallback(Uart_Instance_t instance,
+//                       Uart_CallbackFunction_t callback);
 
 /**
  *

@@ -39,10 +39,10 @@ typedef enum Gpio_Instance_e
     // Peripheral pins
     Gpio_I2c1_Scl,
     Gpio_I2c1_Sda,
-    // Gpio_Uart1_Rx,
-    // Gpio_Uart1_Tx,
-    // Gpio_Uart2_Rx,
-    // Gpio_Uart2_Tx,
+    Gpio_Uart1_Rx,
+    Gpio_Uart1_Tx,
+    Gpio_Uart2_Rx,
+    Gpio_Uart2_Tx,
 
     Gpio_Instance_MAX
 } Gpio_Instance_t;
