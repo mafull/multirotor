@@ -10,11 +10,8 @@
 // --- Public header ---
 #include "peripherals/ExternalInterrupt.h"
 
-// --- Project includes ---
-
-// --- Library includes ---
-
-// --- Standard includes ---
+// --- Project Includes ---
+#include "peripherals/Gpio.h"
 
 
 /******************************************************************************
@@ -35,16 +32,10 @@
 /**
  *
  */
-typedef struct Uart_Handle_s
+typedef struct ExternalInterrupt_ConfigData_s
 {
-    ExternalInterrupt_Instance_t instance;
-
-    bool initialised;
-    ExternalInterrupt_CallbackFunction_t callback;
-
-    GPIO_InitTypeDef initStruct;
-    GPIO_TypeDef *port;
-} ExternalInterrupt_Handle_t;
+    Gpio_Instance_t gpioInstance;
+} ExternalInterrupt_ConfigData_t;
 
 
 /******************************************************************************
@@ -54,20 +45,17 @@ typedef struct Uart_Handle_s
 /**
  *
  */
-extern ExternalInterrupt_Handle_t ExternalInterrupt_handles[ExternalInterrupt_Instance_MAX];
+extern const ExternalInterrupt_ConfigData_t ExternalInterrupt_configData[ExternalInterrupt_Instance_MAX];
 
 /**
  *
  */
 extern ExternalInterrupt_CallbackFunction_t ExternalInterrupt_callbackFunctions[EXTERNAL_INTERRUPT_LINE_COUNT];
 
-
-/******************************************************************************
-  Private Function Prototypes
- ******************************************************************************/
-
 /**
  *
  */
+extern bool ExternalInterrupt_isInitialised;
+
 
 #endif // __EXTERNAL_INTERRUPT_PRIVATE_H

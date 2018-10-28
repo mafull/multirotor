@@ -34,7 +34,7 @@ typedef enum Gpio_Instance_e
 
     // External Interrupts
     Gpio_MPU6050_Int,
-    Gpio_MPU6050_UserButton,
+    Gpio_UserButton,
 
     // Peripheral pins
     Gpio_I2c1_Scl,

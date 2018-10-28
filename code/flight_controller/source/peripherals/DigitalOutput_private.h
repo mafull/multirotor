@@ -11,7 +11,7 @@
 #include "peripherals/DigitalOutput.h"
 
 // --- Project includes ---
-#include "Gpio.h"
+#include "peripherals/Gpio.h"
 
 
 /******************************************************************************

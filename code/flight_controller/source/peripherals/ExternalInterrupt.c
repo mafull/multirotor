@@ -8,6 +8,7 @@
 
 
 // --- Project includes ---
+#include "macros.h"
 
 // --- Library includes ---
 
@@ -18,41 +19,30 @@
   Private Data
  ******************************************************************************/
 
-extern ExternalInterrupt_CallbackFunction_t ExternalInterrupt_callbackFunctions[EXTERNAL_INTERRUPT_LINE_COUNT] = { 0 };
+ExternalInterrupt_CallbackFunction_t ExternalInterrupt_callbackFunctions[EXTERNAL_INTERRUPT_LINE_COUNT] = { 0 };
+
+bool ExternalInterrupt_isInitialised = false;
 
 
 /******************************************************************************
   Public Function Implementations
  ******************************************************************************/
 
-bool ExternalInterrupt_Initialise(ExternalInterrupt_Instance_t instance)
+bool ExternalInterrupt_Initialise(void)
 {
-    ENSURE(instance < ExternalInterrupt_Instance_MAX);
+    ENSURE(!ExternalInterrupt_isInitialised);
 
-    // Get the relevant handle
-    ExternalInterrupt_Handle_t *const handle =
-        &ExternalInterrupt_handles[(uint8_t)instance];
+    // All we need to do is check that the GPIOs are initialised
+    ENSURE(Gpio_IsInitialised()); // @todo: Maybe make this the ret value, don't assert?
 
-    // Ensure its instance is configured correctly and it's not initialised
-    ENSURE(instance == handle->instance);
-    ENSURE(!handle->initialised);
-
-    // Enable the relevant port clock and initialise the pin
-    ExternalInterrupt_EnablePortClock(handle->port);
-    HAL_GPIO_Init(handle->port, &handle->initStruct);
-    handle->initialised = true;
-
-    // Enable the EXTI
-    ExternalInterrupt_EnableEXTI();
-
-    return handle->initialised;
+    ExternalInterrupt_isInitialised = true;
+    return ExternalInterrupt_isInitialised;
 }
 
 
-bool ExternalInterrupt_IsInitialised(ExternalInterrupt_Instance_t instance)
+bool ExternalInterrupt_IsInitialised(void)
 {
-    ENSURE(instance < ExternalInterrupt_Instance_MAX);
-    return ExternalInterrupt_handles[(uint8_t)instance].initialised; // @todo: rename to isInitialise + same for other modules
+    return ExternalInterrupt_isInitialised;
 }
 
 
@@ -67,19 +57,39 @@ void ExternalInterrupt_SetCallback(ExternalInterrupt_Instance_t instance,
   Private Function Implementations
  ******************************************************************************/
 
-void EXTI0_IRQHandler(void)
-{
-    const ExternalInterrupt_CallbackFunction_t callback = ExternalInterrupt_callbackFunctions[0];
-    
-    if (callback)
-    {
-        const bool isHigh = HAL_GPIO_ReadPin(handle->port,
-                          handle->initStruct.Pin) == GPIO_PIN_SET)
-        callback();
-    }
 
-    EXTI->PR = (1 << 0); // @todo: Maybe use __HAL_GPIO_EXTI_CLEAR_IT()
-}
+
+
+// #define EXTIn_HANDLER(n) \
+//     void EXTI##n##_IRQHandler(void) \
+//     { \
+//         const ExternalInterrupt_CallbackFunction_t callback = ExternalInterrupt_callbackFunctions[n]; \
+//         if (callback) \
+//         { \
+//             callback(true); \
+//         } \
+//         EXTI->PR = (1 << n); \
+//     }
+
+// EXTIn_HANDLER(0)
+// EXTIn_HANDLER(1)
+// EXTIn_HANDLER(2)
+// EXTIn_HANDLER(3)
+// EXTIn_HANDLER(4)
+
+// void EXTI0_IRQHandler(void)
+// {
+//     const ExternalInterrupt_CallbackFunction_t callback = ExternalInterrupt_callbackFunctions[0];
+    
+//     if (callback)
+//     {
+//         const bool isHigh = (HAL_GPIO_ReadPin(handle->port,
+//                           handle->initStruct.Pin) == GPIO_PIN_SET)
+//         callback();
+//     }
+
+//     EXTI->PR = (1 << 0); // @todo: Maybe use __HAL_GPIO_EXTI_CLEAR_IT()
+// }
 
 /*
 void EXTI0_IRQHandler(void)

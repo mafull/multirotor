@@ -24,7 +24,7 @@ typedef void (*ExternalInterrupt_CallbackFunction_t)(bool);
  */
 typedef enum ExternalInterrupt_Instance_e
 {
-    MPU6050Int = 0u,
+    MPU6050_Int = 0u,
     UserButton,
 
     ExternalInterrupt_Instance_MAX
@@ -38,12 +38,12 @@ typedef enum ExternalInterrupt_Instance_e
 /**
  *
  */
-bool ExternalInterrupt_Initialise(ExternalInterrupt_Instance_t instance);
+bool ExternalInterrupt_Initialise(void);
 
 /**
  *
  */
-bool ExternalInterrupt_IsInitialised(ExternalInterrupt_Instance_t instance);
+bool ExternalInterrupt_IsInitialised(void);
 
 /**
  *

@@ -11,18 +11,11 @@
   Private Data
  ******************************************************************************/
 
-ExternalInterrupt_Handle_t ExternalInterrupt_handles[ExternalInterrupt_Instance_Max] = 
+const ExternalInterrupt_ConfigData_t ExternalInterrupt_configData[ExternalInterrupt_Instance_MAX] = 
     {
-        {
-            .instance = MPU6050Int,
-
-            .initStruct = 
-            {
-                .Mode   = GPIO_MODE_IT_RISING,
-                .Pin    = GPIO_PIN_4,
-                .Pull   = GPIO_NOPULL,
-                .Speed  = GPIO_SPEED_LOW
-            },
-            .port       = GPIOD
-        }
+        /*
+          | GPIO Instance
+        */
+        { Gpio_MPU6050_Int }, // MPU6050_Int
+        { Gpio_UserButton  }, // UserButton
     };
