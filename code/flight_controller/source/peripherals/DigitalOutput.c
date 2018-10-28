@@ -61,3 +61,13 @@ bool DigitalOutput_SetState(DigitalOutput_Instance_t instance,
     return Gpio_SetState(gpioInstance,
                          (newState == On) ? High : Low);
 }
+
+void DigitalOutput_ToggleState(DigitalOutput_Instance_t instance)
+{
+    ENSURE(instance < DigitalOutput_Instance_MAX);
+    ENSURE(DigitalOutput_isInitialised);
+
+    const DigitalOutput_State_t currentState = DigitalOutput_GetState(instance);
+    DigitalOutput_SetState(instance,
+                           (currentState == On) ? Off : On);
+}

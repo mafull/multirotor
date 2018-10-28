@@ -17,7 +17,7 @@ typedef enum DigitalOutput_Instance_e
 {
     AssertLed = 0u,
     ControlLed,
-    IMULed,
+    ImuLed,
     LoggerLed,
     UnusedLed,
     
@@ -69,5 +69,13 @@ bool DigitalOutput_IsInitialised(void);
  */
 bool DigitalOutput_SetState(DigitalOutput_Instance_t instance,
                             DigitalOutput_State_t newState);
+
+/**
+ * Toggle the state of a Digital Output
+ *
+ * @param instance The Digital Output to update
+ */
+void DigitalOutput_ToggleState(DigitalOutput_Instance_t instance);
+
 
 #endif // __DIGITAL_OUTPUT_H
