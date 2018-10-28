@@ -14,8 +14,8 @@
 const Gpio_ConfigData_t Gpio_configData[Gpio_Instance_MAX] = 
     {
         /*
-          | Port   | Init Struct
-          |        | Pin        | Mode               | Pull        | Speed         | Alt. Function
+          | Port | Init Struct
+          |      | | Pin        | Mode               | Pull        | Speed         | Alt. Function
         */
         // Digital Outputs
         { GPIOD, {  GPIO_PIN_1, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL,  GPIO_SPEED_LOW,               0 } }, // Gpio_AssertLed

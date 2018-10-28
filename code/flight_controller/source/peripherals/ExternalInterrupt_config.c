@@ -14,7 +14,7 @@
 const ExternalInterrupt_ConfigData_t ExternalInterrupt_configData[ExternalInterrupt_Instance_MAX] = 
     {
         /*
-          | GPIO Instance   | line
+          | GPIO Instance   | EXTI Line
           |                 |  | IRQ Number
         */
         { Gpio_MPU6050_Int, 4, EXTI4_IRQn }, // MPU6050_Int
