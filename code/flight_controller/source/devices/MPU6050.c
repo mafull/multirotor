@@ -24,8 +24,9 @@
 
 bool MPU6050_Initialise(void)
 {
-    ENSURE(I2c_IsInitialised(I2c1)); // @todo: Make I2c1 a config thing
-    ENSURE(ExternalInterrupt_IsInitialised(MPU6050_Int)); // @todo: Make MPU6050_Int a config thing
+    // ENSURE(!MPU6050_isInitialised);
+    ENSURE(I2c_IsInitialised());
+    // ENSURE(ExternalInterrupt_IsInitialised()); // @todo: Make MPU6050_Int a config thing
 
     bool success = true;
     uint8_t tmp = 0x00u;

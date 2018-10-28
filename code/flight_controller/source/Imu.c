@@ -35,6 +35,7 @@ bool Imu_isDataNew = false;
 bool Imu_GetNewData(Imu_Data_t *const data)
 {
     ENSURE(data);
+    ENSURE(Imu_isInitialised);
 
     // @todo: Lock mutex
     *data = Imu_data;
@@ -47,7 +48,7 @@ bool Imu_GetNewData(Imu_Data_t *const data)
 
 bool Imu_Initialise(void)
 {
-    ENSURE(!Imu_IsInitialised());
+    ENSURE(!Imu_isInitialised);
 
     if (MPU6050_Initialise())
     {
@@ -75,7 +76,7 @@ bool Imu_IsInitialised(void)
 
 void Imu_Update(void)
 {
-    ENSURE(Imu_IsInitialised());
+    ENSURE(Imu_isInitialised);
 
     static Imu_Data_t data = { 0 }; // Static so it isn't repeatedly allocated
 
