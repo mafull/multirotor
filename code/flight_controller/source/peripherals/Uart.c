@@ -8,6 +8,7 @@
 
 // --- Project includes ---
 #include "macros.h"
+#include "peripherals/Gpio.h"
 
 // Standard includes
 #include <string.h>
@@ -34,7 +35,7 @@ bool Uart_Initialise(void)
     ENSURE(Gpio_IsInitialised()); // @todo: Maybe make this the ret value, don't assert?
 
     bool success = true;
-    for (uint8_t i = 0; i < Uart_Instance_MAX; i++)
+    for (uint8_t i = 0; success && (i < Uart_Instance_MAX); i++)
     {
         const Uart_ConfigData_t *const conf = &Uart_configData[i];
         UART_HandleTypeDef *const handle = &Uart_handles[i];
@@ -100,12 +101,12 @@ void Uart_EnableUartClock(USART_TypeDef *instance)
 {
     ENSURE(instance);
 
-    if      (instance == USART1)    __USART1_CLK_ENABLE();
-    else if (instance == USART2)    __USART2_CLK_ENABLE();
-    else if (instance == USART3)    __USART3_CLK_ENABLE();
-    else if (instance == UART4)      __UART4_CLK_ENABLE();
-    else if (instance == UART5)      __UART5_CLK_ENABLE();
-    else if (instance == USART6)    __USART6_CLK_ENABLE();
+    if      (instance == USART1)    __HAL_RCC_USART1_CLK_ENABLE();
+    else if (instance == USART2)    __HAL_RCC_USART2_CLK_ENABLE();
+    else if (instance == USART3)    __HAL_RCC_USART3_CLK_ENABLE();
+    else if (instance == UART4)      __HAL_RCC_UART4_CLK_ENABLE();
+    else if (instance == UART5)      __HAL_RCC_UART5_CLK_ENABLE();
+    else if (instance == USART6)    __HAL_RCC_USART6_CLK_ENABLE();
     else                            UNREACHABLE();
 }
 
