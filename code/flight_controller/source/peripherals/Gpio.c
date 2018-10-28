@@ -42,9 +42,9 @@ bool Gpio_Initialise(void)
     {
         const Gpio_ConfigData_t *const conf = &Gpio_configData[i];
 
-        // Initialise the GPIO and start the relevant port clock
-        HAL_GPIO_Init(conf->port, (GPIO_InitTypeDef *)&conf->initStruct);
+        // Initialise the GPIO after starting the relevant port clock
         Gpio_EnablePortClock(conf->port);
+        HAL_GPIO_Init(conf->port, (GPIO_InitTypeDef *)&conf->initStruct);
     }
 
     Gpio_isInitialised = true;
