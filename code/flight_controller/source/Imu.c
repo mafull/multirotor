@@ -9,8 +9,8 @@
 
 // --- Project includes ---
 #include "devices/MPU6050.h"
+#include "Logger.h"
 #include "macros.h"
-#include "peripherals/Uart.h"
 
 // --- Library includes ---
 
@@ -52,7 +52,7 @@ bool Imu_Initialise(void)
 
     if (MPU6050_Initialise())
     {
-        Uart_Write(Uart1, "MPU6050 initialised successfully\n");
+        LOG_INFO("MPU6050 initialised successfully");
 
 
         // DO OTHER STUFF
@@ -61,7 +61,7 @@ bool Imu_Initialise(void)
     }
     else
     {
-        Uart_Write(Uart1, "MPU6050 failed to initialise\n");
+        LOG_ERROR("MPU6050 failed to initialise");
     }
 
     return Imu_isInitialised;

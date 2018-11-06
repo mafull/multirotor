@@ -8,10 +8,10 @@
 
 
 // --- Project includes ---
+#include "Logger.h"
 #include "macros.h"
 #include "peripherals/ExternalInterrupt.h"
 #include "peripherals/I2c.h"
-#include "peripherals/Uart.h"
 
 // --- Library includes ---
 
@@ -34,7 +34,7 @@ bool MPU6050_Initialise(void)
 
     // @todo: Clean this all up
     // @todo: Add "WriteThenReadCheck" function to read back the written value
-    Uart_Write(Uart1, "WHO_AM_I\n");
+    LOG_DEBUG("WHO_AM_I");
     // WHO_AM_I
     // Check WHO_AM_I equals the device address
     success = (I2c_ReadMemory(I2c1,
@@ -44,7 +44,7 @@ bool MPU6050_Initialise(void)
                               1u) && (tmp == MPU6050_DEVICE_ADDR));
     if (!success) return false;
 
-    Uart_Write(Uart1, "PWM_MGMT_1\n");
+    LOG_DEBUG("PWM_MGMT_1");
     // PWM_MGMT_1
     // Reset and wake up the device
     tmp = 0x00u; //((uint8_t)1u << 7u);
@@ -65,7 +65,7 @@ bool MPU6050_Initialise(void)
                               1u);
     if (!success) return false;
 
-    Uart_Write(Uart1, "SMPLRT_DIV\n");
+    LOG_DEBUG("SMPLRT_DIV");
     // SMPLRT_DIV
     // Set the sample rate to 1kHz
     tmp = 0x07u; // 0x00u;
@@ -76,7 +76,7 @@ bool MPU6050_Initialise(void)
                               1u);
     if (!success) return false;
 
-    Uart_Write(Uart1, "CONFIG\n");
+    LOG_DEBUG("CONFIG");
     // CONFIG
     // Disable FSYNC input and configure the DLPF for ~3ms delay
     tmp = 0x02u;
@@ -87,7 +87,7 @@ bool MPU6050_Initialise(void)
                               1u);
     if (!success) return false;
 
-    Uart_Write(Uart1, "GYRO_CONFIG\n");
+    LOG_DEBUG("GYRO_CONFIG");
     // GYRO_CONFIG
     // Set gyroscope range to +-500 deg/s (FS_SEL = 1)
     tmp = ((uint8_t)1u << 3u);
@@ -98,7 +98,7 @@ bool MPU6050_Initialise(void)
                               1u);
     if (!success) return false;
 
-    Uart_Write(Uart1, "ACCEL_CONFIG\n");
+    LOG_DEBUG("ACCEL_CONFIG");
     // ACCEL_CONFIG
     // Set accelerometer range to +-8 g (AFS_SEL = 2)
     tmp = ((uint8_t)2u << 3u);
@@ -109,7 +109,7 @@ bool MPU6050_Initialise(void)
                               1u);
     if (!success) return false;
 
-    Uart_Write(Uart1, "Interrupt pin\n");
+    LOG_DEBUG("Interrupt pin");
     // Interrupt pin
     // INT_PIN_CFG
     // Read the current value so as not to change any other settings
@@ -138,7 +138,7 @@ bool MPU6050_Initialise(void)
                               1u);
     if (!success) return false;
 
-    Uart_Write(Uart1, "I2C bypass\n");
+    LOG_DEBUG("I2C bypass");
     // I2C bypass
     // INT_PIN_CFG
     // Read the current value so as not to change any other settings
