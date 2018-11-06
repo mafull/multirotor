@@ -14,6 +14,7 @@
 
 // --- Standard includes ---
 #include <stdio.h>
+#include <string.h>
 
 
 /******************************************************************************
@@ -44,23 +45,23 @@ bool Logger_IsInitialised(void)
 }
 
 
-void Logger_Log(char *fileName, uint16_t lineNumber,
+void Logger_Log(const char *fileName, uint16_t lineNumber,
                 Logger_Severity_t severity,
-                char *message)
+                const char *message)
 {
     // @todo: Make this thread safe (i.e. use a message queue)
     ENSURE(fileName);
     ENSURE(message);
     ENSURE(Logger_isInitialised);
 
-    ENSURE(Uart_IsInitialised());
-
     // @todo: Maybe strip LF/CR characters from message?
+    // message[strcspn(message, "\n")] = '\0';
+    Logger_StripLFCR(message);
 
     char buffer[LOGGER_BUFFER_LENGTH] = ""; // @todo maybe make static & use memset 0?
     snprintf(buffer,                    // Target string
              LOGGER_BUFFER_LENGTH,      // Max output string length
-             "%*.*s:%*u|%*.*u|%.*s",  // Format string
+             "%*.*s:%*u|%*.*u|%.*s\n",  // Format string
              // File name
              LOGGER_FILENAME_LENGTH,    // Width (min length)
              LOGGER_FILENAME_LENGTH,    // Precision (max length)
@@ -80,4 +81,18 @@ void Logger_Log(char *fileName, uint16_t lineNumber,
     const bool success = Uart_Write(Uart1, buffer); // @todo: Move Uart1 to config
     UNUSED(success);
     // @todo: Add stats (e.g. num logs sent, num failed)?
+}
+
+
+/******************************************************************************
+  Private Function Implementations
+ ******************************************************************************/
+
+void Logger_StripLFCR(const char *string)
+{
+    ENSURE(string);
+
+    char *pos;
+    if ((pos = strchr(string, '\r')) != NULL) *pos = '\0';
+    if ((pos = strchr(string, '\n')) != NULL) *pos = '\0';
 }

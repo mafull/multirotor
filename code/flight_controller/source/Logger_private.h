@@ -29,7 +29,7 @@
                                      - LOGGER_FILENAME_LENGTH \
                                      - LOGGER_LINENUMBER_LENGTH \
                                      - LOGGER_SEVERITY_LENGTH \
-                                     - 4u)
+                                     - 5u)
 
 
 /******************************************************************************
@@ -40,5 +40,16 @@
  *
  */
 extern bool Logger_isInitialised;
+
+
+/******************************************************************************
+  Private Function Prototypes
+ ******************************************************************************/
+
+/**
+ *
+ */
+void Logger_StripLFCR(const char *string);
+
 
 #endif // __LOGGER_PRIVATE_H

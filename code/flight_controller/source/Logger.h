@@ -54,9 +54,9 @@ bool Logger_IsInitialised(void);
 /**
  *
  */
-void Logger_Log(char *fileName, uint16_t lineNumber,
+void Logger_Log(const char *fileName, uint16_t lineNumber,
                 Logger_Severity_t severity,
-                char *msg);
+                const char *message);
 
 
 #endif // __LOGGER_H
