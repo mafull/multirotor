@@ -17,16 +17,16 @@
 typedef enum PwmOutput_Instance_e
 {
     // Timer 1
-    Ch1 = 0u,
-    Ch2,
-    Ch3,
-    Ch4,
+    Out_Ch1 = 0u,
+    Out_Ch2,
+    Out_Ch3,
+    Out_Ch4,
 
     // Timer 4
-    // Ch5,
-    // Ch6,
-    // Ch7,
-    // Ch8,
+    // Out_Ch5,
+    // Out_Ch6,
+    // Out_Ch7,
+    // Out_Ch8,
 
     PwmOutput_Instance_MAX
 } PwmOutput_Instance_t;
