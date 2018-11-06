@@ -2,10 +2,6 @@
 #define __PWM_OUTPUT_H
 
 
-// --- Project includes ---
-
-// --- Library includes ---
-
 // --- Standard includes ---
 #include <stdbool.h>
 #include <stdint.h>
