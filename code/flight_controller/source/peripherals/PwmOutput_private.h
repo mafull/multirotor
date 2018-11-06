@@ -30,7 +30,8 @@
 typedef struct PwmOutput_ConfigData_s
 {
     Timer_Instance_t timerInstance;
-    Timer_OCConfigData_t ocConfigData;
+    uint32_t channel;
+    TIM_OC_InitTypeDef initStruct;
 } PwmOutput_ConfigData_t;
 
 
@@ -46,15 +47,12 @@ extern const PwmOutput_ConfigData_t PwmOutput_configData[PwmOutput_Instance_MAX]
 /**
  *
  */
-extern bool PwmOutput_isInitialised;
-
-
-/******************************************************************************
-  Private Function Prototypes
- ******************************************************************************/
+extern TIM_HandleTypeDef *PwmOutput_timerHandles[PwmOutput_Instance_MAX];
 
 /**
  *
  */
+extern bool PwmOutput_isInitialised;
+
 
 #endif // __PWM_OUTPUT_PRIVATE_H

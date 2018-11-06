@@ -15,11 +15,6 @@
 
 
 /******************************************************************************
-  Private Defines
- ******************************************************************************/
-
-
-/******************************************************************************
   Private Data Types
  ******************************************************************************/
 
@@ -45,6 +40,11 @@ extern const Timer_ConfigData_t Timer_configData[Timer_Instance_MAX];
 /**
  *
  */
+extern TIM_HandleTypeDef Timer_handles[Timer_Instance_MAX];
+
+/**
+ *
+ */
 extern bool Timer_isInitialised;
 
 
@@ -56,6 +56,11 @@ extern bool Timer_isInitialised;
  *
  */
 void Timer_EnableTimerClock(TIM_TypeDef *instance);
+
+/**
+ *
+ */
+TIM_HandleTypeDef *const Timer_GetHandle(Timer_Instance_t instance);
 
 
 #endif // __TIMER_PRIVATE_H
