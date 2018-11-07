@@ -8,6 +8,7 @@
 
 // --- Standard includes ---
 #include <stdbool.h>
+#include <stdint.h>
 
 
 /******************************************************************************
@@ -39,15 +40,33 @@ typedef enum PwmInput_Instance_e
     PwmInput_Instance_MAX
 } PwmInput_Instance_t;
 
+/**
+ *
+ */
+typedef struct PwmInput_PulseData_s
+{
+    uint32_t startTime;
+    uint32_t endTime;
 
-/******************************************************************************
-  Public Data
- ******************************************************************************/
+    uint32_t duration;
+} PwmInput_PulseData_t;
 
 
 /******************************************************************************
   Public Function Prototypes
  ******************************************************************************/
+
+/**
+ *
+ */
+bool PwmInput_GetPulseData(PwmInput_Instance_t instance,
+                           PwmInput_PulseData_t *const dataOut);
+
+/**
+ *
+ */
+bool PwmInput_GetPulseWidth(PwmInput_Instance_t instance,
+                            uint32_t *const pulseWidthOut);
 
 /**
  *

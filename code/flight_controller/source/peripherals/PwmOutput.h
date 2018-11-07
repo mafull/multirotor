@@ -39,6 +39,11 @@ typedef enum PwmOutput_Instance_e
 /**
  *
  */
+uint32_t PwmOutput_GetPulseWidth(PwmOutput_Instance_t instance);
+
+/**
+ *
+ */
 bool PwmOutput_Initialise(void);
 
 /**

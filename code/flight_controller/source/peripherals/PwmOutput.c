@@ -40,6 +40,7 @@ bool PwmOutput_Initialise(void)
 {
     ENSURE(!PwmOutput_isInitialised);
     ENSURE(Timer_IsInitialised()); // @todo: Maybe make this return false instead of asserting
+    ENSURE(Gpio_IsInitialised());
 
     bool success = true;
     for (uint8_t i = 0u; success && (i < PwmOutput_Instance_MAX); i++)

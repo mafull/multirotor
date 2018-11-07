@@ -31,7 +31,7 @@ bool Rcc_Initialise(void)
     HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000u); // @todo: Make setting
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
-    HAL_NVIC_SetPriority(SysTick_IRQn, 15u, 0u);
+    HAL_NVIC_SetPriority(SysTick_IRQn, 0u, 0u);
 
     return true;
 }

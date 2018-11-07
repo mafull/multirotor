@@ -14,12 +14,12 @@
 const PwmOutput_ConfigData_t PwmOutput_configData[PwmOutput_Instance_MAX] = 
     {
         /*
-                  | Timer Instance
-                  |       | Channel      | Init Struct
-                  |                      | | Mode           | Pulse
-                  |                      | |                |  | Output Polarity    | Complimentary Output Polarity
-                  |                      | |                |  |                    |  | Fast Mode         | Idle Pin State
-                  |                      | |                |  |                    |  |                   |  | Complementary Idle Pin State
+                      | Timer Instance
+                      |       | Channel      | Init Struct
+                      |                      | | Mode           | Pulse
+                      |                      | |                |  | Output Polarity    | Complimentary Output Polarity
+                      |                      | |                |  |                    |  | Fast Mode         | Idle Pin State
+                      |                      | |                |  |                    |  |                   |  | Complementary Idle Pin State
         */
         // Timer 1
         [Out_Ch1] = { Timer1, TIM_CHANNEL_1, { TIM_OCMODE_PWM1, 0, TIM_OCPOLARITY_HIGH, 0, TIM_OCFAST_DISABLE, 0, 0} },
