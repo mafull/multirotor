@@ -26,6 +26,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>FreeRTOS</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/third_party/src/FreeRTOS</locationURI>
+		</link>
+		<link>
 			<name>HAL_Driver</name>
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/third_party/src/HAL_Driver</locationURI>
