@@ -52,5 +52,10 @@ bool Uart_IsInitialised(void);
  */
 bool Uart_Write(Uart_Instance_t instance, char *message);
 
+/**
+ *
+ */
+bool Uart_WriteDMA(Uart_Instance_t instance, char *message);
+
 
 #endif // __UART_H

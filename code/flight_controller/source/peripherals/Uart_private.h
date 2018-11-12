@@ -10,6 +10,12 @@
 // --- Public header ---
 #include "peripherals/Uart.h"
 
+// --- Project includes ---
+#include "peripherals/Dma.h"
+#define DMA_PRIVATE
+    #include "peripherals/Dma_private.h"
+#undef DMA_PRIVATE
+
 // --- Library includes ---
 #include "stm32f4xx_hal.h"
 
@@ -35,6 +41,9 @@ typedef struct Uart_ConfigData_s
 {
     USART_TypeDef *halInstance;
     UART_InitTypeDef initStruct;
+
+    Dma_Instance_t dmaInstanceRx;
+    Dma_Instance_t dmaInstanceTx;
 } Uart_ConfigData_t;
 
 

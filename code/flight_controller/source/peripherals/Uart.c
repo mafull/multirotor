@@ -40,6 +40,21 @@ bool Uart_Initialise(void)
         const Uart_ConfigData_t *const conf = &Uart_configData[i];
         UART_HandleTypeDef *const handle = &Uart_handles[i];
 
+        // Link RX DMA
+        if (conf->dmaInstanceRx != Dma_Instance_MAX)
+        {
+            DMA_HandleTypeDef *const dmaHandleRx = Dma_GetHandle(conf->dmaInstanceRx);
+            ENSURE(dmaHandleRx);
+            __HAL_LINKDMA(handle, hdmarx, *dmaHandleRx);
+        }
+
+        // Link TX DMA
+        if (conf->dmaInstanceTx != Dma_Instance_MAX)
+        {
+            DMA_HandleTypeDef *const dmaHandleTx = Dma_GetHandle(conf->dmaInstanceTx);
+            ENSURE(dmaHandleTx);
+            __HAL_LINKDMA(handle, hdmatx, *dmaHandleTx);
+        }
 
         // Configure the interrupt handler
         // IRQn_Type irqn = Uart_GetUartInterruptNumber(conf->halInstance);
@@ -90,6 +105,23 @@ bool Uart_Write(Uart_Instance_t instance, char *message)
                               (uint8_t *)message,
                               strnlen(message, 128u), // @todo: Add max length define
                               UART_TRANSMIT_TIMEOUT) == HAL_OK);
+}
+
+bool Uart_WriteDMA(Uart_Instance_t instance, char *message)
+{
+    ENSURE(instance < Uart_Instance_MAX);
+    ENSURE(message);
+    ENSURE(Uart_isInitialised);
+
+    UART_HandleTypeDef *const handle = &Uart_handles[instance]; // @todo: Maybe make this a macro
+
+    static char tmp[128] = "";
+    strncpy(tmp, message, 128);
+
+    // Attempt to send the message
+    return (HAL_UART_Transmit_DMA(handle,
+                                  (uint8_t *)tmp,
+                                  strnlen(tmp, 128u)) == HAL_OK);
 }
 
 
@@ -150,3 +182,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     //     handle->callback(handle->halHandle.Instance->DR);
     // }
 }
+
+
+
+// void DMA2_Stream7_IRQHandler(void)
+// {
+//     HAL_DMA_IRQHandler(&hdma);
+// }
