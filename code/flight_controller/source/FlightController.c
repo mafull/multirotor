@@ -131,3 +131,24 @@ void FlightController_ThreadTop(void *params)
 
     LOG_INFO("Finished");
 }
+
+
+/******************************************************************************
+  Callback Functions
+ ******************************************************************************/
+
+// @todo: Move these
+void vApplicationTickHook(void)
+{
+
+}
+
+void vApplicationMallocFailedHook(void)
+{
+
+}
+
+void vApplicationStackOverflowHook(void)
+{
+
+}
