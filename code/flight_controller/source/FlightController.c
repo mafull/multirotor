@@ -20,6 +20,7 @@
 #include "peripherals/Rcc.h"
 #include "peripherals/Timer.h"
 #include "peripherals/Uart.h"
+#include "threadPriorities.h"
 
 // --- Library includes ---
 
@@ -49,7 +50,7 @@ void FlightController_Run(void)
                        "Initialisation",
                        1024,
                        (void *)NULL,
-                       (tskIDLE_PRIORITY + 2u),
+                       THREAD_PRIORITY_INITIALISATION,
                        &FlightController_hTask) == pdPASS);
 
     // Start the scheduler
@@ -103,10 +104,6 @@ void FlashyFunc(void *params)
         count++;
     }
 }
-
-
-
-
 #endif
 
 

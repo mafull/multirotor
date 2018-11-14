@@ -9,6 +9,7 @@
 
 // --- Project includes ---
 #include "macros.h"
+#include "threadPriorities.h"
 
 // --- Library includes ---
 
@@ -47,7 +48,7 @@ void Logger_Run(void)
                        "Logger",
                        1024,
                        (void *)NULL,
-                       (tskIDLE_PRIORITY + 2u),
+                       THREAD_PRIORITY_LOGGER,
                        &Logger_hTask) == pdPASS);
 }
 
