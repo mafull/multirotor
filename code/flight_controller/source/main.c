@@ -24,7 +24,7 @@
 #include "FreeRTOS/task.h"
 
 
-TaskHandle_t initTask, ledFlasherTask, loggerTask;
+TaskHandle_t initTask, ledFlasherTask;
 SemaphoreHandle_t initComplete = NULL;
 SemaphoreHandle_t initComplete2 = NULL;
 
@@ -141,6 +141,7 @@ void LEDFlasherTask(void *params)
     uint32_t count = 0u;
     while (1)
     {
+        LOG_DEBUG("Flash %u", count);
         if (!(count % 1)) DigitalOutput_ToggleState(ControlLed);
         if (!(count % 2)) DigitalOutput_ToggleState(ImuLed);
         if (!(count % 4)) DigitalOutput_ToggleState(LoggerLed);
@@ -148,18 +149,6 @@ void LEDFlasherTask(void *params)
 
         vTaskDelay(200);
         count++;
-    }
-}
-
-
-void LoggerTask(void *params)
-{
-    xSemaphoreTake(initComplete2, portMAX_DELAY);
-
-    while (1)
-    {
-        LOG_DEBUG("Tick");
-        vTaskDelay(1000);
     }
 }
 
@@ -184,19 +173,14 @@ int main(void)
                 tskIDLE_PRIORITY + 2UL,
                 &ledFlasherTask);
 
-    xTaskCreate(LoggerTask,
-                "LoggerTask",
-                1024,//configMINIMAL_STACK_SIZE,
-                (void *)NULL,
-                tskIDLE_PRIORITY + 2UL,
-                &loggerTask);
+    Logger_Run(&initComplete2);
 
     initComplete = xSemaphoreCreateBinary();
     initComplete2 = xSemaphoreCreateBinary();
 
     vTaskStartScheduler();
 
-    // UNREACHABLE();
+    UNREACHABLE();
 
     return 0;
 

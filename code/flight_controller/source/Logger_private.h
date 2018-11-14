@@ -13,6 +13,13 @@
 // --- Project includes ---
 #include "peripherals/Uart.h"
 
+// --- Library includes ---
+// FreeRTOS
+#include "FreeRTOS/FreeRTOS.h"
+#include "FreeRTOS/queue.h"
+#include "FreeRTOS/semphr.h"
+#include "FreeRTOS/task.h"
+
 
 /******************************************************************************
   Private Defines
@@ -41,6 +48,11 @@
  */
 extern bool Logger_isInitialised;
 
+/**
+ *
+ */
+extern bool Logger_isStarted;
+
 
 /******************************************************************************
   Private Function Prototypes
@@ -50,6 +62,11 @@ extern bool Logger_isInitialised;
  *
  */
 void Logger_StripLFCR(const char *string);
+
+/**
+ *
+ */
+void Logger_ThreadTop(void *params);
 
 
 #endif // __LOGGER_PRIVATE_H
