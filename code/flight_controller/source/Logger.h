@@ -44,7 +44,7 @@ typedef enum Logger_Severity_e
 /**
  *
  */
-void Logger_Run(void *params);
+void Logger_Run(void);
 
 
 

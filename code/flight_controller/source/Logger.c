@@ -22,8 +22,8 @@
   Private Data
  ******************************************************************************/
 
-QueueHandle_t hQueue = NULL;
-TaskHandle_t hTask = NULL;
+QueueHandle_t Logger_hQueue = NULL;
+TaskHandle_t Logger_hTask = NULL;
 
 bool Logger_isInitialised = false;
 bool Logger_isStarted = false;
@@ -33,22 +33,22 @@ bool Logger_isStarted = false;
   Public Function Implementations
  ******************************************************************************/
 
-void Logger_Run(void *params)
+void Logger_Run(void)
 {
     ENSURE(!Logger_isStarted);
     Logger_isStarted = true;
 
     // CREATE QUEUE
-    hQueue = xQueueCreate(5u, LOGGER_MESSAGE_LENGTH);
-    ENSURE(hQueue != NULL);
+    Logger_hQueue = xQueueCreate(5u, LOGGER_MESSAGE_LENGTH);
+    ENSURE(Logger_hQueue != NULL);
 
-    // Create the Logger thread
+    // Create the Logger thread @todo: Define these values
     ENSURE(xTaskCreate(Logger_ThreadTop,
                        "Logger",
                        1024,
-                       params,//(void *)NULL,
+                       (void *)NULL,
                        (tskIDLE_PRIORITY + 2u),
-                       &hTask) == pdPASS);
+                       &Logger_hTask) == pdPASS);
 }
 
 bool Logger_Initialise(void)
@@ -110,7 +110,7 @@ void Logger_Log(const char *fileName, uint16_t lineNumber,
              LOGGER_MESSAGE_LENGTH,     // Precision
              msgBuf);                   // Data
 
-    xQueueSend(hQueue, buffer, 0);
+    xQueueSend(Logger_hQueue, buffer, 0);
 
     // const bool success = Uart_Write(Uart1, buffer); // @todo: Move Uart1 to config
     // UNUSED(success);
@@ -133,15 +133,16 @@ void Logger_StripLFCR(const char *string)
 
 void Logger_ThreadTop(void *params)
 {
-    xSemaphoreTake(*((QueueHandle_t *)params), portMAX_DELAY);
+    // xSemaphoreTake(*((QueueHandle_t *)params), portMAX_DELAY);
 
+    // INITIALISE
     LOG_INFO("Initialised");
 
     while (1)
     {
         static char buffer[LOGGER_MESSAGE_LENGTH] = "";
 
-        xQueueReceive(hQueue,
+        xQueueReceive(Logger_hQueue,
                       buffer,
                       portMAX_DELAY);
 

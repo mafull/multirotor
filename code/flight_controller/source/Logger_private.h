@@ -29,7 +29,7 @@
  *
  */
 #define LOGGER_BUFFER_LENGTH        256u
-#define LOGGER_FILENAME_LENGTH      15u
+#define LOGGER_FILENAME_LENGTH      20u
 #define LOGGER_LINENUMBER_LENGTH    4u
 #define LOGGER_SEVERITY_LENGTH      1u
 #define LOGGER_MESSAGE_LENGTH       (  LOGGER_BUFFER_LENGTH \
@@ -42,6 +42,11 @@
 /******************************************************************************
   Private Data
  ******************************************************************************/
+
+/**
+ *
+ */
+extern TaskHandle_t Logger_hTask;
 
 /**
  *
