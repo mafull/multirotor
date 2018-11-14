@@ -96,3 +96,13 @@ DMA_HandleTypeDef *const Dma_GetHandle(Dma_Instance_t instance)
 
     return &Dma_handles[instance];
 }
+
+
+/******************************************************************************
+  Callback Functions
+ ******************************************************************************/
+
+// void DMA2_Stream7_IRQHandler(void)
+// {
+//     HAL_DMA_IRQHandler(&hdma);
+// }

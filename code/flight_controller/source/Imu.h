@@ -61,6 +61,11 @@ bool Imu_IsInitialised(void);
 /**
  *
  */
+void Imu_Run(void);
+
+/**
+ *
+ */
 void Imu_Update(void);
 
 

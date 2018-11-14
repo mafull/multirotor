@@ -11,6 +11,7 @@
 #include "devices/MPU6050.h"
 #include "Logger.h"
 #include "macros.h"
+#include "threadPriorities.h"
 
 // --- Library includes ---
 
@@ -23,9 +24,13 @@
 
 Imu_Data_t Imu_data = { 0 };
 
+TaskHandle_t Imu_hTask = NULL;
+
 bool Imu_isInitialised = false;
 
 bool Imu_isDataNew = false;
+
+bool Imu_isStarted = false;
 
 
 /******************************************************************************
@@ -74,6 +79,20 @@ bool Imu_IsInitialised(void)
 }
 
 
+void Imu_Run(void)
+{
+    ENSURE(!Imu_isStarted);
+    Imu_isStarted = true;
+
+    ENSURE(xTaskCreate(Imu_ThreadTop,
+                       "IMU",
+                       1024,
+                       (void *)NULL,
+                       THREAD_PRIORITY_IMU,
+                       &Imu_hTask) == pdPASS);
+}
+
+
 void Imu_Update(void)
 {
     ENSURE(Imu_isInitialised);
@@ -94,3 +113,12 @@ void Imu_Update(void)
 /******************************************************************************
   Private Function Implementations
  ******************************************************************************/
+
+void Imu_ThreadTop(void *params)
+{
+    while (1)
+    {
+        LOG_INFO("TICK");
+        vTaskDelay(1000);
+    }
+}

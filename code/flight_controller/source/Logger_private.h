@@ -17,7 +17,6 @@
 // FreeRTOS
 #include "FreeRTOS/FreeRTOS.h"
 #include "FreeRTOS/queue.h"
-#include "FreeRTOS/semphr.h"
 #include "FreeRTOS/task.h"
 
 

@@ -8,6 +8,7 @@
 
 
 // --- Project includes ---
+#include "Imu.h"
 #include "Logger.h"
 #include "macros.h"
 #include "peripherals/DigitalOutput.h"
@@ -47,7 +48,7 @@ void FlightController_Run(void)
 
     // Create the initialisation thread @todo: Define these values
     ENSURE(xTaskCreate(FlightController_ThreadTop,
-                       "Initialisation",
+                       "Init",
                        1024,
                        (void *)NULL,
                        THREAD_PRIORITY_INITIALISATION,
@@ -91,6 +92,8 @@ void FlightController_InitialisePeripherals(void)
 TaskHandle_t hFlashyTask = NULL;
 void FlashyFunc(void *params)
 {
+    vTaskDelay(100);
+
     uint32_t count = 0u;
     while (1)
     {
@@ -124,6 +127,7 @@ void FlightController_ThreadTop(void *params)
     // THREAD START
     Logger_Initialise(); // @todo: Remove
     Logger_Run();
+    Imu_Run();
 
     LOG_INFO("Finished");
 }

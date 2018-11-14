@@ -13,6 +13,9 @@
 // --- Project includes ---
 
 // --- Library includes ---
+// FreeRTOS
+#include "FreeRTOS/FreeRTOS.h"
+#include "FreeRTOS/task.h"
 
 // --- Standard includes ---
 
@@ -39,12 +42,22 @@ extern Imu_Data_t Imu_data;
 /**
  *
  */
+extern TaskHandle_t Imu_hTask;
+
+/**
+ *
+ */
 extern bool Imu_isInitialised;
 
 /**
  *
  */
 extern bool Imu_isDataNew;
+
+/**
+ *
+ */
+extern bool Imu_isStarted;
 
 
 /******************************************************************************
@@ -54,5 +67,7 @@ extern bool Imu_isDataNew;
 /**
  *
  */
+void Imu_ThreadTop(void *params);
+
 
 #endif // __IMU_PRIVATE_H

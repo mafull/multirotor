@@ -160,6 +160,10 @@ IRQn_Type Uart_GetUartInterruptNumber(USART_TypeDef *instance)
 }
 
 
+/******************************************************************************
+  Callback Functions
+ ******************************************************************************/
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     ENSURE(huart);
@@ -182,10 +186,3 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     //     handle->callback(handle->halHandle.Instance->DR);
     // }
 }
-
-
-
-// void DMA2_Stream7_IRQHandler(void)
-// {
-//     HAL_DMA_IRQHandler(&hdma);
-// }
