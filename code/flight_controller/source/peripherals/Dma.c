@@ -39,6 +39,9 @@ bool Dma_Initialise(void)
         handle->Instance = conf->halInstance;
         handle->Init = conf->initStruct;
         success = (HAL_DMA_Init(handle) == HAL_OK);
+
+        HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 0, 0);
+        HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
     }
 
     Dma_isInitialised = success;
@@ -102,7 +105,16 @@ DMA_HandleTypeDef *const Dma_GetHandle(Dma_Instance_t instance)
   Callback Functions
  ******************************************************************************/
 
-// void DMA2_Stream7_IRQHandler(void)
-// {
-//     HAL_DMA_IRQHandler(&hdma);
-// }
+#include "peripherals/DigitalOutput.h"
+void DMA2_Stream7_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(&Dma_handles[0]);
+    //DMA2->HIFCR = 0xFF;
+    //USART1->SR = 0x00;
+    // __HAL_DMA_CLEAR_FLAG(&Dma_handles[0], DMA_FLAG_TCIF3_7);
+    // __HAL_DMA_CLEAR_FLAG(&Dma_handles[0], DMA_FLAG_TCIF3_7);
+    // __HAL_DMA_CLEAR_FLAG(&Dma_handles[0], DMA_FLAG_HTIF3_7);
+    // __HAL_DMA_CLEAR_FLAG(&Dma_handles[0], DMA_FLAG_TEIF3_7);
+    // __HAL_UART_CLEAR_FLAG()
+    // HAL_DMA_IRQHandler(&hdma);
+}

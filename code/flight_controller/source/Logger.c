@@ -40,7 +40,7 @@ void Logger_Run(void)
     Logger_isStarted = true;
 
     // CREATE QUEUE
-    Logger_hQueue = xQueueCreate(5u, LOGGER_MESSAGE_LENGTH);
+    Logger_hQueue = xQueueCreate(20u, LOGGER_MESSAGE_LENGTH);
     ENSURE(Logger_hQueue != NULL);
 
     // Create the Logger thread @todo: Define these values
@@ -134,9 +134,8 @@ void Logger_StripLFCR(const char *string)
 
 void Logger_ThreadTop(void *params)
 {
-    // xSemaphoreTake(*((QueueHandle_t *)params), portMAX_DELAY);
+    // INITIALISE STUFF HERE
 
-    // INITIALISE
     LOG_INFO("Initialised");
 
     while (1)
@@ -148,5 +147,15 @@ void Logger_ThreadTop(void *params)
                       portMAX_DELAY);
 
         Uart_Write(Uart1, buffer);
+
+    #if 1
+        static uint8_t count = 0;
+        if (++count == 10)
+        {
+            count = 0;
+            Uart_WriteDMA(Uart1, "DMA test here\n");
+            vTaskDelay(1000);
+        }
+    #endif
     }
 }

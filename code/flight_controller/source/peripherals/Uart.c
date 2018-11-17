@@ -57,12 +57,14 @@ bool Uart_Initialise(void)
         }
 
         // Configure the interrupt handler
-        // IRQn_Type irqn = Uart_GetUartInterruptNumber(conf->halInstance);
-        // HAL_NVIC_SetPriority(irqn, 1u, 1u); // @todo: Configurable priorities
-        // HAL_NVIC_EnableIRQ(irqn);
+        IRQn_Type irqn = Uart_GetUartInterruptNumber(conf->halInstance);
+        HAL_NVIC_SetPriority(irqn, 0, 0); // @todo: Configurable priorities
+        HAL_NVIC_EnableIRQ(irqn);
 
         // Enable the RXNE interrupt
         // __HAL_UART_ENABLE_IT(handle, UART_IT_RXNE);
+        __HAL_UART_ENABLE_IT(handle, UART_IT_TC);
+        __HAL_UART_ENABLE_IT(handle, UART_IT_ERR);
 
         Uart_EnableUartClock(conf->halInstance);
 
@@ -164,6 +166,11 @@ IRQn_Type Uart_GetUartInterruptNumber(USART_TypeDef *instance)
   Callback Functions
  ******************************************************************************/
 
+void USART1_IRQHandler(void)
+{
+    HAL_UART_IRQHandler(&Uart_handles[0]);
+}
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     ENSURE(huart);
@@ -185,4 +192,22 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     // {
     //     handle->callback(handle->halHandle.Instance->DR);
     // }
+}
+
+#include "peripherals/DigitalOutput.h"
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    DigitalOutput_ToggleState(AssertLed);
+}
+
+
+void HAL_UART_TxHalfCpltCallback(UART_HandleTypeDef *huart)
+{
+
+}
+
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+
 }
