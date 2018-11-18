@@ -50,34 +50,31 @@ void Logger_Run(void)
                        (void *)NULL,
                        THREAD_PRIORITY_LOGGER,
                        &Logger_hTask) == pdPASS);
-
-    // UART DMA is unused thus far, so notify the task that it is ready
-    xTaskNotifyGive(Logger_hTask);
 }
 
 
 void Logger_Log(const char *fileName, uint16_t lineNumber,
                 Logger_Severity_t severity,
-                const char *message, ...)
+                const char *fmt, ...)
 {
     ENSURE(fileName);
-    ENSURE(message);
+    ENSURE(fmt);
     // @todo: Handle the case when the logger thread has yet to be started/created
 
-    // message[strcspn(message, "\n")] = '\0';
-    Logger_StripLFCR(message);
+    // fmt[strcspn(fmt, "\n")] = '\0';
+    Logger_StripLFCR(fmt);
 
     // Generate the variadic args string
     char msgBuf[LOGGER_MESSAGE_LENGTH] = "";
     va_list args;
-    va_start(args, message);
+    va_start(args, fmt);
     vsnprintf(msgBuf,
               LOGGER_MESSAGE_LENGTH,
-              message,
+              fmt,
               args);
     va_end(args);
 
-    // Generate the overall message
+    // Generate the overall fmt
     char buffer[LOGGER_BUFFER_LENGTH] = ""; // @todo maybe make static & use memset 0?
     snprintf(buffer,                    // Target string
              LOGGER_BUFFER_LENGTH,      // Max output string length
@@ -101,6 +98,8 @@ void Logger_Log(const char *fileName, uint16_t lineNumber,
     (void)xQueueSend(Logger_hQueue, buffer, 0);
 
     // @todo: Add stats (e.g. num logs sent, num failed)?
+
+    // @todo: Add return value + update description
 }
 
 
@@ -113,6 +112,9 @@ void Logger_Initialise(void)
     // Ensure that UART is initialised and configure the callback function
     ENSURE(Uart_IsInitialised()); // @todo: Ret val?
     Uart_SetTxCpltCb(Uart1, &Logger_UartTxCpltCb);
+
+    // UART DMA is unused thus far, so notify the task that it is ready
+    xTaskNotifyGive(Logger_hTask);
 
     LOG_INFO("Initialised");
 }
