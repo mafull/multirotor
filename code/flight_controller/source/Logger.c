@@ -23,10 +23,10 @@
   Private Data
  ******************************************************************************/
 
+// FreeRTOS handles
 QueueHandle_t Logger_hQueue = NULL;
-TaskHandle_t Logger_hTask = NULL;
+TaskHandle_t  Logger_hTask  = NULL;
 
-bool Logger_isInitialised = false;
 bool Logger_isStarted = false;
 
 
@@ -43,7 +43,7 @@ void Logger_Run(void)
     Logger_hQueue = xQueueCreate(20u, LOGGER_MESSAGE_LENGTH);
     ENSURE(Logger_hQueue != NULL);
 
-    // Create the Logger thread @todo: Define these values
+    // Create the Logger thread   @todo: Define these values
     ENSURE(xTaskCreate(Logger_ThreadTop,
                        "Logger",
                        1024,
@@ -55,36 +55,19 @@ void Logger_Run(void)
     xTaskNotifyGive(Logger_hTask);
 }
 
-bool Logger_Initialise(void)
-{
-    ENSURE(!Logger_isInitialised);
-
-    ENSURE(Uart_IsInitialised()); // @todo: Ret val?
-
-    Logger_isInitialised = true;
-    return Logger_isInitialised;
-}
-
-
-bool Logger_IsInitialised(void)
-{
-    return Logger_isInitialised;
-}
-
 
 void Logger_Log(const char *fileName, uint16_t lineNumber,
                 Logger_Severity_t severity,
                 const char *message, ...)
 {
-    // @todo: Make this thread safe (i.e. use a message queue)
     ENSURE(fileName);
     ENSURE(message);
-    ENSURE(Logger_isInitialised);
+    // @todo: Handle the case when the logger thread has yet to be started/created
 
-    // @todo: Maybe strip LF/CR characters from message?
     // message[strcspn(message, "\n")] = '\0';
     Logger_StripLFCR(message);
 
+    // Generate the variadic args string
     char msgBuf[LOGGER_MESSAGE_LENGTH] = "";
     va_list args;
     va_start(args, message);
@@ -94,6 +77,7 @@ void Logger_Log(const char *fileName, uint16_t lineNumber,
               args);
     va_end(args);
 
+    // Generate the overall message
     char buffer[LOGGER_BUFFER_LENGTH] = ""; // @todo maybe make static & use memset 0?
     snprintf(buffer,                    // Target string
              LOGGER_BUFFER_LENGTH,      // Max output string length
@@ -104,7 +88,6 @@ void Logger_Log(const char *fileName, uint16_t lineNumber,
              fileName,                  // Data
              // Line number
              LOGGER_LINENUMBER_LENGTH,  // Width
-             // LOGGER_LINENUMBER_LENGTH,  // Precision
              lineNumber,                // Data
              // Severity
              LOGGER_SEVERITY_LENGTH,    // Width
@@ -114,10 +97,9 @@ void Logger_Log(const char *fileName, uint16_t lineNumber,
              LOGGER_MESSAGE_LENGTH,     // Precision
              msgBuf);                   // Data
 
+    // Add the formatted message to the queue
     (void)xQueueSend(Logger_hQueue, buffer, 0);
 
-    // const bool success = Uart_Write(Uart1, buffer); // @todo: Move Uart1 to config
-    // UNUSED(success);
     // @todo: Add stats (e.g. num logs sent, num failed)?
 }
 
@@ -125,6 +107,16 @@ void Logger_Log(const char *fileName, uint16_t lineNumber,
 /******************************************************************************
   Private Function Implementations
  ******************************************************************************/
+
+void Logger_Initialise(void)
+{
+    // Ensure that UART is initialised and configure the callback function
+    ENSURE(Uart_IsInitialised()); // @todo: Ret val?
+    Uart_SetTxCpltCb(Uart1, &Logger_UartTxCpltCb);
+
+    LOG_INFO("Initialised");
+}
+
 
 void Logger_StripLFCR(const char *string)
 {
@@ -135,41 +127,39 @@ void Logger_StripLFCR(const char *string)
     if ((pos = strchr(string, '\n')) != NULL) *pos = '\0';
 }
 
+
 void Logger_ThreadTop(void *params)
 {
-    // INITIALISE STUFF HERE
-    Uart_SetTxCpltCb(Uart1, &Logger_UartTxCpltCb);
+    LOG_INFO("Started");
 
-    LOG_INFO("Initialised");
+    (void)Logger_Initialise();
 
     while (1)
     {
         static char buffer[LOGGER_MESSAGE_LENGTH] = "";
 
+        // Wait indefinitely for a message to arrive in the queue
         (void)xQueueReceive(Logger_hQueue,
-                      buffer,
-                      portMAX_DELAY);
+                            buffer,
+                            portMAX_DELAY); // @todo: Add a finite delay and process return value
 
-        (void)ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        // Wait indefinitely for the UART peripheral to become available
+        (void)ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // @todo: Add a finite delay etc.
 
+        // Send the received message over UART via DMA
         (void)Uart_WriteDMA(Uart1, buffer);
     }
+
+    LOG_INFO("Finished");
 }
 
-#include "peripherals/DigitalOutput.h"
+
 void Logger_UartTxCpltCb(void)
 {
-    // https://www.freertos.org/RTOS_Task_Notification_As_Binary_Semaphore.html
+    static BaseType_t higherPrioTaskWoken;
 
-
-    // static BaseType_t higherPrioTaskTaken = pdFALSE;
-    // xSemaphoreGiveFromISR(Logger_uartReadySignal, &higherPrioTaskTaken);
-    // portYIELD_FROM_ISR(higherPrioTaskTaken);
-    
-    DigitalOutput_ToggleState(AssertLed);
-
-    static BaseType_t higherPrioTaskWoken = pdFALSE;
+    // Notify the logger thread that the UART is ready and yield if necessary
+    higherPrioTaskWoken = pdFALSE;
     vTaskNotifyGiveFromISR(Logger_hTask, &higherPrioTaskWoken);
-
     portYIELD_FROM_ISR(higherPrioTaskWoken);
 }

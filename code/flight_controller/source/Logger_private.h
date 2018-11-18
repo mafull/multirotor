@@ -50,17 +50,17 @@ extern TaskHandle_t Logger_hTask;
 /**
  *
  */
-extern bool Logger_isInitialised;
-
-/**
- *
- */
 extern bool Logger_isStarted;
 
 
 /******************************************************************************
   Private Function Prototypes
  ******************************************************************************/
+
+/**
+ *
+ */
+void Logger_Initialise(void);
 
 /**
  *

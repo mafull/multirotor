@@ -46,20 +46,6 @@ typedef enum Logger_Severity_e
  */
 void Logger_Run(void);
 
-
-
-
-
-/**
- *
- */
-bool Logger_Initialise(void);
-
-/**
- *
- */
-bool Logger_IsInitialised(void);
-
 /**
  *
  */

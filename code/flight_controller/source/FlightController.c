@@ -124,8 +124,7 @@ void FlightController_ThreadTop(void *params)
                 &hFlashyTask);
 #endif
 
-    // THREAD START
-    Logger_Initialise(); // @todo: Remove
+    // Start the threads
     Logger_Run();
     Imu_Run();
 
