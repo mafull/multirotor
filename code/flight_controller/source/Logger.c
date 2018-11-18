@@ -39,7 +39,7 @@ void Logger_Run(void)
     ENSURE(!Logger_isStarted);
     Logger_isStarted = true;
 
-    // CREATE QUEUE
+    // Create the log message queue
     Logger_hQueue = xQueueCreate(20u, LOGGER_MESSAGE_LENGTH);
     ENSURE(Logger_hQueue != NULL);
 
@@ -50,6 +50,9 @@ void Logger_Run(void)
                        (void *)NULL,
                        THREAD_PRIORITY_LOGGER,
                        &Logger_hTask) == pdPASS);
+
+    // UART DMA is unused thus far, so notify the task that it is ready
+    xTaskNotifyGive(Logger_hTask);
 }
 
 bool Logger_Initialise(void)
@@ -111,7 +114,7 @@ void Logger_Log(const char *fileName, uint16_t lineNumber,
              LOGGER_MESSAGE_LENGTH,     // Precision
              msgBuf);                   // Data
 
-    xQueueSend(Logger_hQueue, buffer, 0);
+    (void)xQueueSend(Logger_hQueue, buffer, 0);
 
     // const bool success = Uart_Write(Uart1, buffer); // @todo: Move Uart1 to config
     // UNUSED(success);
@@ -135,6 +138,7 @@ void Logger_StripLFCR(const char *string)
 void Logger_ThreadTop(void *params)
 {
     // INITIALISE STUFF HERE
+    Uart_SetTxCpltCb(Uart1, &Logger_UartTxCpltCb);
 
     LOG_INFO("Initialised");
 
@@ -142,20 +146,30 @@ void Logger_ThreadTop(void *params)
     {
         static char buffer[LOGGER_MESSAGE_LENGTH] = "";
 
-        xQueueReceive(Logger_hQueue,
+        (void)xQueueReceive(Logger_hQueue,
                       buffer,
                       portMAX_DELAY);
 
-        Uart_Write(Uart1, buffer);
+        (void)ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
-    #if 1
-        static uint8_t count = 0;
-        if (++count == 10)
-        {
-            count = 0;
-            Uart_WriteDMA(Uart1, "DMA test here\n");
-            vTaskDelay(1000);
-        }
-    #endif
+        (void)Uart_WriteDMA(Uart1, buffer);
     }
+}
+
+#include "peripherals/DigitalOutput.h"
+void Logger_UartTxCpltCb(void)
+{
+    // https://www.freertos.org/RTOS_Task_Notification_As_Binary_Semaphore.html
+
+
+    // static BaseType_t higherPrioTaskTaken = pdFALSE;
+    // xSemaphoreGiveFromISR(Logger_uartReadySignal, &higherPrioTaskTaken);
+    // portYIELD_FROM_ISR(higherPrioTaskTaken);
+    
+    DigitalOutput_ToggleState(AssertLed);
+
+    static BaseType_t higherPrioTaskWoken = pdFALSE;
+    vTaskNotifyGiveFromISR(Logger_hTask, &higherPrioTaskWoken);
+
+    portYIELD_FROM_ISR(higherPrioTaskWoken);
 }

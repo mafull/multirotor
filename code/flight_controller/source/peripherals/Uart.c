@@ -22,6 +22,8 @@ UART_HandleTypeDef Uart_handles[Uart_Instance_MAX];
 
 bool Uart_isInitialised = false;
 
+Uart_TxCpltCbFunc_t Uart_txCpltCbFuncs[UART_PERIPHERAL_COUNT] = { 0 };
+
 
 /******************************************************************************
   Public Function Implementations
@@ -58,10 +60,10 @@ bool Uart_Initialise(void)
 
         // Configure the interrupt handler
         IRQn_Type irqn = Uart_GetUartInterruptNumber(conf->halInstance);
-        HAL_NVIC_SetPriority(irqn, 0, 0); // @todo: Configurable priorities
+        HAL_NVIC_SetPriority(irqn, 6u, 0); // @todo: Configurable priorities
         HAL_NVIC_EnableIRQ(irqn);
 
-        // Enable the RXNE interrupt
+        // Enable interrupts
         // __HAL_UART_ENABLE_IT(handle, UART_IT_RXNE);
         __HAL_UART_ENABLE_IT(handle, UART_IT_TC);
         __HAL_UART_ENABLE_IT(handle, UART_IT_ERR);
@@ -92,6 +94,15 @@ bool Uart_IsInitialised(void)
 
 //     Uart_handles[(uint8_t)instance].callback = callback;
 // }
+
+
+void Uart_SetTxCpltCb(Uart_Instance_t instance, Uart_TxCpltCbFunc_t callback)
+{
+    ENSURE(instance < Uart_Instance_MAX);
+    ENSURE(callback);
+
+    Uart_txCpltCbFuncs[instance] = callback; // @todo: Change this
+}
 
 
 bool Uart_Write(Uart_Instance_t instance, char *message)
@@ -197,7 +208,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 #include "peripherals/DigitalOutput.h"
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-    DigitalOutput_ToggleState(AssertLed);
+    if (Uart_txCpltCbFuncs[0]) Uart_txCpltCbFuncs[0]();
+    // DigitalOutput_ToggleState(AssertLed);
 }
 
 

@@ -13,11 +13,18 @@
 /**
  *
  */
-typedef void (*Uart_CallbackFunction_t)(char);
+// typedef void (*Uart_CallbackFunction_t)(char);
+
 
 /**
  *
  */
+typedef void (*Uart_TxCpltCbFunc_t)(void);
+
+
+/**
+ *
+*/
 typedef enum Uart_Instance_e
 {
     Uart1 = 0u,
@@ -46,6 +53,11 @@ bool Uart_IsInitialised(void);
  */
 // void Uart_SetCallback(Uart_Instance_t instance,
 //                       Uart_CallbackFunction_t callback);
+
+/**
+ *
+ */
+void Uart_SetTxCpltCb(Uart_Instance_t instance, Uart_TxCpltCbFunc_t callback);
 
 /**
  *

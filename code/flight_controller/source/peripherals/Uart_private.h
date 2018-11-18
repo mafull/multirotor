@@ -27,6 +27,11 @@
 /**
  *
  */
+#define UART_PERIPHERAL_COUNT   6u
+
+/**
+ *
+ */
 #define UART_TRANSMIT_TIMEOUT   HAL_MAX_DELAY // @todo: Change this
 
 
@@ -65,6 +70,8 @@ extern UART_HandleTypeDef Uart_handles[Uart_Instance_MAX];
  *
  */
 extern bool Uart_isInitialised;
+
+extern Uart_TxCpltCbFunc_t Uart_txCpltCbFuncs[UART_PERIPHERAL_COUNT];
 
 
 /******************************************************************************

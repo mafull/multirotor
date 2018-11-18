@@ -72,5 +72,10 @@ void Logger_StripLFCR(const char *string);
  */
 void Logger_ThreadTop(void *params);
 
+/**
+ *
+ */
+void Logger_UartTxCpltCb(void);
+
 
 #endif // __LOGGER_PRIVATE_H
