@@ -80,7 +80,7 @@ void FlightController_InitialisePeripherals(void)
     (void)ExternalInterrupt_Initialise();
 
     // Communication
-    // (void)I2c_Initialise();
+    (void)I2c_Initialise();
     (void)Uart_Initialise();
 
     // Timer-based IO
@@ -92,7 +92,7 @@ void FlightController_InitialisePeripherals(void)
 TaskHandle_t hFlashyTask = NULL;
 void FlashyFunc(void *params)
 {
-    vTaskDelay(100);
+    LOG_INFO("Started");
 
     uint32_t count = 0u;
     while (1)
@@ -105,16 +105,24 @@ void FlashyFunc(void *params)
 
         vTaskDelay(200);
         count++;
+        ENSURE(count == 0);
     }
+
+    LOG_INFO("Finished");
 }
 #endif
 
 
 void FlightController_ThreadTop(void *params)
 {
+    LOG_INFO("Started"); // This should be dropped but not cause an issue
+
     // Initialise microcontroller peripherals
     FlightController_InitialisePeripherals();
 
+    // Start the threads
+    Logger_Run();
+    Imu_Run();
 #if 1
     xTaskCreate(FlashyFunc,
                 "Flashy",
@@ -123,10 +131,7 @@ void FlightController_ThreadTop(void *params)
                 (tskIDLE_PRIORITY + 2u),
                 &hFlashyTask);
 #endif
-
-    // Start the threads
-    Logger_Run();
-    Imu_Run();
+    LOG_INFO("All threads created");
 
     LOG_INFO("Finished");
 }
