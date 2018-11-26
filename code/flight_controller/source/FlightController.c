@@ -8,6 +8,7 @@
 
 
 // --- Project includes ---
+#include "ControlLoop.h"
 #include "Imu.h"
 #include "Logger.h"
 #include "macros.h"
@@ -122,6 +123,7 @@ void FlightController_ThreadTop(void *params)
 
     // Start the threads
     Logger_Run();
+    ControlLoop_Run();
     Imu_Run();
 #if 1
     xTaskCreate(FlashyFunc,
