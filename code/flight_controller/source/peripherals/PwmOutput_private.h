@@ -11,6 +11,7 @@
 #include "peripherals/PwmOutput.h"
 
 // --- Project includes ---
+#include "peripherals/Gpio.h"
 #include "peripherals/Timer.h"
 #define TIMER_PRIVATE
     #include "peripherals/Timer_private.h"

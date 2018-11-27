@@ -37,7 +37,6 @@ bool Logger_isStarted = false;
 void Logger_Run(void)
 {
     ENSURE(!Logger_isStarted);
-    Logger_isStarted = true;
 
     // Create the log message queue
     Logger_hQueue = xQueueCreate(20u, LOGGER_MESSAGE_LENGTH);
@@ -50,6 +49,9 @@ void Logger_Run(void)
                        (void *)NULL,
                        THREAD_PRIORITY_LOGGER,
                        &Logger_hTask) == pdPASS);
+
+    // Update the isStarted flag to allow log messages to be received
+    Logger_isStarted = true;
 }
 
 
@@ -59,7 +61,6 @@ void Logger_Log(const char *fileName, uint16_t lineNumber,
 {
     ENSURE(fileName);
     ENSURE(fmt);
-    // @todo: Handle the case when the logger thread has yet to be started/created
 
     // fmt[strcspn(fmt, "\n")] = '\0';
     Logger_StripLFCR(fmt);
@@ -95,7 +96,14 @@ void Logger_Log(const char *fileName, uint16_t lineNumber,
              msgBuf);                   // Data
 
     // Add the formatted message to the queue
-    (void)xQueueSend(Logger_hQueue, buffer, 0);
+    if (Logger_isStarted)
+    {
+        (void)xQueueSend(Logger_hQueue, buffer, 0);
+    }
+    else
+    {
+        // @todo: Handle this properly + stats
+    }
 
     // @todo: Add stats (e.g. num logs sent, num failed)?
 
@@ -132,9 +140,9 @@ void Logger_StripLFCR(const char *string)
 
 void Logger_ThreadTop(void *params)
 {
-    LOG_INFO("Started");
+    LOG_INFO("Started"); // @todo: Maybe send logs from this file to the front of the queue
 
-    (void)Logger_Initialise();
+    Logger_Initialise();
 
     while (1)
     {

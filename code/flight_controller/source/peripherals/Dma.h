@@ -15,7 +15,9 @@
  */
 typedef enum Dma_Instance_e
 {
-    Dma2_7 = 0u,
+    // Dma1_5 = 0u,    // I2C1 Rx
+    // Dma1_6,         // I2C1 Tx
+    Dma2_7,         // USART1 Tx
 
     Dma_Instance_MAX
 } Dma_Instance_t;

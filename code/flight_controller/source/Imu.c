@@ -26,10 +26,8 @@ Imu_Data_t Imu_data = { 0 };
 
 TaskHandle_t Imu_hTask = NULL;
 
-bool Imu_isInitialised = false;
-
 bool Imu_isDataNew = false;
-
+bool Imu_isInitialised = false;
 bool Imu_isStarted = false;
 
 
@@ -51,45 +49,19 @@ bool Imu_GetNewData(Imu_Data_t *const data)
 }
 
 
-bool Imu_Initialise(void)
-{
-    ENSURE(!Imu_isInitialised);
-
-    if (MPU6050_Initialise())
-    {
-        LOG_INFO("MPU6050 initialised successfully");
-
-
-        // DO OTHER STUFF
-
-        Imu_isInitialised = true;
-    }
-    else
-    {
-        LOG_ERROR("MPU6050 failed to initialise");
-    }
-
-    return Imu_isInitialised;
-}
-
-
-bool Imu_IsInitialised(void)
-{
-    return Imu_isInitialised;
-}
-
-
 void Imu_Run(void)
 {
     ENSURE(!Imu_isStarted);
-    Imu_isStarted = true;
 
+    // Create the IMU thread
     ENSURE(xTaskCreate(Imu_ThreadTop,
                        "IMU",
                        1024,
                        (void *)NULL,
                        THREAD_PRIORITY_IMU,
                        &Imu_hTask) == pdPASS);
+
+    Imu_isStarted = true;
 }
 
 
@@ -114,11 +86,38 @@ void Imu_Update(void)
   Private Function Implementations
  ******************************************************************************/
 
+bool Imu_Initialise(void)
+{
+    ENSURE(!Imu_isInitialised);
+
+    if (MPU6050_Initialise())
+    {
+        LOG_INFO("MPU6050 initialised successfully");
+
+
+        // DO OTHER STUFF
+
+        Imu_isInitialised = true;
+    }
+    else
+    {
+        LOG_ERROR("MPU6050 failed to initialise");
+    }
+
+    return Imu_isInitialised;
+}
+
+
 void Imu_ThreadTop(void *params)
 {
+    LOG_INFO("Started");
+    (void)Imu_Initialise();
+
     while (1)
     {
-        LOG_INFO("TICK");
+        LOG_DEBUG("TICK");
         vTaskDelay(1000);
     }
+
+    LOG_INFO("Finished");
 }

@@ -14,8 +14,19 @@
 #include "peripherals/I2c.h"
 
 // --- Library includes ---
+// FreeRTOS
+#include "FreeRTOS/FreeRTOS.h"
+#include "FreeRTOS/task.h"
+
 
 // --- Standard includes ---
+
+
+#define CLEAR_BIT(byte, bit)           CLEAR_BITS(byte, bit, 1u)
+#define CLEAR_BITS(byte, offset, mask) ((byte) ^ ((mask) << (offset)))
+
+#define SET_BIT(byte, bit)             SET_BITS(byte, bit, 1u)
+#define SET_BITS(byte, offset, mask)   ((byte) | ((mask) << (offset)))
 
 
 /******************************************************************************
@@ -34,80 +45,82 @@ bool MPU6050_Initialise(void)
 
     // @todo: Clean this all up
     // @todo: Add "WriteThenReadCheck" function to read back the written value
-    LOG_DEBUG("WHO_AM_I");
+
+
+
     // WHO_AM_I
     // Check WHO_AM_I equals the device address
-    success = (I2c_ReadMemory(I2c1,
-                              MPU6050_DEVICE_ADDR,
-                              MPU6050_MEM_ADDR_WHO_AM_I,
-                              &tmp,
-                              1u) && (tmp == MPU6050_DEVICE_ADDR));
-    if (!success) return false;
+    success =    MPU6050_ReadRegister(WHO_AM_I, &tmp)
+              && (tmp == MPU6050_DEVICE_ADDR);
+    // if (!success) return false;
+    LOG_DEBUG("WHO_AM_I: 0x%02x", tmp);
 
-    LOG_DEBUG("PWM_MGMT_1");
+
+
     // PWM_MGMT_1
-    // Reset and wake up the device
-    tmp = 0x00u; //((uint8_t)1u << 7u);
-    success = I2c_WriteMemory(I2c1,
-                              MPU6050_DEVICE_ADDR,
-                              MPU6050_MEM_ADDR_PWR_MGMT_1,
-                              &tmp,
-                              1u);
+    // Reset the device
+    tmp = SET_BIT(0x00, 7u); // DEVICE_RESET
+    success = MPU6050_WriteRegister(POWER_MGMT_1, tmp);
     if (!success) return false;
     // Wait for the PLL to get established (gyro to stabilise)
-    HAL_Delay(1000);
-    // Set the time source to the (stable) PLL gyro-z reference
-    tmp = 0x03u;
-    success = I2c_WriteMemory(I2c1,
-                              MPU6050_DEVICE_ADDR,
-                              MPU6050_MEM_ADDR_PWR_MGMT_1,
-                              &tmp,
-                              1u);
+    vTaskDelay(1000);
+    // Wake the device and configure the clock source
+    tmp = 0x00;                  //  SLEEP = 0
+    tmp = SET_BITS(tmp, 0u, 3u); // CLKSEL = 3 (PLL with gyro Z-axis reference)
+    success = MPU6050_WriteRegister(POWER_MGMT_1, tmp);
     if (!success) return false;
 
-    LOG_DEBUG("SMPLRT_DIV");
     // SMPLRT_DIV
-    // Set the sample rate to 1kHz
-    tmp = 0x07u; // 0x00u;
-    success = I2c_WriteMemory(I2c1,
-                              MPU6050_DEVICE_ADDR,
-                              MPU6050_MEM_ADDR_SMPLRT_DIV,
-                              &tmp,
-                              1u);
+    // Configure the sample rate
+    tmp = SET_BITS(0x00, 0u, 7u); // SMPLRT_DIV = 7 (1kHz)
+    success = MPU6050_WriteRegister(SMPLRT_DIV, tmp);
     if (!success) return false;
 
-    LOG_DEBUG("CONFIG");
     // CONFIG
-    // Disable FSYNC input and configure the DLPF for ~3ms delay
-    tmp = 0x02u;
-    success = I2c_WriteMemory(I2c1,
-                              MPU6050_DEVICE_ADDR,
-                              MPU6050_MEM_ADDR_CONFIG,
-                              &tmp,
-                              1u);
+    // Configure FSYNC and DLPF
+    tmp = 0x00;                  // EXT_SYNC_SET = 0 (FSYNC disabled)
+    tmp = SET_BITS(tmp, 0u, 2u); //     DLPF_CFG = 2 (~3ms delay)
+    success = MPU6050_WriteRegister(CONFIG, tmp);
     if (!success) return false;
 
-    LOG_DEBUG("GYRO_CONFIG");
     // GYRO_CONFIG
-    // Set gyroscope range to +-500 deg/s (FS_SEL = 1)
-    tmp = ((uint8_t)1u << 3u);
-    success = I2c_WriteMemory(I2c1,
-                              MPU6050_DEVICE_ADDR,
-                              MPU6050_MEM_ADDR_GYRO_CONFIG,
-                              &tmp,
-                              1u);
+    // Configure gyroscope range
+    tmp = SET_BITS(0x00, 3u, 1u); // FS_SEL = 1 (+-500 deg/s)
+    success = MPU6050_WriteRegister(GYRO_CONFIG, tmp);
     if (!success) return false;
 
-    LOG_DEBUG("ACCEL_CONFIG");
     // ACCEL_CONFIG
-    // Set accelerometer range to +-8 g (AFS_SEL = 2)
-    tmp = ((uint8_t)2u << 3u);
-    success = I2c_WriteMemory(I2c1,
-                              MPU6050_DEVICE_ADDR,
-                              MPU6050_MEM_ADDR_ACCEL_CONFIG,
-                              &tmp,
-                              1u);
+    // Configure accelerometer range
+    tmp = SET_BITS(0x00, 3u, 2u); // AFS_SEL = 2 (+-8 g)
+    success = MPU6050_WriteRegister(ACCEL_CONFIG, tmp);
     if (!success) return false;
+    
+    // INT_PIN_CFG
+    // Configure I2C bypass
+    tmp = SET_BIT(0x00, 1u); // I2C_BYPASS_EN = 1 (Bypass auxiliary I2C bus)
+    success = MPU6050_WriteRegister(INT_PIN_CFG, tmp);
+    if (!success) return false;
+
+    // USER_CTRL
+    // Configure I2C bypass///////////////
+    // success = MPU6050_ReadRegister(USER_CTRL, &tmp);
+    // if (!success) return false;
+
+    LOG_DEBUG("Finished with MPU6050 0x%02x", tmp);
+
+
+
+    // success = I2c_ReadMemory(I2c1,
+    //                          0x1E,
+    //                          0x10,
+    //                          &tmp,
+    //                          1u);// && (tmp == 0x48);
+    // if (!success) return false;
+
+    LOG_DEBUG("Finished with HMC5883L, id: 0x%02x", tmp);
+
+
+  #if 0
 
     LOG_DEBUG("Interrupt pin");
     // Interrupt pin
@@ -156,7 +169,7 @@ bool MPU6050_Initialise(void)
                               &tmp,
                               1u);
     if (!success) return false;
-
+#endif
 #if 0
     // USER_CTRL
     // Same as before
@@ -182,3 +195,21 @@ bool MPU6050_Initialise(void)
 /******************************************************************************
   Private Function Implementations
  ******************************************************************************/
+
+bool MPU6050_ReadRegister(MPU6050_Register_t registerAddress, uint8_t *data)
+{
+    return I2c_ReadMemory(I2c1,
+                          MPU6050_DEVICE_ADDR,
+                          (uint16_t)registerAddress,
+                          data,
+                          1u);
+}
+
+bool MPU6050_WriteRegister(MPU6050_Register_t registerAddress, uint8_t data)
+{
+    return I2c_WriteMemory(I2c1,
+                           MPU6050_DEVICE_ADDR,
+                           (uint16_t)registerAddress,
+                           &data,
+                           1u);
+}

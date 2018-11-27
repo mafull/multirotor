@@ -28,6 +28,7 @@
 
 // --- Standard includes ---
 
+
 /******************************************************************************
   Public Function Implementations
  ******************************************************************************/
@@ -89,6 +90,7 @@ void FlightController_InitialisePeripherals(void)
     // (void)PwmOutput_Initialise();
 }
 
+
 #if 1
 TaskHandle_t hFlashyTask = NULL;
 void FlashyFunc(void *params)
@@ -106,7 +108,6 @@ void FlashyFunc(void *params)
 
         vTaskDelay(200);
         count++;
-        ENSURE(count == 0);
     }
 
     LOG_INFO("Finished");
@@ -116,7 +117,7 @@ void FlashyFunc(void *params)
 
 void FlightController_ThreadTop(void *params)
 {
-    LOG_INFO("Started"); // This should be dropped but not cause an issue
+    LOG_INFO("Started"); // This should be dropped but should not cause an issue
 
     // Initialise microcontroller peripherals
     FlightController_InitialisePeripherals();
@@ -158,3 +159,6 @@ void vApplicationStackOverflowHook(void)
 {
 
 }
+
+
+// https://www.freertos.org/xTimerPendFunctionCallFromISR.html

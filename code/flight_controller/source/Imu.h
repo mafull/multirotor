@@ -51,16 +51,6 @@ bool Imu_GetNewData(Imu_Data_t *const data);
 /**
  *
  */
-bool Imu_Initialise(void);
-
-/**
- *
- */
-bool Imu_IsInitialised(void);
-
-/**
- *
- */
 void Imu_Run(void);
 
 /**
