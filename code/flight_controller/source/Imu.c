@@ -122,3 +122,39 @@ void Imu_ThreadTop(void *params)
         vTaskDelay(1000);
     }
 }
+
+
+
+
+
+
+/*
+    Getting data from MPU6050:
+        IMU Thread:
+            Block, waiting on data ready signal (WHAT IS IT?)
+            ###
+
+
+            Process raw data:
+                Generate raw sensor data from raw byte data
+                Signal that the raw data has been used (+ SOMETHING DMA SIGNAL RELATED HERE)
+                Scale raw sensor data and apply callibration offsets
+
+            Deal with processed data
+                
+
+        MPU6050 interrupt:
+            Trigger DMA read
+                8-bit data (or 16, but would need changing if I stop using HAL in the future)
+                14 reads (or 7 reads if 16-bit data)
+
+        DMA complete interrupt:
+            Signal that data is ready (WHAT TYPE OF SIGNAL?)
+
+        DMA error interrupt:
+            Increment failure counter
+
+
+        ControlLoop Thread:
+            ???
+*/

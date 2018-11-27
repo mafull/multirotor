@@ -38,10 +38,7 @@ def get_line_count_in_file(file):
     return count, blank_count
 
 def get_used_line_percentage(line_count, blank_count):
-    if line_count is 0:
-        return 0.0
-    else:
-        return (100 *(1 - (blank_count / line_count)))
+    return 0.0 if line_count is 0 else (100 *(1 - (blank_count / line_count)))
 
 def print_list(list):
     print(*list, sep='\n')
