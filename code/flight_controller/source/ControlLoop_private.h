@@ -57,7 +57,7 @@ extern bool ControlLoop_isStarted;
 /**
  *
  */
-void ControlLoop_ThreadTop(void *params)
+void ControlLoop_ThreadTop(void *params);
 
 
 #endif // __CONTROL_LOOP_PRIVATE_H

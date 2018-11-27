@@ -48,7 +48,7 @@ bool ExternalInterrupt_Initialise(void)
 
         ExternalInterrupt_gpioPins[conf->line] = conf->gpioInstance;
 
-        HAL_NVIC_SetPriority(conf->irqN, 1, 0); // @todo: Change priorities/add to config data
+        HAL_NVIC_SetPriority(conf->irqN, 6u, 0); // @todo: Change priorities/add to config data
     }
 
     ExternalInterrupt_isInitialised = true;
