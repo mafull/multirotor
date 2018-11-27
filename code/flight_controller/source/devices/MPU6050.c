@@ -192,6 +192,46 @@ bool MPU6050_Initialise(void)
 }
 
 
+void MPU6050_ProcessRawData(const MPU6050_RawData_t *const rawData,
+                            MPU6050_Data_t *const data)
+{
+    ENSURE(rawData);
+    ENSURE(data);
+
+    // @todo: Check that the device is initialised (and that the scale factors have values)
+
+    // Static convenience
+    static MPU6050_CalibrationData_t *const calib = &MPU6050_calibrationData;
+
+    /* Raise a warning if the accelerometer/gyroscope offsets have not been
+    initialised. Their default (zero) values will be used */
+    if (!calib->accelOffsets.timestamp.hasValue)
+    {
+        LOG_WARNING("Accelerometer offsets have not been loaded or calibrated");
+    }
+    if (!calib->gyroOffsets.timestamp.hasValue)
+    {
+        LOG_WARNING("Gyroscope offsets have not been loaded or calibrated");
+    }
+
+    // Scale and offset accelerometer data
+    data.accel.x = (rawData.accelX * calib->accelScale) - calib->accelOffsets.x;
+    data.accel.y = (rawData.accelY * calib->accelScale) - calib->accelOffsets.y;
+    data.accel.z = (rawData.accelZ * calib->accelScale) - calib->accelOffsets.z;
+
+    // Generate a temperature value in degrees celcius
+    data.temperature = (rawData.temperature / 340.0f) + 36.53f;
+
+    // Scale and offset gyroscope data
+    data.gyro.x = (rawData.gyroX * calib->gyroScale) - calib->gyroOffsets.x;
+    data.gyro.y = (rawData.gyroY * calib->gyroScale) - calib->gyroOffsets.y;
+    data.gyro.z = (rawData.gyroZ * calib->gyroScale) - calib->gyroOffsets.z;
+
+    // Copy across the timestamp
+    data.timestamp = rawData.timestamp;
+}
+
+
 /******************************************************************************
   Private Function Implementations
  ******************************************************************************/
