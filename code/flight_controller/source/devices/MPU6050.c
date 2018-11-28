@@ -251,6 +251,7 @@ void MPU6050_ProcessRawData(MPU6050_Data_t *const data)
 void MPU6050_SetDataReadyCallback(MPU6050_DataReadyCallback_t callback);
 {
     ENSURE(callback);
+
     MPU6050_dataReadyCallback = callback;
     LOG_INFO("\"Data Ready\" callback set");
 }

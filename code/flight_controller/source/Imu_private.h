@@ -75,6 +75,23 @@ extern bool Imu_isStarted;
 /**
  *
  */
+void Imu_CombineSensorData(const MPU6050_Data_t *const mpu6050Data,
+                           const HMC5883L_Data_t *const hmc5883lData,
+                           Imu_Data_t *const imuData);
+
+/**
+ *
+ */
+bool Imu_Initialise(void);
+
+/**
+ *
+ */
+void Imu_MPU6050DataReadyCallback(void);
+
+/**
+ *
+ */
 void Imu_ThreadTop(void *params);
 
 

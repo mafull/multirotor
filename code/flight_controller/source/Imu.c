@@ -69,26 +69,67 @@ void Imu_Run(void)
   Private Function Implementations
  ******************************************************************************/
 
+void Imu_CombineSensorData(const MPU6050_Data_t *const mpu6050Data,
+                           const HMC5883L_Data_t *const hmc5883lData,
+                           Imu_Data_t *const imuData)
+{
+    ENSURE(mpu6050Data);
+    ENSURE(hmc5883lData);
+    ENSURE(imuData);
+
+    ENSURE(mpu6050Data->timestamp.hasValue);
+    ENSURE(hmc5883lData->timestamp.hasValue);
+
+    const bool firstPacket =    (!imuData->timestamp.hasValue)
+                             && (imuData->timestamp.value == 0);
+
+    if (!firstPacket)
+    {
+        // Calculate the time since the previous packet in seconds
+        const Timestamp_t dt_timestamp =
+            (mpu6050Data->timestamp.value - imuData->timestamp.value);
+        const float dt_s = (float)timestamp; // @todo: TImestamp implmentation, plus maybe replace float with Imu_DataType_t?
+
+        // Copy angular rates
+
+        // Calculate accelerometer-based attitude
+
+
+        // Calculate gyroscope-based attitude
+        gAngX += mpu6050Data.gyro.x * dt;
+        gAngY += mpu6050Data.gyro.y * dt;
+        gAngZ += mpu6050Data.gyro.z * dt;
+
+        imuData->timestamp.hasValue = true;
+    }
+    else // First data packet
+    {
+        
+    }
+
+
+
+    LOG_ERROR("UNIMPLEMENTED"); // @todo: Implement
+}
+
+
 bool Imu_Initialise(void)
 {
     ENSURE(!Imu_isInitialised);
 
-    if (MPU6050_Initialise())
+    MPU6050_SetDataReadyCallback(&Imu_MPU6050DataReadyCallback);
+    bool success = MPU6050_Initialise();
+
+    if (success)
     {
         LOG_INFO("MPU6050 initialised successfully");
-
-        MPU6050_SetDataReadyCallback(&Imu_MPU6050DataReadyCallback);
-
-
-        // DO OTHER STUFF
-
-        Imu_isInitialised = true;
     }
     else
     {
         LOG_ERROR("MPU6050 failed to initialise");
     }
 
+    Imu_isInitialised = success;
     return Imu_isInitialised;
 }
 
@@ -108,12 +149,12 @@ void Imu_MPU6050DataReadyCallback(void)
 void Imu_ThreadTop(void *params)
 {
     LOG_INFO("Started");
+
     (void)Imu_Initialise();
 
     while (1)
     {
-        LOG_DEBUG("Waiting for new data to become available");
-
+        LOG_DEBUG("Waiting for new data to become available"); // @todo: Probably remove
 
         // Wait indefinitely for new data to become available
         (void)ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // @todo: Add finite delay/use ret val
@@ -121,15 +162,21 @@ void Imu_ThreadTop(void *params)
         static Imu_Data_t imuData = { 0 };
 
         static MPU6050_Data_t mpu6050Data = { 0 };
+        // static HMC5883L_Data_t hmc5883lData = { 0 };
 
-        // Generate useable MPU6050 data from the raw data read from its sensors
+        // Generate useable data from the raw data read from sensors
         // @todo: Prevent raw data from being updated via DMA
         MPU6050_ProcessRawData(&mpu6050Data);
+        // HMC5883L_ProcessRawData(&hmc5883lData);
         // @todo: Allow raw data to be updated again
 
+        // Combine the accelerometer/gyroscope/magnetometer data
+        Imu_CombineSensorData(&mpu6050Data, &hmc5883lData, &imuData);
 
-        LOG_DEBUG("TICK");
-        vTaskDelay(1000);
+        // USE THE DATA - SEND TO CONTROL THREAD?
+
+        LOG_DEBUG("TICK"); // @todo: Remove
+        vTaskDelay(1000);  // @todo: Remove
     }
 
     LOG_INFO("Finished");
