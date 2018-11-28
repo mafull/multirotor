@@ -15,7 +15,7 @@
   Private Data
  ******************************************************************************/
 
-ExternalInterrupt_CallbackFunction_t ExternalInterrupt_callbackFunctions[EXTERNAL_INTERRUPT_LINE_COUNT] = { 0 };
+ExternalInterrupt_Callback_t ExternalInterrupt_callback[EXTERNAL_INTERRUPT_LINE_COUNT] = { 0 };
 Gpio_Instance_t ExternalInterrupt_gpioPins[EXTERNAL_INTERRUPT_LINE_COUNT] = { 0 };
 
 bool ExternalInterrupt_isInitialised = false;
@@ -25,7 +25,8 @@ bool ExternalInterrupt_isInitialised = false;
   Public Function Implementations
  ******************************************************************************/
 
-void ExternalInterrupt_EnableIT(ExternalInterrupt_Instance_t instance, bool enable)
+void ExternalInterrupt_Enable(ExternalInterrupt_Instance_t instance,
+                              bool enable = true)
 {
     ENSURE(instance < ExternalInterrupt_Instance_MAX);
     ENSURE(ExternalInterrupt_isInitialised);
@@ -63,14 +64,13 @@ bool ExternalInterrupt_IsInitialised(void)
 
 
 void ExternalInterrupt_SetCallback(ExternalInterrupt_Instance_t instance,
-                                   ExternalInterrupt_CallbackFunction_t callback)
+                                   ExternalInterrupt_Callback_t callback)
 {
     ENSURE(instance < ExternalInterrupt_Instance_MAX);
-    ENSURE(ExternalInterrupt_isInitialised);
     ENSURE(callback);
 
     const ExternalInterrupt_ConfigData_t *const conf = &ExternalInterrupt_configData[instance]; // @todo: Make a macro...
-    ExternalInterrupt_callbackFunctions[conf->line] = callback;
+    ExternalInterrupt_callbacks[conf->line] = callback;
 }
 
 
@@ -85,7 +85,7 @@ void ExternalInterrupt_GenericHandler(uint8_t line)
     const uint16_t lineDef = (uint16_t)(1 << line);
     if (__HAL_GPIO_EXTI_GET_IT(lineDef))
     {
-        const ExternalInterrupt_CallbackFunction_t callback = ExternalInterrupt_callbackFunctions[line];
+        const ExternalInterrupt_Callback_t callback = ExternalInterrupt_callbacks[line];
         
         if (callback)
         {

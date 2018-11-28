@@ -131,10 +131,25 @@ typedef enum MPU6050_Register_e
   Private Data
  ******************************************************************************/
 
+/**
+ *
+ */
+extern MPU6050_DataReadyCallback_t MPU6050_dataReadyCallback;
+
 
 /******************************************************************************
   Private Function Prototypes
  ******************************************************************************/
+
+/*
+ *
+ */
+void MPU6050_DataReadyHandler(void);
+
+/**
+ *
+ */
+void MPU6050_InterruptHandler(ExternalInterrupt_State_t state);
 
 /**
  *

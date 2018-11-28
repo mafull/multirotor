@@ -32,6 +32,11 @@ typedef struct Timestamp_s
 typedef float MPU6060_DataType_t;
 
 /**
+ *
+ */
+typedef void (*MPU6050_DataReadyCallback_t)(void);
+
+/**
  * 
  * @note  The struct members used to store sensor readings must occur first and
           their order must not be changed - they match the MPU6050 device's data
@@ -49,7 +54,7 @@ typedef struct MPU6050_RawData_s
     uint16_t gyroZ;
 
     // Other data
-    Timestamp_t timestamp;  // @todo: Maybe make optional
+    OptionalTimestamp_t timestamp;
 } MPU6050_RawData_t;
 
 /**
@@ -66,7 +71,7 @@ typedef struct MPU6050_Data_s
 
     MPU6060_DataType_t temperature;
 
-    Timestamp_t timestamp; // @todo: Maybe make optional
+    OptionalTimestamp_t timestamp;
 } MPU6050_Data_t;
 
 /**
@@ -109,8 +114,12 @@ bool MPU6050_Initialise(void);
 /**
  *
  */
-void MPU6050_ProcessRawData(const MPU6050_RawData_t *const rawData,
-                            MPU6050_Data_t *const data);
+void MPU6050_ProcessRawData(MPU6050_Data_t *const data);
+
+/**
+ *
+ */
+void MPU6050_SetDataReadyCallback(MPU6050_DataReadyCallback_t callback);
 
 
 #endif // __MPU6050_H

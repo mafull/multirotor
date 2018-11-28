@@ -13,6 +13,11 @@
 /**
  *
  */
+typedef void (*Dma_TransferCompleteCallback_t)(void);
+
+/**
+ *
+ */
 typedef enum Dma_Instance_e
 {
     // Dma1_5 = 0u,    // I2C1 Rx
@@ -36,6 +41,18 @@ bool Dma_Initialise(void);
  *
  */
 bool Dma_IsInitialised(void);
+
+/**
+ *
+ */
+void Dma_SetTransferCompleteCallback(Dma_Instance_t instance,
+                                     Dma_TransferCompleteCallback_t callback);
+
+/**
+ *
+ */
+void Dma_SetTransferError(Dma_Callback_t callback);
+
 
 
 #endif // __DMA_H

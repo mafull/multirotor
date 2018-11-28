@@ -65,23 +65,6 @@ void Imu_Run(void)
 }
 
 
-void Imu_Update(void)
-{
-    ENSURE(Imu_isInitialised);
-
-    static Imu_Data_t data = { 0 }; // Static so it isn't repeatedly allocated
-
-    // MPU6050_GetData();
-
-
-
-    // @todo: Lock mutex
-    Imu_data = data;
-    Imu_isDataNew = true;
-    // @todo: Unlock mutex
-}
-
-
 /******************************************************************************
   Private Function Implementations
  ******************************************************************************/
@@ -93,6 +76,8 @@ bool Imu_Initialise(void)
     if (MPU6050_Initialise())
     {
         LOG_INFO("MPU6050 initialised successfully");
+
+        MPU6050_SetDataReadyCallback(&Imu_MPU6050DataReadyCallback);
 
 
         // DO OTHER STUFF
@@ -108,6 +93,18 @@ bool Imu_Initialise(void)
 }
 
 
+void Imu_MPU6050DataReadyCallback(void)
+{
+    static BaseType_t higherPrioTaskWoken;
+
+    /* Notify the IMU thread that new MPU6050 data is available and yield if
+    necessary */
+    higherPrioTaskWoken = pdFALSE;
+    vTaskNotifyGiveFromISR(Imu_hTask, &higherPrioTaskWoken);
+    portYIELD_FROM_ISR(higherPrioTaskWoken);
+}
+
+
 void Imu_ThreadTop(void *params)
 {
     LOG_INFO("Started");
@@ -115,6 +112,22 @@ void Imu_ThreadTop(void *params)
 
     while (1)
     {
+        LOG_DEBUG("Waiting for new data to become available");
+
+
+        // Wait indefinitely for new data to become available
+        (void)ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // @todo: Add finite delay/use ret val
+
+        static Imu_Data_t imuData = { 0 };
+
+        static MPU6050_Data_t mpu6050Data = { 0 };
+
+        // Generate useable MPU6050 data from the raw data read from its sensors
+        // @todo: Prevent raw data from being updated via DMA
+        MPU6050_ProcessRawData(&mpu6050Data);
+        // @todo: Allow raw data to be updated again
+
+
         LOG_DEBUG("TICK");
         vTaskDelay(1000);
     }

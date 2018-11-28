@@ -22,11 +22,19 @@
 // --- Standard includes ---
 
 
+// @todo: Move these
 #define CLEAR_BIT(byte, bit)           CLEAR_BITS(byte, bit, 1u)
 #define CLEAR_BITS(byte, offset, mask) ((byte) ^ ((mask) << (offset)))
 
 #define SET_BIT(byte, bit)             SET_BITS(byte, bit, 1u)
 #define SET_BITS(byte, offset, mask)   ((byte) | ((mask) << (offset)))
+
+
+/******************************************************************************
+  Private Data
+ ******************************************************************************/
+
+MPU6050_DataReadyCallback_t MPU6050_dataReadyCallback = NULL;
 
 
 /******************************************************************************
@@ -38,6 +46,9 @@ bool MPU6050_Initialise(void)
     // ENSURE(!MPU6050_isInitialised);
     ENSURE(I2c_IsInitialised());
     // ENSURE(ExternalInterrupt_IsInitialised()); // @todo: Make MPU6050_Int a config thing
+    // ENSURE(Dma_IsInitialised()); // @todo: Make DMA a config thing
+
+
 
     bool success = true;
     uint8_t tmp = 0x00u;
@@ -188,20 +199,25 @@ bool MPU6050_Initialise(void)
                               1u);
     if (!success) return false;
 #endif
+
+    ExternalInterrupt_SetCallback(MPU6050_Int, &MPU6050_InterruptHandler); // @todo: Config instance
+    ExternalInterrupt_Enable(MPU6050_Int);
+    Dma_SetTransferCompleteCallback(Dma2_7, &MPU6050_DataReadyHandler); // @todo: Config instance
+
     return success;
 }
 
 
-void MPU6050_ProcessRawData(const MPU6050_RawData_t *const rawData,
-                            MPU6050_Data_t *const data)
+void MPU6050_ProcessRawData(MPU6050_Data_t *const data)
 {
-    ENSURE(rawData);
     ENSURE(data);
 
     // @todo: Check that the device is initialised (and that the scale factors have values)
 
     // Static convenience
     static MPU6050_CalibrationData_t *const calib = &MPU6050_calibrationData;
+    static MPU6050_RawData_t *const rawData = &MPU6050_rawData;
+    ENSURE(rawData.timestamp.hasValue);
 
     /* Raise a warning if the accelerometer/gyroscope offsets have not been
     initialised. Their default (zero) values will be used */
@@ -232,22 +248,54 @@ void MPU6050_ProcessRawData(const MPU6050_RawData_t *const rawData,
 }
 
 
+void MPU6050_SetDataReadyCallback(MPU6050_DataReadyCallback_t callback);
+{
+    ENSURE(callback);
+    MPU6050_dataReadyCallback = callback;
+    LOG_INFO("\"Data Ready\" callback set");
+}
+
+
 /******************************************************************************
   Private Function Implementations
  ******************************************************************************/
 
+void MPU6050_DataReadyHandler(void)
+{
+    if (MPU6050_dataReadyCallback) // Callback has been set
+    {
+        MPU6050_dataReadyCallback();
+    }
+}
+
+
+void MPU6050_InterruptHandler(ExternalInterrupt_State_t state)
+{
+    ENSURE(state == Risen); // @todo: Config?
+
+    // Trigger a DMA read of the sensor data
+    (void)I2c_ReadMemory(I2c1, // @todo: Config, ret value
+                        MPU6050_DEVICE_ADDR,
+                        (uint16_t)ACCEL_XOUT_H,
+                        (uint8_t *)&MPU6050_rawData, // Struct must be in order
+                        14u,
+                        I2c_Dma);
+}
+
+
 bool MPU6050_ReadRegister(MPU6050_Register_t registerAddress, uint8_t *data)
 {
-    return I2c_ReadMemory(I2c1,
+    return I2c_ReadMemory(I2c1, // @todo: Config
                           MPU6050_DEVICE_ADDR,
                           (uint16_t)registerAddress,
                           data,
                           1u);
 }
 
+
 bool MPU6050_WriteRegister(MPU6050_Register_t registerAddress, uint8_t data)
 {
-    return I2c_WriteMemory(I2c1,
+    return I2c_WriteMemory(I2c1, // @todo: Config
                            MPU6050_DEVICE_ADDR,
                            (uint16_t)registerAddress,
                            &data,

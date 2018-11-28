@@ -34,6 +34,7 @@ typedef struct Imu_Data_s
     } rates;
 } Imu_Data_t;
 
+
 /******************************************************************************
   Public Data
  ******************************************************************************/
@@ -52,11 +53,6 @@ bool Imu_GetNewData(Imu_Data_t *const data);
  *
  */
 void Imu_Run(void);
-
-/**
- *
- */
-void Imu_Update(void);
 
 
 #endif // __IMU_H

@@ -164,7 +164,7 @@ void Logger_ThreadTop(void *params)
 }
 
 
-void Logger_UartTxCpltCb(void)
+void Logger_UartTxCpltCb(void) // @todo: Rename UartTransmitCompleteCallback
 {
     static BaseType_t higherPrioTaskWoken;
 

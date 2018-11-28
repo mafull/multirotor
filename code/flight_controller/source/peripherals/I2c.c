@@ -59,21 +59,42 @@ bool I2c_ReadMemory(I2c_Instance_t instance,
                     uint16_t deviceAddress,
                     uint16_t memoryAddress,
                     uint8_t *data,
-                    uint8_t amount)
+                    uint8_t amount,
+                    I2c_TransferMethod_t transferMethod = I2c_Blocking)
 {
     ENSURE(instance < I2c_Instance_MAX);
     ENSURE(I2c_isInitialised);
 
+    // @todo: Check DMA is initialised and instance linked if using dma
+
     I2C_HandleTypeDef *const handle = &I2c_handles[instance];
 
-    // Attempt to read from the memory
-    return (HAL_I2C_Mem_Read(handle,
-                             (deviceAddress << 1), // @todo Make func/macro?
-                             memoryAddress,
-                             1u,
-                             data,
-                             amount,
-                             I2C_TRANSMIT_TIMEOUT) == HAL_OK);
+    // Attempt to read from the memory location via the requested method
+    bool success = false;
+    switch(transferMethod)
+    {
+    case I2c_Blocking:
+        success = HAL_I2C_Mem_Read(handle,
+                                   (deviceAddress << 1), // @todo Make func/macro?
+                                   memoryAddress,
+                                   1u,
+                                   data,
+                                   amount,
+                                   I2C_TRANSMIT_TIMEOUT) == HAL_OK;
+        break;
+    case I2c_Dma:
+        success = HAL_I2C_Mem_Read_DMA(handle,
+                                       (deviceAddress << 1), // @todo Make func/macro?
+                                       memoryAddress,
+                                       1u,
+                                       data,
+                                       amount) == HAL_OK;
+        break;
+    default:
+        UNREACHABLE();
+    }
+
+    return success;
 }
 
 
@@ -81,21 +102,42 @@ bool I2c_WriteMemory(I2c_Instance_t instance,
                      uint16_t deviceAddress,
                      uint16_t memoryAddress,
                      uint8_t *data,
-                     uint8_t amount)
+                     uint8_t amount,
+                     I2c_TransferMethod_t transferMethod = I2c_Blocking)
 {
     ENSURE(instance < I2c_Instance_MAX);
     ENSURE(I2c_isInitialised);
 
+    // @todo: Check DMA is initialised and instance linked if using dma
+
     I2C_HandleTypeDef *const handle = &I2c_handles[instance];
 
-    // Attempt to write to the memory
-    return (HAL_I2C_Mem_Write(handle,
-                              (deviceAddress << 1), // @todo Make func?
-                              memoryAddress,
-                              1u,
-                              data,
-                              amount,
-                              I2C_TRANSMIT_TIMEOUT) == HAL_OK);
+    // Attempt to write to the memory location via the requested method
+    bool success = false;
+    switch(transferMethod)
+    {
+    case I2c_Blocking:
+        success = HAL_I2C_Mem_Write(handle,
+                                    (deviceAddress << 1), // @todo Make func/macro?
+                                    memoryAddress,
+                                    1u,
+                                    data,
+                                    amount,
+                                    I2C_TRANSMIT_TIMEOUT) == HAL_OK;
+        break;
+    case I2c_Dma:
+        success = HAL_I2C_Mem_Write_DMA(handle,
+                                        (deviceAddress << 1), // @todo Make func/macro?
+                                        memoryAddress,
+                                        1u,
+                                        data,
+                                        amount) == HAL_OK;
+        break;
+    default:
+        UNREACHABLE();
+    }
+
+    return success;
 }
 
 

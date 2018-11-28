@@ -56,7 +56,7 @@ extern const ExternalInterrupt_ConfigData_t ExternalInterrupt_configData[Externa
 /**
  *
  */
-extern ExternalInterrupt_CallbackFunction_t ExternalInterrupt_callbackFunctions[EXTERNAL_INTERRUPT_LINE_COUNT];
+extern ExternalInterrupt_Callback_t ExternalInterrupt_callbacks[EXTERNAL_INTERRUPT_LINE_COUNT];
 
 /**
  *
