@@ -117,6 +117,7 @@ bool Imu_Initialise(void)
 {
     ENSURE(!Imu_isInitialised);
 
+#if 0
     MPU6050_SetDataReadyCallback(&Imu_MPU6050DataReadyCallback);
     bool success = MPU6050_Initialise();
 
@@ -128,7 +129,10 @@ bool Imu_Initialise(void)
     {
         LOG_ERROR("MPU6050 failed to initialise");
     }
-
+#else
+    LOG_ERROR("NOT ACTUALLY INITIALISING");
+    const bool success = true;
+#endif
     Imu_isInitialised = success;
     return Imu_isInitialised;
 }

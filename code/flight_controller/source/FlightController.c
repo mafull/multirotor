@@ -79,7 +79,7 @@ void FlightController_InitialisePeripherals(void)
 
     // Simple IO
     (void)DigitalOutput_Initialise();
-    (void)ExternalInterrupt_Initialise();
+    // (void)ExternalInterrupt_Initialise();
 
     // Communication
     (void)I2c_Initialise();
@@ -100,11 +100,11 @@ void FlashyFunc(void *params)
     uint32_t count = 0u;
     while (1)
     {
-        LOG_DEBUG("Flash %u", count);
         if (!(count % 1)) DigitalOutput_ToggleState(ControlLed);
         if (!(count % 2)) DigitalOutput_ToggleState(ImuLed);
         if (!(count % 4)) DigitalOutput_ToggleState(LoggerLed);
         if (!(count % 8)) DigitalOutput_ToggleState(UnusedLed);
+        if (!(count % 16)) LOG_DEBUG("Flash %u", count);
 
         vTaskDelay(200);
         count++;
