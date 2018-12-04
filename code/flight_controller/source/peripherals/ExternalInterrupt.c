@@ -15,7 +15,7 @@
   Private Data
  ******************************************************************************/
 
-ExternalInterrupt_Callback_t ExternalInterrupt_callback[EXTERNAL_INTERRUPT_LINE_COUNT] = { 0 };
+ExternalInterrupt_Callback_t ExternalInterrupt_callbacks[EXTERNAL_INTERRUPT_LINE_COUNT] = { 0 };
 Gpio_Instance_t ExternalInterrupt_gpioPins[EXTERNAL_INTERRUPT_LINE_COUNT] = { 0 };
 
 bool ExternalInterrupt_isInitialised = false;
@@ -26,7 +26,7 @@ bool ExternalInterrupt_isInitialised = false;
  ******************************************************************************/
 
 void ExternalInterrupt_Enable(ExternalInterrupt_Instance_t instance,
-                              bool enable = true)
+                              bool enable)
 {
     ENSURE(instance < ExternalInterrupt_Instance_MAX);
     ENSURE(ExternalInterrupt_isInitialised);

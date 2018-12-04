@@ -10,6 +10,7 @@
 // --- Project includes ---
 #include "Logger.h"
 #include "macros.h"
+#include "peripherals/Dma.h"
 #include "peripherals/ExternalInterrupt.h"
 #include "peripherals/I2c.h"
 
@@ -34,7 +35,11 @@
   Private Data
  ******************************************************************************/
 
+MPU6050_CalibrationData_t MPU6050_calibrationData = { 0 };
+
 MPU6050_DataReadyCallback_t MPU6050_dataReadyCallback = NULL;
+
+MPU6050_RawData_t MPU6050_rawData = { 0 };
 
 
 /******************************************************************************
@@ -201,7 +206,7 @@ bool MPU6050_Initialise(void)
 #endif
 
     ExternalInterrupt_SetCallback(MPU6050_Int, &MPU6050_InterruptHandler); // @todo: Config instance
-    ExternalInterrupt_Enable(MPU6050_Int);
+    ExternalInterrupt_Enable(MPU6050_Int, true);
     Dma_SetTransferCompleteCallback(Dma2_7, &MPU6050_DataReadyHandler); // @todo: Config instance
 
     return success;
@@ -217,7 +222,7 @@ void MPU6050_ProcessRawData(MPU6050_Data_t *const data)
     // Static convenience
     static MPU6050_CalibrationData_t *const calib = &MPU6050_calibrationData;
     static MPU6050_RawData_t *const rawData = &MPU6050_rawData;
-    ENSURE(rawData.timestamp.hasValue);
+    ENSURE(rawData->timestamp.hasValue);
 
     /* Raise a warning if the accelerometer/gyroscope offsets have not been
     initialised. Their default (zero) values will be used */
@@ -231,24 +236,24 @@ void MPU6050_ProcessRawData(MPU6050_Data_t *const data)
     }
 
     // Scale and offset accelerometer data
-    data.accel.x = (rawData.accelX * calib->accelScale) - calib->accelOffsets.x;
-    data.accel.y = (rawData.accelY * calib->accelScale) - calib->accelOffsets.y;
-    data.accel.z = (rawData.accelZ * calib->accelScale) - calib->accelOffsets.z;
+    data->accel.x = (rawData->accelX * calib->accelScale) - calib->accelOffsets.x;
+    data->accel.y = (rawData->accelY * calib->accelScale) - calib->accelOffsets.y;
+    data->accel.z = (rawData->accelZ * calib->accelScale) - calib->accelOffsets.z;
 
     // Generate a temperature value in degrees celcius
-    data.temperature = (rawData.temperature / 340.0f) + 36.53f;
+    data->temperature = (rawData->temperature / 340.0f) + 36.53f;
 
     // Scale and offset gyroscope data
-    data.gyro.x = (rawData.gyroX * calib->gyroScale) - calib->gyroOffsets.x;
-    data.gyro.y = (rawData.gyroY * calib->gyroScale) - calib->gyroOffsets.y;
-    data.gyro.z = (rawData.gyroZ * calib->gyroScale) - calib->gyroOffsets.z;
+    data->gyro.x = (rawData->gyroX * calib->gyroScale) - calib->gyroOffsets.x;
+    data->gyro.y = (rawData->gyroY * calib->gyroScale) - calib->gyroOffsets.y;
+    data->gyro.z = (rawData->gyroZ * calib->gyroScale) - calib->gyroOffsets.z;
 
     // Copy across the timestamp
-    data.timestamp = rawData.timestamp;
+    data->timestamp = rawData->timestamp;
 }
 
 
-void MPU6050_SetDataReadyCallback(MPU6050_DataReadyCallback_t callback);
+void MPU6050_SetDataReadyCallback(MPU6050_DataReadyCallback_t callback)
 {
     ENSURE(callback);
 
@@ -290,7 +295,8 @@ bool MPU6050_ReadRegister(MPU6050_Register_t registerAddress, uint8_t *data)
                           MPU6050_DEVICE_ADDR,
                           (uint16_t)registerAddress,
                           data,
-                          1u);
+                          1u,
+                          I2c_Blocking);
 }
 
 
@@ -300,5 +306,6 @@ bool MPU6050_WriteRegister(MPU6050_Register_t registerAddress, uint8_t data)
                            MPU6050_DEVICE_ADDR,
                            (uint16_t)registerAddress,
                            &data,
-                           1u);
+                           1u,
+                           I2c_Blocking);
 }

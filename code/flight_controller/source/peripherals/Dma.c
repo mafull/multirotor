@@ -66,6 +66,17 @@ void Dma_SetTransferCompleteCallback(Dma_Instance_t instance,
 }
 
 
+void Dma_SetTransferErrorCallback(Dma_Instance_t instance,
+                                  Dma_TransferCompleteCallback_t callback)
+{
+    ENSURE(instance < Dma_Instance_MAX);
+    ENSURE(callback);
+
+    // @todo: Do this
+    LOG_ERROR("HAVEN'T IMPLEMENTED SETTING TRANSFER ERROR CALLBACK YET");
+}
+
+
 /******************************************************************************
   Private Function Implementations
  ******************************************************************************/

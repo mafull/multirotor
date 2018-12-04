@@ -24,4 +24,12 @@
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
 
+typedef uint32_t Timestamp_t; // @todo: MOVE THIS
+typedef struct Timestamp_s
+{
+    bool hasValue;
+    Timestamp_t value;
+} OptionalTimestamp_t; // @todo: MOVE THIS
+
+
 #endif // __MACROS_H

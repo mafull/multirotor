@@ -53,7 +53,7 @@ bool I2c_ReadMemory(I2c_Instance_t instance,
                     uint16_t memoryAddress,
                     uint8_t *data,
                     uint8_t amount,
-                    bool dma);
+                    I2c_TransferMethod_t transferMethod);
 
 /**
  *
@@ -63,7 +63,7 @@ bool I2c_WriteMemory(I2c_Instance_t instance,
                      uint16_t memoryAddress,
                      uint8_t *data,
                      uint8_t amount,
-                     bool dma);
+                     I2c_TransferMethod_t transferMethod);
 
 
 #endif // __I2C_H

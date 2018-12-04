@@ -3,11 +3,13 @@
 
 
 // --- Project includes ---
+#include "macros.h"
 
 // --- Library includes ---
 
 // --- Standard includes ---
 #include <stdbool.h>
+#include <stdint.h>
 
 
 /******************************************************************************
@@ -19,8 +21,14 @@
   Public Data Types
  ******************************************************************************/
 
+/**
+ *
+ */
 typedef float Imu_DataType_t;
 
+/**
+ *
+ */
 typedef struct Imu_Data_s
 {
     struct
@@ -32,6 +40,8 @@ typedef struct Imu_Data_s
     {
         Imu_DataType_t roll;
     } rates;
+
+    OptionalTimestamp_t timestamp;
 } Imu_Data_t;
 
 

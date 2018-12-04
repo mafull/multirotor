@@ -11,6 +11,8 @@
 #include "Imu.h"
 
 // --- Project includes ---
+// #include "devices/HMC5883L.h"
+#include "devices/MPU6050.h"
 
 // --- Library includes ---
 // FreeRTOS
@@ -34,7 +36,7 @@
  */
 typedef struct Imu_RawData_s
 {
-    uint16_t 
+    
 } Imu_RawData_t;
 
 
@@ -76,7 +78,7 @@ extern bool Imu_isStarted;
  *
  */
 void Imu_CombineSensorData(const MPU6050_Data_t *const mpu6050Data,
-                           const HMC5883L_Data_t *const hmc5883lData,
+                           /*const HMC5883L_Data_t *const hmc5883lData,*/
                            Imu_Data_t *const imuData);
 
 /**

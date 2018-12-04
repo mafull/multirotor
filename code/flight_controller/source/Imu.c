@@ -70,15 +70,15 @@ void Imu_Run(void)
  ******************************************************************************/
 
 void Imu_CombineSensorData(const MPU6050_Data_t *const mpu6050Data,
-                           const HMC5883L_Data_t *const hmc5883lData,
+                           /*const HMC5883L_Data_t *const hmc5883lData,*/
                            Imu_Data_t *const imuData)
 {
     ENSURE(mpu6050Data);
-    ENSURE(hmc5883lData);
+    // ENSURE(hmc5883lData);
     ENSURE(imuData);
 
     ENSURE(mpu6050Data->timestamp.hasValue);
-    ENSURE(hmc5883lData->timestamp.hasValue);
+    // ENSURE(hmc5883lData->timestamp.hasValue);
 
     const bool firstPacket =    (!imuData->timestamp.hasValue)
                              && (imuData->timestamp.value == 0);
@@ -88,7 +88,7 @@ void Imu_CombineSensorData(const MPU6050_Data_t *const mpu6050Data,
         // Calculate the time since the previous packet in seconds
         const Timestamp_t dt_timestamp =
             (mpu6050Data->timestamp.value - imuData->timestamp.value);
-        const float dt_s = (float)timestamp; // @todo: TImestamp implmentation, plus maybe replace float with Imu_DataType_t?
+        const float dt_s = (float)dt_timestamp; // @todo: Timestamp implmentation, plus maybe replace float with Imu_DataType_t?
 
         // Copy angular rates
 
@@ -96,9 +96,9 @@ void Imu_CombineSensorData(const MPU6050_Data_t *const mpu6050Data,
 
 
         // Calculate gyroscope-based attitude
-        gAngX += mpu6050Data.gyro.x * dt;
-        gAngY += mpu6050Data.gyro.y * dt;
-        gAngZ += mpu6050Data.gyro.z * dt;
+        // gAngX += mpu6050Data.gyro.x * dt_s;
+        // gAngY += mpu6050Data.gyro.y * dt_s;
+        // gAngZ += mpu6050Data.gyro.z * dt_s;
 
         imuData->timestamp.hasValue = true;
     }
@@ -171,7 +171,7 @@ void Imu_ThreadTop(void *params)
         // @todo: Allow raw data to be updated again
 
         // Combine the accelerometer/gyroscope/magnetometer data
-        Imu_CombineSensorData(&mpu6050Data, &hmc5883lData, &imuData);
+        Imu_CombineSensorData(&mpu6050Data, /*&hmc5883lData,*/ &imuData);
 
         // USE THE DATA - SEND TO CONTROL THREAD?
 

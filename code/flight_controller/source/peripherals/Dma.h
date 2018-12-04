@@ -18,6 +18,11 @@ typedef void (*Dma_TransferCompleteCallback_t)(void);
 /**
  *
  */
+typedef void (*Dma_TransferErrorCallback_t)(void);
+
+/**
+ *
+ */
 typedef enum Dma_Instance_e
 {
     // Dma1_5 = 0u,    // I2C1 Rx
@@ -51,7 +56,8 @@ void Dma_SetTransferCompleteCallback(Dma_Instance_t instance,
 /**
  *
  */
-void Dma_SetTransferError(Dma_Callback_t callback);
+void Dma_SetTransferErrorCallback(Dma_Instance_t instance,
+                                  Dma_TransferCompleteCallback_t callback);
 
 
 

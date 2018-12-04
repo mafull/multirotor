@@ -3,6 +3,7 @@
 
 
 // --- Project includes ---
+#include "macros.h"
 
 // --- Library includes ---
 
@@ -19,17 +20,11 @@
 /******************************************************************************
   Public Data Types
  ******************************************************************************/
-typedef uint32_t Timestamp_t; // @todo: MOVE THIS
-typedef struct Timestamp_s
-{
-    bool hasValue;
-    Timestamp_t value;
-} OptionalTimestamp_t; // @todo: MOVE THIS
 
 /**
  *
  */
-typedef float MPU6060_DataType_t;
+typedef float MPU6050_DataType_t;
 
 /**
  *
@@ -64,12 +59,12 @@ typedef struct MPU6050_Data_s
 {
     struct
     {
-        MPU6060_DataType_t x;
-        MPU6060_DataType_t y;
-        MPU6060_DataType_t z;
+        MPU6050_DataType_t x;
+        MPU6050_DataType_t y;
+        MPU6050_DataType_t z;
     } accel, gyro;
 
-    MPU6060_DataType_t temperature;
+    MPU6050_DataType_t temperature;
 
     OptionalTimestamp_t timestamp;
 } MPU6050_Data_t;
@@ -92,7 +87,7 @@ typedef struct MPU6050_CalibrationData_s
 
         /* The accelerometer/gyroscope can be calibrated separately so need
         their own timestamps */
-        OptionalTimestamp timestamp;
+        OptionalTimestamp_t timestamp;
     } accelOffsets, gyroOffsets;
 } MPU6050_CalibrationData_t;
 

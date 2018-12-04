@@ -60,7 +60,7 @@ bool I2c_ReadMemory(I2c_Instance_t instance,
                     uint16_t memoryAddress,
                     uint8_t *data,
                     uint8_t amount,
-                    I2c_TransferMethod_t transferMethod = I2c_Blocking)
+                    I2c_TransferMethod_t transferMethod)
 {
     ENSURE(instance < I2c_Instance_MAX);
     ENSURE(I2c_isInitialised);
@@ -103,7 +103,7 @@ bool I2c_WriteMemory(I2c_Instance_t instance,
                      uint16_t memoryAddress,
                      uint8_t *data,
                      uint8_t amount,
-                     I2c_TransferMethod_t transferMethod = I2c_Blocking)
+                     I2c_TransferMethod_t transferMethod)
 {
     ENSURE(instance < I2c_Instance_MAX);
     ENSURE(I2c_isInitialised);

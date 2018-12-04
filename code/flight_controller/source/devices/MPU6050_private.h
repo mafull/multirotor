@@ -11,6 +11,7 @@
 #include "devices/MPU6050.h"
 
 // --- Project includes ---
+#include "peripherals/ExternalInterrupt.h"
 
 // --- Library includes ---
 
@@ -134,7 +135,17 @@ typedef enum MPU6050_Register_e
 /**
  *
  */
+extern MPU6050_CalibrationData_t MPU6050_calibrationData;
+
+/**
+ *
+ */
 extern MPU6050_DataReadyCallback_t MPU6050_dataReadyCallback;
+
+/**
+ *
+ */
+extern MPU6050_RawData_t MPU6050_rawData;
 
 
 /******************************************************************************
